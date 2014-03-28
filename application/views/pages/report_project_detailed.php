@@ -43,19 +43,19 @@
 			</tr>
 			<tr>
 				<td>Ref. to Admin Sacntion</td>
-				<td><?php echo $p->admin_sanction_id; ?></td>
+				<td><?php echo $p->ref_admin; ?></td>
 			</tr>
 			<tr>
 				<td>Admin Sanction Amount</td>
-				<td><?php echo number_format($p->admin_sanction_amount); ?></td>
+				<td><?php echo number_format($p->admin_amount); ?></td>
 			</tr>
 			<tr>
 				<td>Ref. to Tech Sanction</td>
-				<td><?php echo $p->tech_sanction_id; ?></td>
+				<td><?php echo $p->ref_tech; ?></td>
 			</tr>
 			<tr>
 				<td>Tech Sanction Amount</td>
-				<td><?php echo number_format($p->tech_sanction_amount); ?></td>
+				<td><?php echo number_format($p->tech_amount); ?></td>
 			</tr>
 			<tr>
 				<td>Agreement Amount (in Lakhs of Rs.)</td>
@@ -79,13 +79,13 @@
 			</tr>
 			<tr>
 				<td>Current Status</td>
-				<td><?php echo $p->status_type; ?></td>
+				<td><?php echo $p->project_status; ?></td>
 			</tr>
 			<tr>
 				<td>Expenditure Amount</td>
 				<td><?php echo number_format($p->expenses); ?></td>
 			</tr>
-			<?php if($p->status_type=='Work Completed'){ ?>
+			<?php if($p->project_status=='Work Completed'){ ?>
 			<tr>
 				<td>Completed on</td>
 				<td><?php echo  date("d-M-y",strtotime($p->probable_date_of_completion)); ?></td>

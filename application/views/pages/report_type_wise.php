@@ -13,11 +13,12 @@
 		<th>In Progress</th>
 		<th>Completed</th>
 		<th>Expenditure (in Crores)</th>
+		<th>Project Status</th>
 	</thead>
 	<tbody>
 
 	<?php
-	$admin_sanction_amount=0;
+	$estimate_amount=0;
 	$agreement_amount=0;
 	$total_projects=0;
 	$not_started=0;
@@ -34,17 +35,18 @@
 		<td><?php echo $facility_type->facility_type; ?>
 		<input type='hidden' value="<?php echo $facility_type->facility_type_id; ?>" name="facility_type" />
 		</td>
-		<td class="text-right"><?php echo number_format($facility_type->admin_sanction_amount/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format($facility_type->estimate_amount/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($facility_type->agreement_amount/10000000,2); ?></td>
 		<td class="text-right"><?php echo $facility_type->total_projects; ?></td>
 		<td class="text-right"><?php echo $facility_type->not_started; ?></td>
 		<td class="text-right"><?php echo $facility_type->work_in_progress; ?></td>
 		<td class="text-right"><?php echo $facility_type->work_completed; ?></td>
 		<td class="text-right"><?php echo number_format($facility_type->expenses/10000000,2); ?></td>
+		<td><?php echo $facility_type->project_status; ?></td>
 	</tr>
 	</form>
 	<?php
-	$admin_sanction_amount+=$facility_type->admin_sanction_amount;
+	$estimate_amount+=$facility_type->estimate_amount;
 	$agreement_amount+=$facility_type->agreement_amount;
 	$total_projects+=$facility_type->total_projects;
 	$not_started+=$facility_type->not_started;
@@ -55,7 +57,7 @@
 	?>
 	<tr>
 		<th>Total</th>
-		<th class="text-right"><?php echo number_format($admin_sanction_amount/10000000,2);?></th>
+		<th class="text-right"><?php echo number_format($estimate_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($agreement_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo $total_projects;?></th>
 		<th class="text-right"><?php echo $not_started;?></th>

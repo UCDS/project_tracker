@@ -14,19 +14,13 @@ $(function(){
  <h3><u>ADD GRANT</u></h3></center><br>
     <?php echo form_open('masters/add/grant',array('role'=>'form')); ?>
     <div class="form-group">
-        <label for="grant_name" class="col-md-4">Grant Name</label>
+        <label for="grant_name" class="col-md-4">Grant Name<font color='red'>*</font></label>
         <div  class="col-md-8">
         <input type="text" class="form-control" placeholder="Grant Name" id="grant_name" name="grant_name" />
         </div>
     </div>
 
-  
-    <div class="form_group">
-        <label for="date" class="col-md-4">Date</label>
-        <div  class="col-md-8">
-        <input type="text" class="form-control" placeholder=" Date" id="date" name="date" />
-        </div>
-    </div>
+ 
      <div class="form_group">		
      <label for="phase_name" class="col-md-4">Grant Phase Name</label>   
       <div  class="col-md-8">    
@@ -37,7 +31,7 @@ $(function(){
 				});
                 $phasecount=1;
                 $('.btnAdd').click (function () {       
-                    $('.buttons').append('<div class="col-md-6 col-md-offset-4"><input type="text" name="phase_name[]" class="form-control" value="Phase '+($phasecount++)+'" /></div><div class="col-md-2"><input type="button" class="btn btn-sl btn-primary btnRemove col-md-2" value="X"></div>'); // end append
+                    $('.buttons').append('<div class="col-md-6 col-md-offset-4"><input type="text" name="phase_name[]" class="form-control" value="Phase '+($phasecount++)+'" /></div><div class="col-md-2"><input type="button" class=" btn btn-sl btn-primary btnRemove col-md-2" value="X"></div>'); // end append
 					$('div .btnRemove').last().click (function () {      
 						$(this).parent().last().remove();    
 					}); // end click
@@ -70,6 +64,13 @@ $(function(){
 		</select>		
 	</div>
 	</div>
+   
+    <div class="form_group">
+        <label for="date" class="col-md-4">Date</label>
+        <div  class="col-md-8">
+        <input type="text" class="form-control" placeholder=" Date" id="date" name="date" />
+        </div>
+    </div>
        <div class="col-md-3 col-md-offset-4"> 
     <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
     </div>

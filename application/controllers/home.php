@@ -20,6 +20,7 @@ class Home extends CI_Controller {
 		$this->load->view('templates/footer');
 	}
 
+
 	function login()
 	{	
 		if(!$this->session->userdata('logged_in')){
@@ -37,7 +38,10 @@ class Home extends CI_Controller {
 	    'trim|required|xss_clean|callback_check_database');
 		if ($this->form_validation->run() === FALSE)
 		{
-			$this->load->view('pages/login');
+
+			$this->load->view('pages/error');
+		$this->load->view('pages/login');
+
 		}
 		else{
 			redirect('home', 'refresh');

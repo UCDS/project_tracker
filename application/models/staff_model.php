@@ -91,6 +91,11 @@ class Staff_model extends CI_Model{
 		$query=$this->db->get();
 		return $query->result();
 	}
+	function get_user(){
+		$this->db->select("user_id,user_type")->from("users")->order_by('user_type');
+		$query=$this->db->get();
+		return $query->result();
+	}
 	function get_grants(){
 		$this->db->select("phase_id,phase_name")->from("grant_phase")->join('grants','grant_phase.grant_id=grants.grant_id')->order_by('phase_name');
 		$query=$this->db->get();
@@ -130,14 +135,12 @@ class Staff_model extends CI_Model{
 			$month="MONTH(CURDATE())";
 			$year="YEAR(CURDATE())";
 		}
-		$this->db->select("		SUM(CASE WHEN month(project_expenses.expense_date)<$month AND YEAR(project_expenses.expense_date)<=$year THEN expense_amount ELSE 0 END) expense_upto_last_month,
-		SUM(CASE WHEN month(project_expenses.expense_date)=$month AND YEAR(project_expenses.expense_date)=$year THEN expense_amount ELSE 0 END) expense_current_month,
-		SUM(CASE WHEN month(project_expenses.expense_date)<=$month AND YEAR(project_expenses.expense_date)<=$year THEN expense_amount ELSE 0 END) expenses,
-		projects.*,districts.*,divisions.*,grant_phase.*,facilities.*,facility_type,project_status.*,sanctions.*,status_types.*");
+		$this->db->select("SUM(CASE WHEN month(project_expenses.to_date)<$month AND YEAR(project_expenses.to_date)<$year THEN expense_amount ELSE 0 END) expense_upto_last_month,
+		SUM(CASE WHEN month(project_expenses.to_date)=$month AND YEAR(project_expenses.to_date)=$year THEN expense_amount ELSE 0 END) expense_current_month,
+		SUM(CASE WHEN month(project_expenses.to_date)<=$month AND YEAR(project_expenses.to_date)<=$year THEN expense_amount ELSE 0 END) expenses,
+		projects.*,districts.*,divisions.*,grant_phase.*,facilities.*,facility_type,project_status.*");
 		$this->db->from("projects")
 		->join('project_status','projects.project_id=project_status.project_id')
-		->join('status_types','project_status.status_type_id=status_types.status_type_id')
-		->join('sanctions','projects.project_id=sanctions.project_id')
 		->join('facilities','projects.facility_id=facilities.facility_id')
 		->join('facility_types','facilities.facility_type_id=facility_types.facility_type_id')
 		->join('divisions','facilities.division_id=divisions.division_id')

@@ -6,7 +6,7 @@ class Masters_model extends CI_Model{
 	
 	function get_data($type){
 		if($type=="facility"){
-			if($this->input->post('facility_id')){
+			if($this->input->post('select')){
 				$facility_id=$this->input->post('facility_id');
 				$this->db->where('facility_id',$facility_id);
 			}
@@ -27,26 +27,110 @@ class Masters_model extends CI_Model{
 			->join('divisions','facilities.division_id=divisions.division_id')
 			->order_by('facility_name');	
 		}
+		else if($type=="users"){
+			//$this->db->select("user_id,username")->from("users")->order_by('username');
+		
+				if($this->input->post('select')){
+				$user_id=$this->input->post('user_id');
+				$this->db->where('users.user_id',$user_id);
+			}
+				
+
+						
+			
+	    	if($this->input->post('search')){
+				$user_type=strtolower($this->input->post('search_user_type'));
+				$this->db->like('LOWER(user_type)',$user_type,'after');
+			}
+
+			$this->db->select("*")->from("users")->order_by('user_type');
+		}
 		else if($type=="districts"){
+			
 			$this->db->select("district_id,district_name")->from("districts");
 		}
+		else if($type=="division"){
+			
+	$this->db->select("division_id,division")->from("divisions");
+		}
 		else if($type=="divisions"){
-			$this->db->select("division_id,division")->from("divisions")->order_by('division');
+				if($this->input->post('search')){
+					$division=strtolower($this->input->post('search_division_id'));
+				$this->db->like('LOWER(division)',$division,'after');
+		}
+if($this->input->post('search_district')){
+				$district_type=$this->input->post('search_district');
+				$this->db->where('districts.district_id',$district_type);
+			}
+
+
+				//$division=$this->input->post('division_id');
+				//$this->db->where('divisions.division',$division);
+			
+				if($this->input->post('select')){
+				$division_id=$this->input->post('division_id');
+				$this->db->where('division_id',$division_id);
+			}
+             	$this->db->select("division_id,districts.district_id,division,district_name
+             		")->from("divisions")
+			->join('districts','divisions.division_id=districts.district_id')
+			->order_by('division');
 		}
 		else if($type=="facility_types"){
 			$this->db->select("facility_type_id,facility_type")->from("facility_types")->order_by('facility_type');
 		}
-		else if($type=="grants"){
-			$this->db->select("phase_id,phase_name")->from("grant_phase")->join('grants','grant_phase.grant_id=grants.grant_id')->order_by('phase_name');
+			else if($type=="grants"){
+			if($this->input->post('select')){
+				$grant_id=$this->input->post('grant_id');
+				$this->db->where('grant_id',$grant_id);
+			}
+			if($this->input->post('search')){
+				$grant_name=strtolower($this->input->post('search_grant_name'));
+				$this->db->like('LOWER(grant_name)',$grant_name,'after');
+			}
+			if($this->input->post('search')){
+				$phase_name=$this->input->post('search_phase_name');
+				$this->db->where('grant_phase.phase_id',$phase_name);
+			}
+			
+			
+			$this->db->select("grant_name,grant_phase.phase_id,phase_name,date,grant_source")->from("grants")
+			->join('grant_phase','grants.grant_id=grant_phase.grant_id')
+			
+			->order_by('grant_name');	
 		}
+	else if($type=="grants"){
+			$this->db->select("phase_id,phase_name,grant_name,grant_source,date")->from("grant_phase")->join('grants','grant_phase.grant_id=grants.grant_id')->order_by('phase_name');
+		}
+		else if($type=="user"){
+			$this->db->select("user_id,user_type")->from("users")->order_by('user_type');
+		}
+		
 		else if($type=="grant_sources"){
-			$this->db->select("*")->from("grant_sources")->order_by('grant_source');
+			$this->db->select("grant_source_id,grant_source")->from("grant_sources")->order_by('grant_source');
 		}
-		else if($type=="agencies"){
-			$this->db->select("agency_id,agency_name")->from("agency")->order_by('agency_name');
+		else if($type=="grant_phases"){
+			$this->db->select("phase_id,phase_name")->from("grant_phase")->order_by('phase_name');
+		}
+		
+		else if($type=="agency"){
+			if($this->input->post('select')){
+				$agency_id=$this->input->post('agency_id');
+				$this->db->where('agency_id',$agency_id);
+			}
+			if($this->input->post('search')){
+			//	$agency_name=$this->input->post('search_agency_name');
+			//	$this->db->where('agency.agency_id',$agency_name);
+				$agency_name=strtolower($this->input->post('search_agency_name'));
+				$this->db->like('LOWER(agency_name)',$agency_name,'after');
+		
+			}
+			
+			$this->db->select("*")->from("agency");
 		}
 
 		$query=$this->db->get();
+  $this->db->last_query();
 		return $query->result();
 	}
 	
@@ -55,15 +139,91 @@ class Masters_model extends CI_Model{
 			$data = array(
 					  'facility_type_id'=>$this->input->post('facility_type'),
 					  'facility_name'=>$this->input->post('facility_name'),
-					  'division_id'=>$this->input->post('division'),
+					  'division_id'=>$this->input->post('divisions'),
 					   'longitude'=>$this->input->post('longitude'),
 					   'latitude'=>$this->input->post('latitude')
 			);
 			$this->db->where('facility_id',$this->input->post('facility_id'));
 			$table="facilities";
+		
+		
+	}
+	else if($type=="agency"){
+		$agency_name=$this->input->post('agency_name');
+			$agency_address=$this->input->post('agency_address');
+			$agency_contact_name=$this->input->post('agency_contact_name');
+			$agency_contact_designation=$this->input->post('agency_contact_designation');
+			$agency_contact_number=$this->input->post('agency_contact_number');
+			$agency_email_id=$this->input->post('agency_email_id');
+			$account_no=$this->input->post('account_no');
+			$bank_name=$this->input->post('bank_name');
+			$branch=$this->input->post('branch');
+			$pan=$this->input->post('pan');
+				$data = array(
+					  'agency_name'=>$agency_name,
+					  'agency_address'=>$agency_address,
+					  'agency_contact_name'=>$agency_contact_name,
+					  'agency_contact_designation'=>$agency_contact_designation,
+					  'agency_contact_number'=>$agency_contact_number,
+					  'agency_email_id'=>$agency_email_id,
+					  'account_no'=>$account_no,
+					  'bank_name'=>$bank_name,
+					  'branch'=>$branch,
+					  'pan'=>$pan
+					);
+			$this->db->where('agency_id',$this->input->post('agency_id'));
+			$table="agency";
+		}
+			else if($type=="users"){
+			$data = array(
+				
+              'user_type'=>$this->input->post('user_type'),
+              'username'=>$this->input->post('username'),
+              'password'=>md5($this->input->post('password')),
+              'first_name'=>$this->input->post('first_name'),
+              'last_name'=>$this->input->post('last_name'),
+              'gender'=>$this->input->post('gender'),
+              'dob'=>date("Y-m-d",strtotime($this->input->post('dob'))),
+              'phone_no'=>$this->input->post('phone_no'),
+              'email_id'=>$this->input->post('email_id'),
+              'address'=>$this->input->post('address'),
+               'city'=>$this->input->post('city'),
+              'state'=>$this->input->post('state'),
+              'country'=>$this->input->post('country'),
+              'pincode'=>$this->input->post('pincode')
+			);
+				$this->db->where('user_id',$this->input->post('user_id'));
+			$table="users";
+		}
+			else if($type=="grant"){
+		$grant_name=$this->input->post('grant_name');
+			$phase_name=$this->input->post('phase_name');
+			$grant_source=$this->input->post('grant_source');
+				$date=$this->input->post('date');
+			
+				$data = array(
+					  'grant_name'=>$grant_name,
+					  'phase_name'=>$phase_name,
+					  'grant_source'=>$grant_source,
+					   'date'=>$date,
+					);
+			$this->db->where('agency_id',$this->input->post('agency_id'));
+			$table="agency";
 		}
 		
-		$this->db->trans_start();
+
+	else if($type=="divisions"){
+	
+				$data = array(
+					  'division'=>$this->input->post('division'),
+					  'district_id'=>$this->input->post('district_name')
+					);
+			$this->db->where('division_id',$this->input->post('division_id'));
+			$table="divisions";
+		}
+		
+		
+			$this->db->trans_start();
 			$this->db->update($table,$data);
 		$this->db->trans_complete();
 		if($this->db->trans_status()===FALSE){
@@ -84,13 +244,34 @@ class Masters_model extends CI_Model{
 					   'latitude'=>$this->input->post('latitude')
 			);
 		$table="facilities";
+		}	
+		else if($type=="users"){
+			$data = array(
+				
+              'user_type'=>$this->input->post('user_type'),
+              'username'=>$this->input->post('username'),
+              'password'=>md5($this->input->post('password')),
+              'first_name'=>$this->input->post('first_name'),
+              'last_name'=>$this->input->post('last_name'),
+              'gender'=>$this->input->post('gender'),
+              'dob'=>date("Y-m-d",strtotime($this->input->post('dob'))),
+              'phone_no'=>$this->input->post('phone_no'),
+              'email_id'=>$this->input->post('email_id'),
+              'address'=>$this->input->post('address'),
+               'city'=>$this->input->post('city'),
+              'state'=>$this->input->post('state'),
+              'country'=>$this->input->post('country'),
+              'pincode'=>$this->input->post('pincode')
+			);
+			$table="users";
 		}
+			
 		else if($type=="agency"){
 			$agency_name=$this->input->post('agency_name');
 			$agency_address=$this->input->post('agency_address');
 			$agency_contact_name=$this->input->post('agency_contact_name');
-			$agency_designation=$this->input->post('agency_designation');
-			$agency_contact_no=$this->input->post('agency_contact_no');
+			$agency_contact_designation=$this->input->post('agency_contact_designation');
+			$agency_contact_number=$this->input->post('agency_contact_number');
 			$agency_email_id=$this->input->post('agency_email_id');
 			$account_no=$this->input->post('account_no');
 			$bank_name=$this->input->post('bank_name');
@@ -100,8 +281,8 @@ class Masters_model extends CI_Model{
 					  'agency_name'=>$agency_name,
 					  'agency_address'=>$agency_address,
 					  'agency_contact_name'=>$agency_contact_name,
-					  'agency_contact_designation'=>$agency_designation,
-					  'agency_contact_number'=>$agency_contact_no,
+					  'agency_contact_designation'=>$agency_contact_designation,
+					  'agency_contact_number'=>$agency_contact_number,
 					  'agency_email_id'=>$agency_email_id,
 					  'account_no'=>$account_no,
 					  'bank_name'=>$bank_name,
@@ -136,34 +317,17 @@ class Masters_model extends CI_Model{
 			  return true;
 			}
 		}
-		else if($type=="division"){
+		else if($type=="divisions"){
 			$data = array(
 					  'district'=>$this->input->post('district'),
-					  'division_name'=>$this->input->post('division_name'),  'state'=>$this->input->post('state')
+					  'division'=>$this->input->post('division')
 					);
 			$table="divisions";
 		}
-		else if($type=="user"){
-			$data = array(
-              'user_type'=>$this->input->post('user_type'),
-              'username'=>$this->input->post('username'),
-              'password'=>$this->input->post('password'),
-              'first_name'=>$this->input->post('first_name'),
-              'last_name'=>$this->input->post('last_name'),
-              'gender'=>$this->input->post('gender'),
-              'dob'=>$this->input->post('dob'),
-              'phone_no'=>$this->input->post('phone_no'),
-              'email_id'=>$this->input->post('email_id'),
-              'address'=>$this->input->post('address'),
-               'city'=>$this->input->post('city'),
-              'state'=>$this->input->post('state'),
-              'country'=>$this->input->post('country'),
-              'pincode'=>$this->input->post('pincode')
-			);
-			$table="users";
-		}
+	
 		$this->db->trans_start();
 			$this->db->insert($table,$data);
+
 		$this->db->trans_complete();
 		if($this->db->trans_status()===FALSE){
 			return false;
@@ -172,6 +336,7 @@ class Masters_model extends CI_Model{
 		  return true;
 		}	
 	}
+
 
 }
 ?>

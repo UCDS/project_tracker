@@ -65,8 +65,8 @@ $(function(){
 				<td><?php echo date("d-M-y",strtotime($p->agreement_completion_date)); ?></td>
 			</tr>
 			<tr>
-				<td>Admin Sanction Amount (in Lakhs of Rs.)</td>
-				<td><?php echo number_format($p->admin_sanction_amount); ?></td>
+				<td>Estimate Amount (in Lakhs of Rs.)</td>
+				<td><?php echo number_format($p->estimate_amount); ?></td>
 			</tr>
 			<tr>
 				<td>Probable completion date</td>
@@ -74,7 +74,7 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Current Status</td>
-				<td><?php echo $p->status_type; ?></td>
+				<td><?php echo $p->project_status; ?></td>
 			</tr>
 			<tr>
 				<td>Update</td>
@@ -87,12 +87,13 @@ $(function(){
 
 				<br /><br />
 				<input type="text" placeholder="Expenditure in Lakhs" class="form-control" name='expenditure' />
-				<input type="text" placeholder="Date" class="form-control" name='expense_date' id="from_date" />
+				<input type="text" placeholder="From Date" class="form-control" name='from_date' id="from_date" />
+				<input type="text" placeholder="To Date" class="form-control" name='to_date' id="from_date" />
 				<select class='form-control' name='status'>
 				<option value=''>Change Status</option>
-				<option value='1'>Not Started</option>
-				<option value='2'>Work in Progress</option>
-				<option value='3'>Work completed</option>
+				<option value='Not Started'>Not Started</option>
+				<option value='Work in Progress'>Work in Progress</option>
+				<option value='Work Completed'>Work completed</option>
 				<input type="text" placeholder="Probable Date" class="form-control" name='probable_date' id="probable_date" />
 				</select>
 				<input class='btn btn-sm btn-primary btn-block' type="submit" name="update" value="Update" />
@@ -130,7 +131,7 @@ $(function(){
 		<td><?php echo $project->project_name; ?></td>
 		<td><?php echo $project->facility_name; ?></td>
 		<td><?php echo $project->district_name; ?></td>
-		<td><?php echo $project->status_type; ?></td>
+		<td><?php echo $project->project_status; ?></td>
 	</tr>
 	</form>
 	<?php

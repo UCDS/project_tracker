@@ -17,7 +17,7 @@
 	<tbody>
 
 	<?php
-	$admin_sanction_amount=0;
+	$estimate_amount=0;
 	$agreement_amount=0;
 	$total_projects=0;
 	$not_started=0;
@@ -34,7 +34,7 @@
 		<td><?php echo $grant->grant_name; ?>
 		<input type='hidden' value="<?php echo $grant->grant_id; ?>" name="grant" />
 		</td>
-		<td class='text-right'><?php echo number_format($grant->admin_sanction_amount/10000000,2); ?></td>
+		<td class='text-right'><?php echo number_format($grant->estimate_amount/10000000,2); ?></td>
 		<td class='text-right'><?php echo number_format($grant->agreement_amount/10000000,2); ?></td>
 		<td class='text-right'><?php echo $grant->total_projects; ?></td>
 		<td class='text-right'><?php echo $grant->not_started; ?></td>
@@ -44,7 +44,7 @@
 	</tr>
 	</form>
 	<?php
-	$admin_sanction_amount+=$grant->admin_sanction_amount;
+	$estimate_amount+=$grant->estimate_amount;
 	$agreement_amount+=$grant->agreement_amount;
 	$total_projects+=$grant->total_projects;
 	$not_started+=$grant->not_started;
@@ -55,8 +55,8 @@
 	}
 	?>
 	<tr>
-		<th colspan="2">Total</th>
-		<th class='text-right'><?php echo number_format($admin_sanction_amount/10000000,2);?></th>
+		<th>Total</th>
+		<th class='text-right'><?php echo number_format($estimate_amount/10000000,2);?></th>
 		<th class='text-right'><?php echo number_format($agreement_amount/10000000,2);?></th>
 		<th class='text-right'><?php echo $total_projects;?></th>
 		<th class='text-right'><?php echo $not_started;?></th>

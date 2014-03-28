@@ -67,17 +67,16 @@
 		<td><?php echo $i++; ?></td>
 		<td><?php echo $project->project_name; ?>
 		<input type='hidden' value="<?php echo $project->project_id; ?>" name="project_id" />
-	</form>
 		</td>
 		<td><?php echo $project->facility_name; ?></td>
-		<td class="text-right"><?php echo number_format($project->admin_sanction_amount/100000,2); ?></td>
-		<td class="text-right"><?php echo number_format($project->tech_sanction_amount/100000,2); ?></td>
+		<td class="text-right"><?php echo number_format($project->estimate_amount/100000,2); ?></td>
+		<td class="text-right"><?php echo number_format($project->tech_amount/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->agreement_amount/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expense_upto_last_month/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expense_current_month/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expenses/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expenses/$project->agreement_amount*100);echo "%" ?></td>
-		<td><?php echo $project->status_type; ?></td>
+		<td><?php echo $project->project_status; ?></td>
 		<td><?php if($project->work_type_id=='M') echo "Medical";
 			else echo "Non-Medical"; 
 			?></td>
@@ -87,5 +86,6 @@
 	?>
 	</tbody>
 	</table>
+	</form>
 	</div>
 	</div>

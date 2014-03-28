@@ -19,7 +19,7 @@
 		</td>
 		<td><?php echo $project->facility_name; ?></td>
 		<td><?php echo $project->district_name; ?></td>
-		<td><?php echo $project->status_type; ?></td>
+		<td><?php echo $project->project_status; ?></td>
 		<td><?php if($project->work_type_id=='M') echo "Medical";
 			else echo "Non-Medical"; 
 			?></td>

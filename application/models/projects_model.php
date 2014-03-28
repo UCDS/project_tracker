@@ -14,8 +14,9 @@ class Projects_model extends CI_Model{
 		$agreement_id=$this->input->post('agreement_number');
 		$estimate_amount=$this->input->post('admin_amount');
 		$agreement_amount=$this->input->post('agreement_amount');
-		$agreement_date=$this->input->post('agreement_date');
-		$agreement_completion_date=$this->input->post('agreement_completion_date');
+		 
+		$agreement_date=date("Y-m-d",strtotime($this->input->post('agreement_date')));
+		$agreement_completion_date=date("Y-m-d",strtotime($this->input->post('agreement_completion_date')));
 		$grant=$this->input->post('grant');
 		$agency=$this->input->post('agency');
 		$work_type=$this->input->post('work_type');
@@ -23,6 +24,11 @@ class Projects_model extends CI_Model{
 			'project_name'=>$project_name,
 			'project_address'=>$address,
 			'facility_id'=>$facility,
+			'ref_admin'=>$ref_admin,
+			'admin_amount'=>$admin_amount,
+			'ref_tech'=>$ref_tech,
+			'tech_amount'=>$tech_amount,
+			'estimate_amount'=>$estimate_amount,
 			'agreement_id'=>$agreement_id,
 			'agreement_amount'=>$agreement_amount,
 			'agreement_date'=>$agreement_date,
@@ -33,23 +39,13 @@ class Projects_model extends CI_Model{
 			);
 		$this->db->trans_start();
 		$this->db->insert('projects',$data);
-		$project_id=$this->db->insert_id();
 		$status_data=array(
-		'project_id'=>$project_id,
-		'status_type_id'=>'1',
+		'project_id'=>$this->db->insert_id(),
+		'project_status'=>'Not started',
 		'probable_date_of_completion'=>$this->input->post('probable_date_of_completion'),
 		'current'=>1
 		);
-
-		$sanction_data=array(
-			'admin_sanction_id'=>$ref_admin,
-			'admin_sanction_amount'=>$admin_amount,
-			'tech_sanction_id'=>$ref_tech,
-			'tech_sanction_amount'=>$tech_amount,
-			'project_id'=>$project_id
-		);	
 		$this->db->insert('project_status',$status_data);
-		$this->db->insert('sanctions',$sanction_data);
 		$this->db->trans_complete();
 		if ($this->db->trans_status() === FALSE){	
 			return false;
@@ -61,12 +57,14 @@ class Projects_model extends CI_Model{
 	
 	function update_expenses(){
 		$expenses=$this->input->post('expenditure');
-		$expense_date=$this->input->post('expense_date');
+		$from_date=$this->input->post('from_date');
+		$to_date=$this->input->post('to_date');
 		$project_id=$this->input->post('selected_project');
 		$data=array(
 		'project_id'=>$project_id,
 		'expense_amount'=>$expenses,
-		'expense_date'=>$expense_date
+		'from_date'=>$from_date,
+		'to_date'=>$to_date
 		);
 		if($this->db->insert('project_expenses',$data)){
 			return true;
@@ -81,7 +79,7 @@ class Projects_model extends CI_Model{
 		$this->db->where('project_id',$project_id)->update('project_status',array('current'=>0));
 		$data=array(
 		'project_id'=>$project_id,
-		'status_type_id'=>$status,
+		'project_status'=>$status,
 		'status_date'=>$date,
 		'probable_date_of_completion'=>$probable_date,
 		'current'=>1
@@ -117,15 +115,24 @@ class Projects_model extends CI_Model{
               'branch'=>$branch,
               'pan'=>$pan
             );
-    if($this->db->insert('agency',$data)){
-     return true;
+ 	$this->db->trans_start();
+	if($this->input->post('agency_id')){
+		$this->db->where('agency_id',$this->input->post('agency_id'));
+		$this->db->update('agency',$data);
+	}
+	else{
+		$this->db->insert('agency',$data);
+	}
+	$this->db->trans_complete();
+	if($this->db->trans_status()===FALSE){
+		return false;
+	}
+	else{
+      return true;
+	
+    }
+  }
 
-    }
-    else 
-    {
-      return false;
-    }
- }
 
 	function insert_division(){
     $this->load->database();
@@ -173,7 +180,8 @@ class Projects_model extends CI_Model{
     $data = array(
               'grant_name'=>$this->input->post('grant_name'),
               'grant_source'=>$this->input->post('grant_source'),
-              'date'=>$this->input->post('date')
+              
+              'date'=>date("Y-m-d",strtotime($this->input->post('date'))),
               );
     if($this->db->insert('grants',$data)){
       $grant_id=$this->db->insert_id();
@@ -208,7 +216,7 @@ class Projects_model extends CI_Model{
               'first_name'=>$this->input->post('first_name'),
               'last_name'=>$this->input->post('last_name'),
               'gender'=>$this->input->post('gender'),
-              'dob'=>$this->input->post('dob'),
+         'dob'=>date("Y-m-d",strtotime($this->input->post('dob'))),
               'phone_no'=>$this->input->post('phone_no'),
               'email_id'=>$this->input->post('email_id'),
               'address'=>$this->input->post('address'),

@@ -2,7 +2,7 @@
 
 <script type="text/javascript" src="<?php echo base_url();?>assets/js/zebra_datepicker.js"></script>
 <script type="text/javascript">
-$(function(){
+$(function(){3
 	$("#agreement_date").Zebra_DatePicker({
 		direction:false
 	});
@@ -26,7 +26,7 @@ $(function(){
  <h3><u>ADD PROJECT</u></h3></center><br>
  <?php echo form_open('projects/create',array('role'=>'form')); ?>
 	<div class="form-group">
-		<label for="project_name" class="col-md-4">Project Name</label>
+		<label for="project_name" class="col-md-4">Project Name<font color='red'>*</font></label>
 		<div  class="col-md-8">
 		<input type="text" class="form-control" placeholder="Project Name" id="project_name" name="project_name" />
 		</div>

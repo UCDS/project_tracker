@@ -19,7 +19,7 @@
 	<tbody>
 
 	<?php
-	$admin_sanction_amount=0;
+	$estimate_amount=0;
 	$agreement_amount=0;
 	$total_projects=0;
 	$not_started=0;
@@ -37,7 +37,7 @@
 		<td><?php echo $district->district_name; ?>
 		<input type='hidden' value="<?php echo $district->district_id; ?>" name="district_id" />
 		</td>
-		<td class="text-right"><?php echo number_format($district->admin_sanction_amount/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format($district->estimate_amount/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($district->agreement_amount/10000000,2); ?></td>
 		<td class="text-right"><?php echo $district->total_projects; ?></td>
 		<td class="text-right"><?php echo $district->not_started; ?></td>
@@ -49,7 +49,7 @@
 	</tr>
 	</form>
 	<?php
-	$admin_sanction_amount+=$district->admin_sanction_amount;
+	$estimate_amount+=$district->estimate_amount;
 	$agreement_amount+=$district->agreement_amount;
 	$total_projects+=$district->total_projects;
 	$not_started+=$district->not_started;
@@ -62,7 +62,7 @@
 	?>
 	<tr>
 		<th>Total</th>
-		<th class="text-right"><?php echo number_format($admin_sanction_amount/10000000,2);?></th>
+		<th class="text-right"><?php echo number_format($estimate_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($agreement_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo $total_projects;?></th>
 		<th class="text-right"><?php echo $not_started;?></th>

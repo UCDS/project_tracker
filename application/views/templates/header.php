@@ -30,20 +30,30 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li <?php if(current_url()==base_url()){ echo "class='active'";}?>><a href="<?php echo base_url();?>home">Home</a></li>
+            <li <?php if(current_url()==base_url()){ echo "class='active'";}?>><a href="/apmsidc/home">Home</a></li>
 	<?php if($this->session->userdata('logged_in')) { ?>
 			<li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Operations <b class="caret"></b></a>
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Add Masters<b class="caret"></b></a>
 				<ul class="dropdown-menu">
 				<li><a href="<?php echo base_url();?>masters/add/agency">Add Agency</a></li>
-				<li><a href="<?php echo base_url();?>masters/add/division">Add Division</a></li>
+				<li><a href="<?php echo base_url();?>masters/add/divisions">Add Division</a></li>
 				<li><a href="<?php echo base_url();?>masters/add/grant">Add Grant</a></li>
-				<li><a href="<?php echo base_url();?>projects/create">Add Project</a></li>
 				<li><a href="<?php echo base_url();?>masters/add/facility">Add Facility</a></li>
-				<li><a href="<?php echo base_url();?>masters/add/user">Add Users</a></li>
-				<li class="divider"></li>
-				<li><a href="<?php echo base_url();?>projects/update">Edit Projects</a></li>
+				<li><a href="<?php echo base_url();?>projects/create">Add Project</a></li>
+				<li><a href="<?php echo base_url();?>masters/add/users">Add Users</a></li>
+			
+				</ul>
+			</li>
+			<li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Edit Masters <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+				
+				<li><a href="<?php echo base_url();?>masters/edit/agency">Edit Agency</a></li>
+				<li><a href="<?php echo base_url();?>masters/edit/divisions">Edit Division</a></li>
 				<li><a href="<?php echo base_url();?>masters/edit/facility">Edit Facility</a></li>
+				<li><a href="<?php echo base_url();?>masters/edit/grant">Edit Grant</a></li>
+				<li><a href="<?php echo base_url();?>projects/update">Edit Projects</a></li>
+				<li><a href="<?php echo base_url();?>masters/edit/users">Edit Users</a></li>
 				</ul>
 			</li>
             <li <?php if(preg_match("/reports/",current_url())){ echo "class='active'";}?>>

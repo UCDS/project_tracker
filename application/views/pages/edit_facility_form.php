@@ -38,7 +38,7 @@
 		<div  class="col-md-8">
 		<select name="division" id="division" class="form-control">
 		<option value="">--SELECT--</option>
-		<?php foreach($divisions as $d){
+		<?php foreach($division as $d){
 			echo "<option value='$d->division_id'";
 			if(isset($facility) && $facility[0]->division_id==$d->division_id)
 				echo "selected";
@@ -94,7 +94,7 @@
 		</select>
 		<select name="search_division" id="search_division" class="form-control" style="width:150px">
 		<option value="" disabled selected >Division</option>
-		<?php foreach($divisions as $d){
+		<?php foreach($division as $d){
 			echo "<option value='$d->division_id'>$d->division</option>";
 		}
 		?>
