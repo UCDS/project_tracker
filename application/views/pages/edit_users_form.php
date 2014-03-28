@@ -202,7 +202,7 @@
 		
 
    <select name="user_type" id="user_type" class="form-control">
-  <option value="">type</option>
+  <option value="">--ALL--</option>
   <option value="Superinendant Engineer" <?php echo set_select('user_type', 'superinendant'); ?> >Superinendant Engineer</option>
   <option value="Executive Engineer" <?php echo set_select('user_type', 'executive'); ?> >Executive Engineer</option>
   <option value="Deputy Executive Engineer" <?php echo set_select('user_type', 'deputy'); ?> >Deputy Executive Engineer</option>

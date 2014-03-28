@@ -73,7 +73,7 @@
 	<tr>
 		<td>
 		<select name="search_grant_name" id="search_grant_name" class="form-control" style="width:180px">
-		<option value="" disabled selected>Type</option>
+		<option value="" disabled selected>--ALL--</option>
 		<?php foreach($grant as $g){
 			echo "<option value='$g->grant_id'>$g->grant_name</option>";
 		}
