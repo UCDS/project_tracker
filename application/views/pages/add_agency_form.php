@@ -20,7 +20,7 @@ $(function(){
 		<div class="col-md-8 col-md-offset-2">
 		<center>
 		<strong><?php if(isset($msg)){ echo $msg;}?></strong>
-		<h3><u>ADD AGENCY</u></h3></center><br>
+		<h3><b><u>ADD AGENCY</u></b></h3></center><br>
 <form name="agency>"	<?php echo validation_errors(); echo form_open('masters/add/agency',array('role'=>'form'));  ?>
 	<div class="form-group">
 		<label for="agency_name" class="col-md-4">Agency Name<font color='red'>*</font></label>
@@ -55,7 +55,7 @@ $(function(){
 	<div class="form_group">
 		<label for="agency_email_id" class="col-md-4">Agency Email Id</label>
 		<div  class="col-md-8">
-		<input type="text" class="form-control" placeholder="Agency Email Id" id="agency_email_id" name="agency_email_id" />
+		<input type="email" class="form-control" placeholder="Agency Email Id" id="agency_email_id" name="agency_email_id" />
 		</div>
 	</div>
 
@@ -74,13 +74,13 @@ $(function(){
 		<div class="form_group">
 		<label for="branch" class="col-md-4">Branch</label>
 		<div  class="col-md-8">
-		<input type="text" class="form-control" placeholder="Branch" id="branch" name="branch" />
+		<input type="text" class="form-control" placeholder="Branch of the Bank" id="branch" name="branch" />
 		</div>
 	</div>
 		<div class="form_group">
 		<label for="pan" class="col-md-4">Pan</label>
 		<div  class="col-md-8">
-		<input type="text" class="form-control" placeholder="Pan" id="pan" name="pan" />
+		<input type="text" class="form-control" placeholder="Pan Number" id="pan" name="pan" />
 		</div>
 	</div>
 		

@@ -16,9 +16,10 @@ class Masters extends CI_Controller {
                array(
                      'field'   => 'facility_name',
                      'label'   => 'Facility Name',
-                     'rules'   => 'required|trim|xss_clean'
+                     'rules'   => 'trim|xss_clean'
                   )
 			);
+				$data['facility']=$this->masters_model->get_data("facility");
 			$data['facility_types']=$this->masters_model->get_data("facility_types");
 			$data['divisions']=$this->masters_model->get_data("divisions");	
 		}
@@ -43,7 +44,9 @@ class Masters extends CI_Controller {
                      'rules'   => 'required|trim|xss_clean'
                   )
 			);	
+			$data['division']=$this->masters_model->get_data("division");
 			$data['district']=$this->masters_model->get_data("districts");
+
 		}
 		else if($type=="grant"){
 			$title="Add Grant";
@@ -115,7 +118,9 @@ class Masters extends CI_Controller {
                      'label'   => 'pincode',
                      'rules'   => 'required|trim|xss_clean'
                   )
-			);$data['users']=$this->masters_model->get_data("users");
+			);
+$data['users']=$this->masters_model->get_data("users");
+$data['users']=$this->masters_model->get_data("user");
 		}
 			
 		else{

@@ -4,14 +4,14 @@
 <script type="text/javascript">
 $(function(){
     $("#date").Zebra_DatePicker({
-        direction:false
+       
     });
 });
 </script>
 <?php echo validation_errors(); ?>
 <div class="col-md-8 col-md-offset-2">
     <center> 		<strong><?php if(isset($msg)){ echo $msg;}?></strong>
- <h3><u>ADD GRANT</u></h3></center><br>
+ <h3><u><b>ADD GRANT</b></u></h3></center><br>
     <?php echo form_open('masters/add/grant',array('role'=>'form')); ?>
     <div class="form-group">
         <label for="grant_name" class="col-md-4">Grant Name<font color='red'>*</font></label>

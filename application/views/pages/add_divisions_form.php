@@ -3,28 +3,26 @@
 <script type="text/javascript" src="<?php echo base_url();?>assets/js/zebra_datepicker.js"></script>
 <script type="text/javascript">
 $(function(){
-	$("#agreement_date").Zebra_DatePicker({
-		direction:false
+	$("#date").Zebra_DatePicker({
+		
 	});
-	$("#probable_date_of_completion,#agreement_completion_date").Zebra_DatePicker({
-		direction:1
-	});
+	
 });
 </script>
 		<div class="col-md-8 col-md-offset-2">
-				<center>	<h3><u>ADD DIVISION</u></h3></center><br>
-	<?php echo form_open('masters/add/division',array('role'=>'form')); ?>
+				<center>	<h3><u><b>ADD DIVISION</b></u></h3></center><br>
+	<?php echo validation_errors(); echo form_open('masters/add/divisions',array('role'=>'form')); ?>
 
 		<div class="form-group">
-		<label for="division_name" class="col-md-4">Division Name<font color='red'>*</font></label>
+		<label for="division" class="col-md-4">Division Name<font color='red'>*</font></label>
 		<div  class="col-md-8">
-		<input type="text" class="form-control" placeholder="Division Name" id="division_name" name="division_name" />
+		<input type="text" class="form-control" placeholder="Division Name" id="division" name="division" />
 		</div>
 	</div>
 	<div class="form-group">
-		<label for="district" class="col-md-4" >Districts</label>
+		<label for="district_name" class="col-md-4" >Districts<font color='red'>*</font></label>
 		<div  class="col-md-8">
-		<select name="district" id="district" class="form-control">
+		<select name="district_name" id="district_name" class="form-control">
 		<option value="">--SELECT--</option>
 		<?php foreach($district as $d){
 			echo "<option value='$d->district_id'>$d->district_name</option>";
@@ -33,6 +31,18 @@ $(function(){
 		</select>
 		</div>
 	</div>	
+	<div class="form-group">
+		<label for="longitude" class="col-md-4">Longitude</label>
+		<div  class="col-md-8">
+		<input type="text" class="form-control" placeholder="Longitude" id="longitude" name="longitude" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="latitude" class="col-md-4">Latitude</label>
+		<div  class="col-md-8">
+		<input type="text" class="form-control" placeholder="Latitude " id="latitude" name="latitude" />
+		</div>
+	</div>
 <div class="form-group">
 		<label for="state" class="col-md-4">State</label>
 		<div  class="col-md-8">

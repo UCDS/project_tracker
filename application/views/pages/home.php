@@ -1,4 +1,5 @@
-
+<center>
 	<section id="right">
-		<h4>Welcome to APMSIDC Portal</h4>
+		<h4><b>Welcome to APMSIDC Portal</b></h4>
 	</section>
+</center>

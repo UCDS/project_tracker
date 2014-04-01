@@ -1,6 +1,6 @@
 
 	<?php if(isset($mode)&& $mode=="select"){ ?>
-	<center>	<h3><u>Edit Facility</u></h3></center><br>
+	<center>	<h3><u><b>Edit Facility</b></u></h3></center><br>
 	<?php echo form_open('masters/edit/facility',array('role'=>'form')); ?>
 
 	<div class="form-group">

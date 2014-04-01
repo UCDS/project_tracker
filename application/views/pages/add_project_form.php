@@ -23,7 +23,7 @@ $(function(){3
 	
 		<div class="col-md-8 col-md-offset-2">
   <center> 		<strong><?php if(isset($msg)){ echo $msg;}?></strong>
- <h3><u>ADD PROJECT</u></h3></center><br>
+ <h3><u><b>ADD PROJECT</b></u></h3></center><br>
  <?php echo form_open('projects/create',array('role'=>'form')); ?>
 	<div class="form-group">
 		<label for="project_name" class="col-md-4">Project Name<font color='red'>*</font></label>
@@ -152,6 +152,6 @@ $(function(){3
 		</div>
 	</div>
 	</div> 
-   	<div class="col-md-3 col-md-offset-4">
+   	<div class="col-md-2 col-md-offset-5">
 	<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 	</div>

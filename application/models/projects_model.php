@@ -17,6 +17,7 @@ class Projects_model extends CI_Model{
 		 
 		$agreement_date=date("Y-m-d",strtotime($this->input->post('agreement_date')));
 		$agreement_completion_date=date("Y-m-d",strtotime($this->input->post('agreement_completion_date')));
+		$probable_date_of_completion=date("Y-m-d",strtotime($this->input->post('probable_date_of_completion')));
 		$grant=$this->input->post('grant');
 		$agency=$this->input->post('agency');
 		$work_type=$this->input->post('work_type');
@@ -33,6 +34,7 @@ class Projects_model extends CI_Model{
 			'agreement_amount'=>$agreement_amount,
 			'agreement_date'=>$agreement_date,
 			'agreement_completion_date'=>$agreement_completion_date,
+			'probable_date_of_completion'=>$probable_date_of_completion,
 			'grant_phase_id'=>$grant,
 			'agency_id'=>$agency,
 			'work_type_id'=>$work_type

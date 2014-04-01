@@ -1,6 +1,6 @@
 
 	<?php if(isset($mode)&& $mode=="select"){ ?>
-	<center>	<h3><u>Edit Agency</u></h3></center><br>
+	<center>	<h3><u><b>Edit Agency</b></u></h3></center><br>
 	<?php echo form_open('masters/edit/agency',array('role'=>'form')); ?>
 
 
@@ -149,7 +149,7 @@
 	<h3 class="col-md-12">List of Agencies</h3>
 	<div class="col-md-12 "><strong>
 	<?php if($this->input->post('search_agency_id')) echo "Agency id : ".$agency[0]->agency_id; ?>
-	<?php if($this->input->post('search_agency_name')) echo "Agency name  : ".$this->input->post('search_agency_name'); ?>
+	<?php if($this->input->post('search_agency_name')) echo "Agency name Starting with  : ".$this->input->post('search_agency_name'); ?>
 	</strong>
 	</div>	
 	<table class="table-hover table-bordered table-striped col-md-10">

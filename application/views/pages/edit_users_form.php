@@ -1,6 +1,6 @@
 
 	<?php if(isset($mode)&& $mode=="select"){ ?>
-	<center>	<h3><u>Edit User</u></h3></center><br>
+	<center>	<h3><u><b>Edit User</b></u></h3></center><br>
 	<?php echo form_open('masters/edit/users',array('role'=>'form')); ?>
 	<div class="form-group">
 	<!--	<label for="users" class="col-md-4" >User Type</label>

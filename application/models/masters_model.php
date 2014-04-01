@@ -71,8 +71,7 @@ if($this->input->post('search_district')){
 				$division_id=$this->input->post('division_id');
 				$this->db->where('division_id',$division_id);
 			}
-             	$this->db->select("division_id,districts.district_id,division,district_name
-             		")->from("divisions")
+             	$this->db->select("*")->from("divisions")
 			->join('districts','divisions.division_id=districts.district_id')
 			->order_by('division');
 		}
@@ -105,6 +104,7 @@ if($this->input->post('search_district')){
 		else if($type=="user"){
 			$this->db->select("user_id,user_type")->from("users")->order_by('user_type');
 		}
+		
 		
 		else if($type=="grant_sources"){
 			$this->db->select("grant_source_id,grant_source")->from("grant_sources")->order_by('grant_source');
@@ -196,16 +196,12 @@ if($this->input->post('search_district')){
 			$table="users";
 		}
 			else if($type=="grant"){
-		$grant_name=$this->input->post('grant_name');
-			$phase_name=$this->input->post('phase_name');
-			$grant_source=$this->input->post('grant_source');
-				$date=$this->input->post('date');
-			
 				$data = array(
-					  'grant_name'=>$grant_name,
-					  'phase_name'=>$phase_name,
-					  'grant_source'=>$grant_source,
-					   'date'=>$date,
+		        'grant_name'=>$this->input->post('grant_name'),
+			    'phase_name'=>$this->input->post('phase_name'),
+			    'grant_source'=>$this->input->post('grant_source'),
+				'date'=>date("Y-m-d",strtotime($this->input->post('date')))
+			
 					);
 			$this->db->where('agency_id',$this->input->post('agency_id'));
 			$table="agency";
@@ -216,7 +212,9 @@ if($this->input->post('search_district')){
 	
 				$data = array(
 					  'division'=>$this->input->post('division'),
-					  'district_id'=>$this->input->post('district_name')
+					  'district_id'=>$this->input->post('district_name'),
+					   'longitude'=>$this->input->post('longitude'),
+                       'latitude'=>$this->input->post('latitude')
 					);
 			$this->db->where('division_id',$this->input->post('division_id'));
 			$table="divisions";
@@ -265,38 +263,42 @@ if($this->input->post('search_district')){
 			);
 			$table="users";
 		}
+		else if($type=="divisions"){
+			$data = array(
+					  'district_id'=>$this->input->post('district_name'),
+					  'division'=>$this->input->post('division'),
+					   'longitude'=>$this->input->post('longitude'),
+                       'latitude'=>$this->input->post('latitude')
+
+					
+					);
+			$table="divisions";
+		}
 			
 		else if($type=="agency"){
-			$agency_name=$this->input->post('agency_name');
-			$agency_address=$this->input->post('agency_address');
-			$agency_contact_name=$this->input->post('agency_contact_name');
-			$agency_contact_designation=$this->input->post('agency_contact_designation');
-			$agency_contact_number=$this->input->post('agency_contact_number');
-			$agency_email_id=$this->input->post('agency_email_id');
-			$account_no=$this->input->post('account_no');
-			$bank_name=$this->input->post('bank_name');
-			$branch=$this->input->post('branch');
-			$pan=$this->input->post('pan');
-			$data = array(
-					  'agency_name'=>$agency_name,
-					  'agency_address'=>$agency_address,
-					  'agency_contact_name'=>$agency_contact_name,
-					  'agency_contact_designation'=>$agency_contact_designation,
-					  'agency_contact_number'=>$agency_contact_number,
-					  'agency_email_id'=>$agency_email_id,
-					  'account_no'=>$account_no,
-					  'bank_name'=>$bank_name,
-					  'branch'=>$branch,
-					  'pan'=>$pan
+				$data = array(
+			'agency_name'=>$this->input->post('agency_name'),
+			'agency_address'=>$this->input->post('agency_address'),
+			'agency_contact_name'=>$this->input->post('agency_contact_name'),
+			'agency_contact_designation'=>$this->input->post('agency_contact_designation'),
+			'agency_contact_number'=>$this->input->post('agency_contact_number'),
+			'agency_email_id'=>$this->input->post('agency_email_id'),
+			'account_no'=>$this->input->post('account_no'),
+			'bank_name'=>$this->input->post('bank_name'),
+			'branch'=>$this->input->post('branch'),
+			'pan'=>$this->input->post('pan')
+		
+			
 					);
 			$table="agency";
 		}
+		
 		else if($type=="grant"){
 			$phase_data=array();
 			$data = array(
 					  'grant_name'=>$this->input->post('grant_name'),
 					  'grant_source'=>$this->input->post('grant_source'),
-					  'date'=>$this->input->post('date')
+					'date'=>date("Y-m-d",strtotime($this->input->post('date')))
 					  );
 			$this->db->trans_start();
 				if($this->db->insert('grants',$data)){
@@ -309,21 +311,9 @@ if($this->input->post('search_district')){
 				}
 				$this->db->insert_batch('grant_phase',$phase_data);
 				}
-			$this->db->trans_complete();
-			if($this->db->trans_status()===FALSE){
-				return false;
-			}
-			else{
-			  return true;
-			}
+			
 		}
-		else if($type=="divisions"){
-			$data = array(
-					  'district'=>$this->input->post('district'),
-					  'division'=>$this->input->post('division')
-					);
-			$table="divisions";
-		}
+
 	
 		$this->db->trans_start();
 			$this->db->insert($table,$data);
