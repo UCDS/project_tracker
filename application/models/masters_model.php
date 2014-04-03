@@ -85,6 +85,12 @@ class Masters_model extends CI_Model{
 			);
 		$table="facilities";
 		}
+		if($type=="facility_type"){
+		$data = array(
+					  'facility_type'=>$this->input->post('facility_type')
+			);
+		$table="facility_types";
+		}
 		else if($type=="agency"){
 			$agency_name=$this->input->post('agency_name');
 			$agency_address=$this->input->post('agency_address');
@@ -114,8 +120,7 @@ class Masters_model extends CI_Model{
 			$phase_data=array();
 			$data = array(
 					  'grant_name'=>$this->input->post('grant_name'),
-					  'grant_source'=>$this->input->post('grant_source'),
-					  'date'=>$this->input->post('date')
+					  'grant_source_id'=>$this->input->post('grant_source')
 					  );
 			$this->db->trans_start();
 				if($this->db->insert('grants',$data)){
@@ -138,7 +143,7 @@ class Masters_model extends CI_Model{
 		}
 		else if($type=="division"){
 			$data = array(
-					  'district'=>$this->input->post('district'),
+					  'district_id'=>$this->input->post('district'),
 					  'division_name'=>$this->input->post('division_name'),  'state'=>$this->input->post('state')
 					);
 			$table="divisions";
@@ -155,7 +160,7 @@ class Masters_model extends CI_Model{
               'phone_no'=>$this->input->post('phone_no'),
               'email_id'=>$this->input->post('email_id'),
               'address'=>$this->input->post('address'),
-               'city'=>$this->input->post('city'),
+              'city'=>$this->input->post('city'),
               'state'=>$this->input->post('state'),
               'country'=>$this->input->post('country'),
               'pincode'=>$this->input->post('pincode')

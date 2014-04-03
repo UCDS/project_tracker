@@ -74,20 +74,21 @@ class Reports extends CI_Controller {
 		$this->load->helper('form');
 		$this->load->library('form_validation');
 		$data['facility_types']=$this->reports_model->get_summary_facility_type();
+		$data['district']=$this->staff_model->get_districts();
 
 		$this->form_validation->set_rules('facility_type', 'facility type',
-		'trim|required|xss_clean');
+		'trim|xss_clean');
 		if ($this->form_validation->run() === FALSE && $facility_type==0)
 		{
 			$this->load->view('pages/report_type_wise',$data);
 		}
 		else{
 
-			if($this->input->post('month')){
+			if($this->input->post('month') && $this->input->post('year')){
 				$data['projects']=$this->staff_model->get_projects();
 				$this->load->view('pages/report_facility_type_detailed',$data);
 			}
-			else if($this->input->post('facility_type') || $facility_type!=0 ){
+			else if($this->input->post('facility_type') || $facility_type!=0 || $this->input->post('district_id') ){
 				$data['projects']=$this->staff_model->get_projects();
 				$this->load->view('pages/report_facility_type_detailed',$data);
 			}
@@ -112,6 +113,7 @@ class Reports extends CI_Controller {
 		$this->load->helper('form');
 		$this->load->library('form_validation');
 		$data['grants']=$this->reports_model->get_summary_grant();
+		$data['district']=$this->staff_model->get_districts();
 
 		$this->form_validation->set_rules('grant', 'Grant',
 		'trim|required|xss_clean');
@@ -121,11 +123,11 @@ class Reports extends CI_Controller {
 		}
 		else{
 
-			if($this->input->post('month')){
+			if($this->input->post('month') && $this->input->post('year')){
 				$data['projects']=$this->staff_model->get_projects();
 				$this->load->view('pages/report_grant_detailed',$data);
 			}
-			else if($this->input->post('grant') || $grant!=0 ){
+			else if($this->input->post('grant') || $grant!=0  || $this->input->post('district_id')){
 				$data['projects']=$this->staff_model->get_projects();
 				$this->load->view('pages/report_grant_detailed',$data);
 			}
@@ -144,7 +146,7 @@ class Reports extends CI_Controller {
 	{
 		if($this->session->userdata('logged_in')){
 		$data['userdata']=$this->session->userdata('logged_in');
-		$data['title']="Out-Patient Summary Report";
+		$data['title']="Project Detailed Report";
 		$this->load->view('templates/header',$data);
 		$this->load->view('templates/left_nav');
 		$this->load->helper('form');
@@ -168,35 +170,5 @@ class Reports extends CI_Controller {
 		show_404();
 		}
 	}
-	
-	public function op_detail()
-	{
-		if($this->session->userdata('logged_in')){
-		$data['userdata']=$this->session->userdata('logged_in');
-		$data['title']="Out-Patient Detailed Report";
-		$this->load->view('templates/header',$data);
-		$this->load->view('templates/left_nav');
-		$this->load->helper('form');
-		$this->load->library('form_validation');
-
-		$this->form_validation->set_rules('from_date', 'From Date',
-		'trim|required|xss_clean');
-	    $this->form_validation->set_rules('to_date', 'To Date', 
-	    'trim|required|xss_clean');
-		if ($this->form_validation->run() === FALSE)
-		{
-			$this->load->view('pages/op_detailed');
-		}
-		else{
-			$data['report']=$this->reports_model->get_op_detail();
-			$this->load->view('pages/op_detailed',$data);
-		}
-		$this->load->view('templates/footer');
-		}
-		else{
-		show_404();
-		}
-	}
-
 }
 

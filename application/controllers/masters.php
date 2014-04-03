@@ -9,7 +9,8 @@ class Masters extends CI_Controller {
 	function add($type=""){
 	 	$this->load->helper('form');
 		$this->load->library('form_validation');
-		$data['user_id']=$this->session->userdata('logged_in')[0]['user_id'];
+		$user=$this->session->userdata('logged_in');
+		$data['user_id']=$user[0]['user_id'];
 		if($type=="facility"){
 			$title="Add Facility";
 			$config=array(
@@ -21,6 +22,16 @@ class Masters extends CI_Controller {
 			);
 			$data['facility_types']=$this->masters_model->get_data("facility_types");
 			$data['divisions']=$this->masters_model->get_data("divisions");	
+		}
+		else if($type=="facility_type"){
+			$title="Add Facility Type";
+			$config=array(
+               array(
+                     'field'   => 'facility_type',
+                     'label'   => 'Facility Type',
+                     'rules'   => 'required|trim|xss_clean'
+                  )
+			);
 		}
 		else if($type=="agency"){
 			$title="Add Agency";
@@ -98,7 +109,8 @@ class Masters extends CI_Controller {
 	function edit($type=""){
 	 	$this->load->helper('form');
 		$this->load->library('form_validation');
-		$data['user_id']=$this->session->userdata('logged_in')[0]['user_id'];
+		$user=$this->session->userdata('logged_in');
+		$data['user_id']=$user[0]['user_id'];
 		if($type=="facility"){
 			$title="Edit Facility";
 			$config=array(

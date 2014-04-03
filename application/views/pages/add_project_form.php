@@ -21,7 +21,6 @@ $(function(){
 });
 </script>
 	
-		<div class="col-md-8 col-md-offset-2">
   <center> 		<strong><?php if(isset($msg)){ echo $msg;}?></strong>
  <h3><u>ADD PROJECT</u></h3></center><br>
  <?php echo form_open('projects/create',array('role'=>'form')); ?>

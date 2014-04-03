@@ -20,10 +20,30 @@
 	}
 	?>
 	</select>
+	<select name="district_id" id="district" style="width:150px"  class="form-control pull-right">
+		<option value="">District</option>
+		<?php
+		for ($e = 0; $e < count($district); $e++)
+		{
+		  for ($ee = $e+1; $ee < count($district); $ee++)
+		  {
+			if ($district[$ee]->district_id==$district[$e]->district_id)
+			{
+			array_splice($district,$ee,1);
+			$ee--;
+			}
+		  }
+		}
+		foreach($district as $d){
+		
+			echo "<option value='$d->district_id'>$d->district_name</option>";
+		}
+		?>
+	</select>	
 	</form>
-	<h3><?php echo $projects[0]->facility_type;?> Works <small>Click on any one to view </small></h3>
-
-	<table class="table table-hover table-bordered">
+	<h3><?php echo $projects[0]->facility_type;?> Works <?php if($this->input->post('district_id')) echo "in ".$projects[0]->district_name; ?> <small> Click on any one to view </small></h3>
+	<table id="header-fixed"  class="table table-hover table-bordered"></table>
+	<table class="table table-hover table-bordered" id="table-1">
 	<thead>
 	<th>S.No</th>
 	<th>Project Name</th>

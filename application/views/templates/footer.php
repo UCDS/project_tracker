@@ -1,3 +1,6 @@
+<?php if(preg_match("^".base_url()."reports^",current_url()) || preg_match("^".base_url()."masters^",current_url()) || preg_match("^".base_url()."projects^",current_url())){ ?>
+</div>
+<?php } ?>
 </div>
 <!-- End container -->
 </div>

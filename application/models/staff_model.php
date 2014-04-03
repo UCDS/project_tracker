@@ -48,7 +48,19 @@ class Staff_model extends CI_Model{
 		return $query->result();
 	}
 	function get_districts(){
+		if($this->input->post('facility_type') || $this->input->post('grant')){
+			$this->db->select("districts.district_id,district_name")->from('districts')
+			->join('divisions','districts.district_id=divisions.district_id')
+			->join('facilities','divisions.division_id=facilities.division_id')
+			->join('projects','facilities.facility_id=projects.facility_id');
+			if($this->input->post('facility_type'))
+			$this->db->where('facility_type_id',$this->input->post('facility_type'));
+			else if($this->input->post('grant'))
+			$this->db->where('grant_phase_id',$this->input->post('grant'));
+		}
+		else
 		$this->db->select("district_id,district_name")->from("districts");
+		$this->db->order_by('district_name');
 		$query=$this->db->get();
 		return $query->result();
 	}
@@ -130,9 +142,9 @@ class Staff_model extends CI_Model{
 			$month="MONTH(CURDATE())";
 			$year="YEAR(CURDATE())";
 		}
-		$this->db->select("		SUM(CASE WHEN month(project_expenses.expense_date)<$month AND YEAR(project_expenses.expense_date)<=$year THEN expense_amount ELSE 0 END) expense_upto_last_month,
+		$this->db->select("SUM(CASE WHEN (month(project_expenses.expense_date)<$month AND YEAR(project_expenses.expense_date)=$year) OR (YEAR(project_expenses.expense_date)<$year)  THEN expense_amount ELSE 0 END) expense_upto_last_month,
 		SUM(CASE WHEN month(project_expenses.expense_date)=$month AND YEAR(project_expenses.expense_date)=$year THEN expense_amount ELSE 0 END) expense_current_month,
-		SUM(CASE WHEN month(project_expenses.expense_date)<=$month AND YEAR(project_expenses.expense_date)<=$year THEN expense_amount ELSE 0 END) expenses,
+		SUM(CASE WHEN (month(project_expenses.expense_date)<=$month AND YEAR(project_expenses.expense_date)<=$year) OR (YEAR(project_expenses.expense_date)<$year) THEN expense_amount ELSE 0 END) expenses,
 		projects.*,districts.*,divisions.*,grant_phase.*,facilities.*,facility_type,project_status.*,sanctions.*,status_types.*");
 		$this->db->from("projects")
 		->join('project_status','projects.project_id=project_status.project_id')

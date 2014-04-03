@@ -1,5 +1,4 @@
 	<div class="row">
-		<div class="col-md-6 col-md-offset-2">
 			
 			<table class="table table-bordered table-striped">
 			<?php
@@ -98,5 +97,4 @@
 			?>
 			</table>
 			</form>		
-		</div>
 	</div>

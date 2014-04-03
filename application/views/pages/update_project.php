@@ -93,6 +93,7 @@ $(function(){
 				<option value='1'>Not Started</option>
 				<option value='2'>Work in Progress</option>
 				<option value='3'>Work completed</option>
+				<input type="text" placeholder="Status Remarks" class="form-control" name='status_remarks' />
 				<input type="text" placeholder="Probable Date" class="form-control" name='probable_date' id="probable_date" />
 				</select>
 				<input class='btn btn-sm btn-primary btn-block' type="submit" name="update" value="Update" />

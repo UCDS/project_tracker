@@ -1,5 +1,5 @@
 	<div class="row">
-	<div class="col-md-12">
+	<div class="col-md-10">
  	<?php echo form_open('reports/districts',array('id'=>'select_month','role'=>'form'));?>
 	<button class="btn btn-lg pull-right" type="submit" name="select_month">></button>
 		<input type='hidden' value="<?php echo $projects[0]->district_id; ?>" name="district_id" />
@@ -22,8 +22,8 @@
 	</select>
 	</form>
 	<h3>Projects in <?php echo $projects[0]->district_name;?> <small>Click on any one to view </small></h3>
-
-	<table class="table table-hover table-bordered">
+	<table id="header-fixed"  class="table table-hover table-bordered"></table>
+	<table class="table table-hover table-bordered" id="table-1">
 	<thead>
 	<th>S.No</th>
 	<th>Project Name</th>

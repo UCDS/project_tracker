@@ -5,7 +5,7 @@ class Reports_model extends CI_Model{
 	}
 	
 	function get_summary_districts(){
-		$this->db->select("districts.latitude,districts.longitude,admin_sanction_amount,agreement_amount,status_type AS project_status,district_name,districts.district_id,
+		$this->db->select("districts.latitude,districts.longitude,SUM(admin_sanction_amount) admin_sanction_amount,SUM(agreement_amount) agreement_amount,status_type AS project_status,district_name,districts.district_id,
           SUM(CASE WHEN expense_amount=0 OR expense_amount='' OR expense_amount<=>NULL  THEN 0 ELSE expense_amount END) 'expenses',
           SUM(CASE WHEN 1  THEN 1 ELSE 0 END) 'total_projects',
           SUM(CASE WHEN status_type='Not Started'  THEN 1 ELSE 0 END) 'not_started',
@@ -26,7 +26,7 @@ class Reports_model extends CI_Model{
 		return $query->result();
 	}
 	function get_summary_facility_type(){
-		$this->db->select("facility_types.facility_type_id,facility_type,admin_sanction_amount,agreement_amount,status_type AS project_status,district_name,districts.district_id,
+		$this->db->select("facility_types.facility_type_id,facility_type,SUM(admin_sanction_amount) admin_sanction_amount,SUM(agreement_amount) agreement_amount,status_type AS project_status,district_name,districts.district_id,
           SUM(CASE WHEN expense_amount=0 OR expense_amount='' OR expense_amount<=>NULL  THEN 0 ELSE expense_amount END) 'expenses',
           SUM(CASE WHEN 1  THEN 1 ELSE 0 END) 'total_projects',
           SUM(CASE WHEN status_type='Not Started'  THEN 1 ELSE 0 END) 'not_started',
@@ -48,7 +48,7 @@ class Reports_model extends CI_Model{
 		return $query->result();
 	}
 	function get_summary_grant(){
-		$this->db->select("grant_phase_id grant_id,phase_name grant_name,admin_sanction_amount,agreement_amount,status_type AS project_status,division,divisions.division_id,
+		$this->db->select("grant_phase_id grant_id,phase_name grant_name,SUM(admin_sanction_amount) admin_sanction_amount,SUM(agreement_amount) agreement_amount,status_type AS project_status,division,divisions.division_id,
           SUM(CASE WHEN expense_amount=0 OR expense_amount='' OR expense_amount<=>NULL  THEN 0 ELSE expense_amount END) 'expenses',
           SUM(CASE WHEN 1  THEN 1 ELSE 0 END) 'total_projects',
           SUM(CASE WHEN status_type='Not Started'  THEN 1 ELSE 0 END) 'not_started',

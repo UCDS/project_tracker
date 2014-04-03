@@ -75,13 +75,15 @@ class Projects_model extends CI_Model{
 	}
 	function update_status(){
 		$status=$this->input->post('status');
+		$status_remarks=$this->input->post('status_remarks');
 		$date=date("Y-m-d");
-		$probable_date=date("Y-m-d");
+		$probable_date=date("Y-m-d",strtotime($this->input->post('probable_date')));
 		$project_id=$this->input->post('selected_project');
 		$this->db->where('project_id',$project_id)->update('project_status',array('current'=>0));
 		$data=array(
 		'project_id'=>$project_id,
 		'status_type_id'=>$status,
+		'remarks_1'=>$status_remarks,
 		'status_date'=>$date,
 		'probable_date_of_completion'=>$probable_date,
 		'current'=>1

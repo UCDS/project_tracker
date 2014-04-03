@@ -12,6 +12,9 @@
 	src="<?php echo base_url();?>assets/js/jquery.min.js"></script>
 	<script type="text/javascript" 
 	src="<?php echo base_url();?>assets/js/bootstrap.min.js"></script>
+	<!-- <script type="text/javascript" 
+	src="<?php echo base_url();?>assets/js/custom.js"></script> -->
+
 </head>
 <body>
 <div id="wrap">
@@ -33,19 +36,7 @@
             <li <?php if(current_url()==base_url()){ echo "class='active'";}?>><a href="<?php echo base_url();?>home">Home</a></li>
 	<?php if($this->session->userdata('logged_in')) { ?>
 			<li class="dropdown">
-			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Operations <b class="caret"></b></a>
-				<ul class="dropdown-menu">
-				<li><a href="<?php echo base_url();?>masters/add/agency">Add Agency</a></li>
-				<li><a href="<?php echo base_url();?>masters/add/division">Add Division</a></li>
-				<li><a href="<?php echo base_url();?>masters/add/grant">Add Grant</a></li>
-				<li><a href="<?php echo base_url();?>projects/create">Add Project</a></li>
-				<li><a href="<?php echo base_url();?>masters/add/facility">Add Facility</a></li>
-				<li><a href="<?php echo base_url();?>masters/add/user">Add Users</a></li>
-				<li class="divider"></li>
-				<li><a href="<?php echo base_url();?>projects/update">Edit Projects</a></li>
-				<li><a href="<?php echo base_url();?>masters/edit/facility">Edit Facility</a></li>
-				</ul>
-			</li>
+			<a <?php if(preg_match("/masters/",current_url()) || preg_match("/projects/",current_url())){ echo "class='active'";}?> href="<?php echo base_url();?>projects/create">Operations</a></li>
             <li <?php if(preg_match("/reports/",current_url())){ echo "class='active'";}?>>
 				<a href="<?php echo base_url();?>reports">Reports</a>
 			</li>

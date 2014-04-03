@@ -1,13 +1,4 @@
-<link rel="stylesheet" href="<?php echo base_url();?>assets/css/metallic.css" >
 
-<script type="text/javascript" src="<?php echo base_url();?>assets/js/zebra_datepicker.js"></script>
-<script type="text/javascript">
-$(function(){
-    $("#date").Zebra_DatePicker({
-        direction:false
-    });
-});
-</script>
 <?php echo validation_errors(); ?>
 <div class="col-md-8 col-md-offset-2">
     <center> 		<strong><?php if(isset($msg)){ echo $msg;}?></strong>
@@ -17,14 +8,6 @@ $(function(){
         <label for="grant_name" class="col-md-4">Grant Name</label>
         <div  class="col-md-8">
         <input type="text" class="form-control" placeholder="Grant Name" id="grant_name" name="grant_name" />
-        </div>
-    </div>
-
-  
-    <div class="form_group">
-        <label for="date" class="col-md-4">Date</label>
-        <div  class="col-md-8">
-        <input type="text" class="form-control" placeholder=" Date" id="date" name="date" />
         </div>
     </div>
      <div class="form_group">		

@@ -9,7 +9,8 @@ class Projects extends CI_Controller {
 	public function create()
 	{
 		$this->load->helper('form');
-		$data['user_id']=$this->session->userdata('logged_in')[0]['user_id'];
+		$user=$this->session->userdata('logged_in');
+		$data['user_id']=$user[0]['user_id'];
 		foreach($this->session->userdata('logged_in') as $row){
 			$data['districts'][]=$row['district_id'];
 		}
@@ -46,7 +47,8 @@ class Projects extends CI_Controller {
 	{
 		$this->load->helper('form');
 		$this->load->helper('file');
-		$data['user_id']=$this->session->userdata('logged_in')[0]['user_id'];
+		$user=$this->session->userdata('logged_in');
+		$data['user_id']=$user[0]['user_id'];
 		foreach($this->session->userdata('logged_in') as $row){
 			$data['districts'][]=$row['district_id'];
 		}
@@ -67,7 +69,7 @@ class Projects extends CI_Controller {
 				$data['project']=$this->staff_model->get_projects();
 				$this->load->view('pages/update_project',$data);
 			}
-			if($this->input->post('status')){
+			if($this->input->post('status') || $this->input->post('status_remarks')){
 				if($this->projects_model->update_status()){
 				$data['msg']="Updated successfully!";
 				$data['project']=$this->staff_model->get_projects();
@@ -79,8 +81,8 @@ class Projects extends CI_Controller {
 				}
 					
 			}
-			if($this->input->post('expenditure') && $this->input->post('from_date') && $this->input->post('to_date')){
-				if($this->projects_model->update_expenses()){
+			if($this->input->post('expenditure') && $this->input->post('expense_date')){
+				if($this->projects_model->update_expenses()==TRUE){
 				$data['msg']="Updated successfully!";
 				$data['project']=$this->staff_model->get_projects();
 				
@@ -88,6 +90,7 @@ class Projects extends CI_Controller {
 				}
 				else{
 				$data['msg']="Error in updating, please retry.";
+				$data['project']=$this->staff_model->get_projects();
 				$this->load->view('pages/update_project',$data);
 				}	
 			}
@@ -97,7 +100,7 @@ class Projects extends CI_Controller {
 						$config['max_size']	= '1000000000';
 						$config['max_width']  = '11924';
 						$config['max_height']  = '11768';
-						$ext = end(explode(".", $_FILES['project_image']['name']));
+						$ext = end(explode(".", strtolower($_FILES['project_image']['name'])));
 						$config['file_name'] = "project_".$this->input->post('selected_project')."_image.".$ext;
 						$this->load->library('upload', $config);
 

@@ -1,9 +1,9 @@
 	<div class="row">
 	<div class="col-md-8 col-md-offset-2">
-	<h3>Projects <small>Click on any one to view </small></h3>
-	
-	<table class="table table-hover table-bordered">
-	<thead><th>Project Name</th><th>Facility</th><th>District</th><th>Status</th><th>Work Type</th></thead>
+	<h3>Projects <small>Click on any one to view </small></h3>	
+	<table id="header-fixed"  class="table table-hover table-bordered"></table>
+	<table class="table table-hover table-bordered" id="table-1">
+	<thead><th>S.No</th><th>Project Name</th><th>Facility</th><th>District</th><th>Status</th><th>Work Type</th></thead>
 	<tbody>
 
 	<?php

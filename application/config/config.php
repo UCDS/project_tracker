@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= '/apmsidc/';
+$config['base_url']	= '/project_tracker/';
 
 /*
 |--------------------------------------------------------------------------
@@ -224,7 +224,7 @@ $config['cache_path'] = '';
 | MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = 'apmsidc';
+$config['encryption_key'] = 'apmsidcho2014';
 
 /*
 |--------------------------------------------------------------------------

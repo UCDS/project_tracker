@@ -70,12 +70,6 @@
 		<div class="col-md-6 col-md-offset-2">
 			
 			<h1>Reports</h1>	
-			<ul>
-				<li><a href="<?php echo base_url();?>reports/districts">Summary - District Wise</a></li>
-				<li><a href="<?php echo base_url();?>reports/facility_types">Summary - Facility type Wise</a></li>
-				<li><a href="<?php echo base_url();?>reports/grants">Summary - Grant Wise</a></li>
-				<li><a href="<?php echo base_url();?>reports/projects">Projects - Detailed</a></li>
-			</ul>
 		</div>
 	</div>			
 	<div id="map_canvas" style="width: 750px; height: 400px; margin:20px;"></div>

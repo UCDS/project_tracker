@@ -61,7 +61,7 @@
 	}
 	?>
 	<tr>
-		<th>Total</th>
+		<th colspan="2">Total</th>
 		<th class="text-right"><?php echo number_format($admin_sanction_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($agreement_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo $total_projects;?></th>
