@@ -45,7 +45,7 @@
 		</ul>
 	<?php if($this->session->userdata('logged_in')) { ?>
           <ul class="nav navbar-nav navbar-right">
-            <li><a><?php echo $this->session->userdata('logged_in')[0]['username']; ?></a></li>
+            <li><a><?php $user=$this->session->userdata('logged_in'); echo $user[0]['username']; ?></a></li>
             <li><a href="<?php echo base_url();?>home/logout">Logout</a></li>
           </ul>	
 	<?php } ?>
