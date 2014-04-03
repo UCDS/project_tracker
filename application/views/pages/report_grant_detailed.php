@@ -42,7 +42,7 @@
 		?>
 	</select>	
 	</form>
-	<h3><?php echo $projects[0]->phase_name;?> <?php if($this->input->post('district_id')) echo " in ".$projects[0]->district;?> <small> Click on any one to view </small></h3>
+	<h3><?php echo $projects[0]->phase_name;?> <?php if($this->input->post('district_id')) echo " in ".$projects[0]->district_name;?> <small> Click on any one to view </small></h3>
 	<table id="header-fixed"  class="table table-hover table-bordered"></table>
 	<table class="table table-hover table-bordered" id="table-1">
 	<thead>
