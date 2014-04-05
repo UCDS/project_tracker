@@ -9,15 +9,21 @@ $(function(){
 	$("#probable_date_of_completion,#agreement_completion_date").Zebra_DatePicker({
 		direction:1
 	});
+	function fun1(){
+		var a=document.agency.Submit.value;
+		if(a=='Submit')
+		window.alert("do you want to insert");
+	}
 });
+
 </script>
 		<div class="col-md-8 col-md-offset-2">
 		<center>
 		<strong><?php if(isset($msg)){ echo $msg;}?></strong>
 		<h3><u>ADD AGENCY</u></h3></center><br>
-	<?php echo form_open('masters/add/agency',array('role'=>'form')); ?>
+<form name="agency>"	<?php echo validation_errors(); echo form_open('masters/add/agency',array('role'=>'form'));  ?>
 	<div class="form-group">
-		<label for="agency_name" class="col-md-4">Agency Name*</label>
+		<label for="agency_name" class="col-md-4">Agency Name<font color='red'>*</font></label>
 		<div  class="col-md-8">
 		<input type="text" class="form-control" placeholder="Agency Name" id="agency_name" name="agency_name" />
 		</div>
@@ -35,21 +41,21 @@ $(function(){
 		</div>
 	</div>	
 	<div class="form-group">
-		<label for="agency_designation" class="col-md-4">Agency Designation</label>
+		<label for="agency_contact_designation" class="col-md-4">Agency Designation</label>
 		<div  class="col-md-8">
-		<input type="text" class="form-control" placeholder="Agency Designation" id="agency_designation" name="agency_designation" />
+		<input type="text" class="form-control" placeholder="Agency Designation" id="agency_contact_designation" name="agency_contact_designation" />
 		</div>
 	</div>		
 	<div class="form_group">
-		<label for="agency_contact_no" class="col-md-4">Agency Contact No</label>
+		<label for="agency_contact_number" class="col-md-4">Agency Contact No</label>
 		<div  class="col-md-8">
-		<input type="text" class="form-control" placeholder="Agency Contact No" id="agency_contact_no" name="agency_contact_no" />
+		<input type="text" class="form-control" placeholder="Agency Contact No" id="agency_contact_number" name="agency_contact_number" />
 		</div>
 	</div>
 	<div class="form_group">
 		<label for="agency_email_id" class="col-md-4">Agency Email Id</label>
 		<div  class="col-md-8">
-		<input type="text" class="form-control" placeholder="Agency Email Id" id="agency_email_id" name="agency_email_id" />
+		<input type="email" class="form-control" placeholder="Agency Email Id" id="agency_email_id" name="agency_email_id" />
 		</div>
 	</div>
 
@@ -68,21 +74,16 @@ $(function(){
 		<div class="form_group">
 		<label for="branch" class="col-md-4">Branch</label>
 		<div  class="col-md-8">
-		<input type="text" class="form-control" placeholder="Branch" id="branch" name="branch" />
+		<input type="text" class="form-control" placeholder="Branch of the Bank" id="branch" name="branch" />
 		</div>
 	</div>
 		<div class="form_group">
 		<label for="pan" class="col-md-4">Pan</label>
 		<div  class="col-md-8">
-		<input type="text" class="form-control" placeholder="Pan" id="pan" name="pan" />
+		<input type="text" class="form-control" placeholder="Pan Number" id="pan" name="pan" />
 		</div>
 	</div>
-		<div class="form_group">
-		<label for="city" class="col-md-4">City</label>
-		<div  class="col-md-8">
-		<input type="text" class="form-control" placeholder="City" id="city" name="city" />
-		</div>
-	</div>
+		
    	<div class="col-md-3 col-md-offset-4">
-	<button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+	<button class="btn btn-lg btn-primary btn-block" type="submit" value="Submit" name="Submit" onclick="fun1()">Submit</button>
 	</div>

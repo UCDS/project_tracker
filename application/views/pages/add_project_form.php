@@ -4,7 +4,7 @@
 <script type="text/javascript">
 $(function(){
 	$("#agreement_date").Zebra_DatePicker({
-		direction:false
+
 	});
 	$("#probable_date_of_completion,#agreement_completion_date").Zebra_DatePicker();
 	$("#division").change(function(){
@@ -34,10 +34,10 @@ $(function(){
 		<div  class="col-md-12" style="padding-left:0">
 		<label class="col-md-6">Work Type</label>
 		<label class="radio-inline" for="wt_medical">
-		<input type="radio" name="work_type" id="wt_medical" value="M" />Medical 
+		<input type="radio" name="work_type" id="wt_medical" value="Medical" />Medical 
 		</label>
 		<label for="wt_non_medical" class="radio-inline"> 
-		<input type="radio" id="wt_non_medical" name="work_type" value="N" /> 
+		<input type="radio" id="wt_non_medical" name="work_type" value="Non-medical" /> 
 		Non Medical
 		</label>
 		</div>

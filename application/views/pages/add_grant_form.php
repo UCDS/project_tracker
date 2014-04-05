@@ -1,4 +1,14 @@
+<link rel="stylesheet" href="<?php echo base_url();?>assets/css/metallic.css" >
 
+<script type="text/javascript" src="<?php echo base_url();?>assets/js/zebra_datepicker.js"></script>
+<script type="text/javascript">
+$(function(){
+  $("#date").Zebra_DatePicker({
+  
+  });
+  
+});
+</script>
 <?php echo validation_errors(); ?>
 <div class="col-md-8 col-md-offset-2">
     <center> 		<strong><?php if(isset($msg)){ echo $msg;}?></strong>
@@ -14,7 +24,9 @@
      <label for="phase_name" class="col-md-4">Grant Phase Name</label>   
       <div  class="col-md-8">    
         <script>
-            $(document).ready (function () {
+
+
+       $(document).ready (function () {
 				$("#grant_name").change(function(){
 					$("#phase_name").val($(this).val());
 				});
@@ -53,6 +65,12 @@
 		</select>		
 	</div>
 	</div>
+   <div class="form_group">
+        <label for="date" class="col-md-4">Date</label>
+        <div  class="col-md-8">
+        <input type="text" class="form-control" placeholder=" Date" id="date" name="date" />
+        </div>
+    </div>
        <div class="col-md-3 col-md-offset-4"> 
     <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
     </div>

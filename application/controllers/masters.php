@@ -9,17 +9,17 @@ class Masters extends CI_Controller {
 	function add($type=""){
 	 	$this->load->helper('form');
 		$this->load->library('form_validation');
-		$user=$this->session->userdata('logged_in');
-		$data['user_id']=$user[0]['user_id'];
+		$data['user_id']=$this->session->userdata('logged_in')[0]['user_id'];
 		if($type=="facility"){
 			$title="Add Facility";
 			$config=array(
                array(
                      'field'   => 'facility_name',
                      'label'   => 'Facility Name',
-                     'rules'   => 'required|trim|xss_clean'
+                     'rules'   => 'trim|xss_clean'
                   )
 			);
+				$data['facility']=$this->masters_model->get_data("facility");
 			$data['facility_types']=$this->masters_model->get_data("facility_types");
 			$data['divisions']=$this->masters_model->get_data("divisions");	
 		}
@@ -42,17 +42,21 @@ class Masters extends CI_Controller {
                      'rules'   => 'required|trim|xss_clean'
                   )
 			);
+			$data['agency']=$this->masters_model->get_data("agency");
+		
 		}
-		else if($type=="division"){
+		else if($type=="divisions"){
 			$title="Add Division";
 			$config=array(
                array(
-                     'field'   => 'division_name',
-                     'label'   => 'Division Name',
-                     'rules'   => 'required|trim|xss_clean'
+                     'field'   => 'division',
+                     'label'   => 'Division ',
+                     'rules'   => 'trim|xss_clean'
                   )
 			);	
+			$data['division']=$this->masters_model->get_data("divisions");
 			$data['district']=$this->masters_model->get_data("districts");
+
 		}
 		else if($type=="grant"){
 			$title="Add Grant";
@@ -68,17 +72,77 @@ class Masters extends CI_Controller {
                      'rules'   => 'required|trim|xss_clean'
                )
 			);
+		    $data['grants']=$this->masters_model->get_data("grant");
 			$data['grant_sources']=$this->masters_model->get_data("grant_sources");
+			$data['grant_phases']=$this->masters_model->get_data("grant_phases");
 		}
-		else if($type=="user"){
-			$title="Add User";
+		else if($type=="user_type"){
+			$title="Add User Type";
 			$config=array(
                array(
-                     'field'   => 'user_name',
-                     'label'   => 'User Name',
+                     'field'   => 'user_type',
+                     'label'   => 'User Type',
                      'rules'   => 'required|trim|xss_clean'
                   )
 			);
+
+		}
+		else if($type=="users"){
+			$title="Add User";
+			$config=array(
+               array(
+                     'field'   => 'user_type',
+                     'label'   => 'User Type',
+                     'rules'   => 'required|trim|xss_clean'
+                  ),
+                array(
+                     'field'   => 'username',
+                     'label'   => 'User Name',
+                     'rules'   => 'required|trim|xss_clean'
+                  ),
+                 array(
+                     'field'   => 'password',
+                     'label'   => ' password',
+                     'rules'   => 'required|trim|xss_clean'
+                  ),
+                  array(
+                     'field'   => 'first_name',
+                     'label'   => 'first_name ',
+                     'rules'   => 'required|trim|xss_clean'
+                  ),
+                   array(
+                     'field'   => 'last_name',
+                     'label'   => 'Last Name',
+                     'rules'   => 'required|trim|xss_clean'
+                  ),
+                     array(
+                     'field'   => 'dob',
+                     'label'   => 'dob ',
+                     'rules'   => 'required|trim|xss_clean'
+                  ),
+                   array(
+                     'field'   => 'phone_no',
+                     'label'   => 'phone_no',
+                     'rules'   => 'required|trim|xss_clean'
+                  ),
+                    array(
+                     'field'   => 'email_id',
+                     'label'   => 'email_id',
+                     'rules'   => 'required|trim|xss_clean'
+                  ),
+                     array(
+                     'field'   => 'address',
+                     'label'   => 'address',
+                     'rules'   => 'required|trim|xss_clean'
+                  ),   array(
+                     'field'   => 'pincode',
+                     'label'   => 'pincode',
+                     'rules'   => 'required|trim|xss_clean'
+                  )
+			);
+$data['users']=$this->masters_model->get_data("users");
+//$data['users']=$this->masters_model->get_data("user");
+$data['user_type']=$this->masters_model->get_data("user_type");
 		}
 			
 		else{
@@ -96,6 +160,7 @@ class Masters extends CI_Controller {
 		}
 		else{
 				if($this->masters_model->insert_data($type)){
+					
 					$data['msg']="Inserted Successfully";
 					$this->load->view($page,$data);
 				}
@@ -109,8 +174,7 @@ class Masters extends CI_Controller {
 	function edit($type=""){
 	 	$this->load->helper('form');
 		$this->load->library('form_validation');
-		$user=$this->session->userdata('logged_in');
-		$data['user_id']=$user[0]['user_id'];
+		$data['user_id']=$this->session->userdata('logged_in')[0]['user_id'];
 		if($type=="facility"){
 			$title="Edit Facility";
 			$config=array(
@@ -121,49 +185,85 @@ class Masters extends CI_Controller {
                   )
 			);
 			$data['facility_types']=$this->masters_model->get_data("facility_types");
-			$data['divisions']=$this->masters_model->get_data("divisions");	
+			$data['division']=$this->masters_model->get_data("division");	
 		}
+			else if($type=="grant"){
+			$title="Edit Grant";
+			$config=array(
+               array(
+                     'field'   => 'grant_id',
+                     'label'   => 'Grant',
+                     'rules'   => 'trim|xss_clean'
+                  )
+			);
+            $data['grants']=$this->masters_model->get_data("grants");
+
+			$data['grant_sources']=$this->masters_model->get_data("grant_sources");
+			$data['grant_phases']=$this->masters_model->get_data("grant_phases");
+		
+							}
+		else if($type=="facility_type"){
+			$title="Add Facility Type";
+			$config=array(
+               array(
+                     'field'   => 'facility_type',
+                     'label'   => 'Facility Type',
+                     'rules'   => 'trim|xss_clean'
+                  )
+			);
+			
+		}	
+		else if($type=="user_type"){
+			$title="Add User Type";
+			$config=array(
+               array(
+                     'field'   => 'user_type',
+                     'label'   => 'User Type',
+                     'rules'   => 'trim|xss_clean'
+                  )
+			);
+			$data['user_type']=$this->masters_model->get_data("user_type");
+		}				
 		else if($type=="agency"){
 			$title="Edit Agency";
 			$config=array(
                array(
-                     'field'   => 'agency_id',
+                     'field'   => 'search_agency_name',
                      'label'   => 'Agency',
-                     'rules'   => 'required|trim|xss_clean'
+                     'rules'   => 'trim|xss_clean'
                   )
 			);
+			$data['agency']=$this->masters_model->get_data("agency");
+
 		}
-		else if($type=="division"){
+		else if($type=="divisions"){
 			$title="Edit Division";
 			$config=array(
                array(
                      'field'   => 'division_id',
                      'label'   => 'Division',
-                     'rules'   => 'required|trim|xss_clean'
+                     'rules'   => 'trim|xss_clean'
                   )
 			);	
-			$data['district']=$this->masters_model->get_data("districts");
+			$data['districts']=$this->masters_model->get_data("districts");
+			$data['divisions']=$this->masters_model->get_data("divisions");
+
 		}
-		else if($type=="grant"){
-			$title="Edit Grant";
-			$config=array(
-               array(
-                     'field'   => 'grant_phase_id',
-                     'label'   => 'Grant',
-                     'rules'   => 'required|trim|xss_clean'
-                  )
-			);
-			$data['grant_sources']=$this->masters_model->get_data("grant_sources");
-		}
-		else if($type=="user"){
+	
+		else if($type=="users"){
 			$title="Edit User";
 			$config=array(
                array(
                      'field'   => 'user_id',
                      'label'   => 'User',
-                     'rules'   => 'required|trim|xss_clean'
+                     'rules'   => 'trim|xss_clean'
                   )
-			);
+			);   
+				$data['users']=$this->masters_model->get_data("users");
+				$data['user_type']=$this->masters_model->get_data("user_type");
+
+       
+
 		}
 			
 		else{

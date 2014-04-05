@@ -16,16 +16,27 @@
     <ul class="nav nav-sidebar">
 		<li class="disabled"><a href="#">Add</a></li>
 				<li><a href="<?php echo base_url();?>masters/add/agency">Agency</a></li>
-				<li><a href="<?php echo base_url();?>masters/add/division">Division</a></li>
+				<li><a href="<?php echo base_url();?>masters/add/divisions">Division</a></li>
 				<li><a href="<?php echo base_url();?>masters/add/grant">Grant</a></li>
 				<li><a href="<?php echo base_url();?>projects/create">Project</a></li>
 				<li><a href="<?php echo base_url();?>masters/add/facility">Facility</a></li>
 				<li><a href="<?php echo base_url();?>masters/add/facility_type">Facility Type</a></li>
-				<li><a href="<?php echo base_url();?>masters/add/user">Users</a></li>
+				<li><a href="<?php echo base_url();?>masters/add/user_type">User type</a></li>
+				<li><a href="<?php echo base_url();?>masters/add/users">Users</a></li>
 		<li class="nav-divider"></li>
 		<li class="disabled"><a href="#">Edit</a></li>
+			
+			
+				<li><a href="<?php echo base_url();?>masters/edit/agency">Agency</a></li>
+				<li><a href="<?php echo base_url();?>masters/edit/divisions">Division</a></li>
+				<li><a href="<?php echo base_url();?>masters/edit/grant">Grant</a></li>
 				<li><a href="<?php echo base_url();?>projects/update">Projects</a></li>
 				<li><a href="<?php echo base_url();?>masters/edit/facility">Facility</a></li>
+				<li><a href="<?php echo base_url();?>masters/edit/facility_type">Facility Type</a></li>
+				<li><a href="<?php echo base_url();?>masters/edit/user_type">User Type</a></li>
+		
+		    
+				<li><a href="<?php echo base_url();?>masters/edit/users">Users</a></li>
 		<ul>
 </div>
 <div class="col-md-10 col-md-offset-2">	
