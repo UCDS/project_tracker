@@ -41,6 +41,10 @@
 				<td><?php echo $p->phase_name; ?></td>
 			</tr>
 			<tr>
+				<td>Agency</td>
+				<td><?php echo $p->agency_name; ?></td>
+			</tr>
+			<tr>
 				<td>Ref. to Admin Sacntion</td>
 				<td><?php echo $p->admin_sanction_id; ?></td>
 			</tr>
@@ -57,7 +61,7 @@
 				<td><?php echo number_format($p->tech_sanction_amount); ?></td>
 			</tr>
 			<tr>
-				<td>Agreement Amount (in Lakhs of Rs.)</td>
+				<td>Agreement Amount</td>
 				<td><?php echo number_format($p->agreement_amount); ?></td>
 			</tr>
 			<tr>
@@ -79,6 +83,10 @@
 			<tr>
 				<td>Current Status</td>
 				<td><?php echo $p->status_type; ?></td>
+			</tr>
+			<tr>
+				<td>Remarks</td>
+				<td><?php echo $p->remarks_1; ?></td>
 			</tr>
 			<tr>
 				<td>Expenditure Amount</td>

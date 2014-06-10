@@ -43,18 +43,17 @@ class Reports extends CI_Controller {
 				$data['projects']=$this->staff_model->get_projects($this->input->post('district_id'));
 				$this->load->view('pages/report_district_detailed',$data);
 			}
-			else if($this->input->post('district_id') || $district_id!=0 ){
-				if($district_id!=0){
-				$data['projects']=$this->staff_model->get_projects($district_id);
-				}
-				else{
-				$data['projects']=$this->staff_model->get_projects($this->input->post('district_id'));
-				}
+			else if($this->input->post('district_id')){
+				$data['projects']=$this->staff_model->get_projects();
 				$this->load->view('pages/report_district_detailed',$data);
 			}
 			else if($this->input->post('project_id')){
 				$data['project']=$this->staff_model->get_projects();
 				$this->load->view('pages/report_project_detailed',$data);
+			}
+			else{
+				$data['projects']=$this->staff_model->get_projects(0,-1,-1,-1);
+				$this->load->view('pages/report_district_detailed',$data);
 			}
 
 		}
@@ -96,6 +95,10 @@ class Reports extends CI_Controller {
 				$data['project']=$this->staff_model->get_projects();
 				$this->load->view('pages/report_project_detailed',$data);
 			}
+			else{
+				$data['projects']=$this->staff_model->get_projects(-1,0,-1,-1);
+				$this->load->view('pages/report_facility_type_detailed',$data);
+			}
 		}
 		$this->load->view('templates/footer');
 		}
@@ -134,6 +137,96 @@ class Reports extends CI_Controller {
 			else if($this->input->post('project_id')){
 				$data['project']=$this->staff_model->get_projects();
 				$this->load->view('pages/report_project_detailed',$data);
+			}
+			else{
+				$data['projects']=$this->staff_model->get_projects(-1,-1,-1,0);
+				$this->load->view('pages/report_grant_detailed',$data);
+			}
+		}
+		$this->load->view('templates/footer');
+		}
+		else{
+		show_404();
+		}
+	}
+	public function agencies($agency=0)
+	{
+		if($this->session->userdata('logged_in')){
+		$data['userdata']=$this->session->userdata('logged_in');
+		$data['title']="Agency wise Summary Report";
+		$this->load->view('templates/header',$data);
+		$this->load->view('templates/left_nav');
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$data['agencies']=$this->reports_model->get_summary_agency();
+		$data['district']=$this->staff_model->get_districts();
+
+		$this->form_validation->set_rules('agency', 'Agency',
+		'trim|required|xss_clean');
+		if ($this->form_validation->run() === FALSE && $agency==0)
+		{
+			$this->load->view('pages/report_agency_wise',$data);
+		}
+		else{
+
+			if($this->input->post('month') && $this->input->post('year')){
+				$data['projects']=$this->staff_model->get_projects();
+				$this->load->view('pages/report_agency_detailed',$data);
+			}
+			else if($this->input->post('agency') || $agency!=0  || $this->input->post('district_id')){
+				$data['projects']=$this->staff_model->get_projects();
+				$this->load->view('pages/report_agency_detailed',$data);
+			}
+			else if($this->input->post('project_id')){
+				$data['project']=$this->staff_model->get_projects();
+				$this->load->view('pages/report_project_detailed',$data);
+			}
+			else{
+				$data['projects']=$this->staff_model->get_projects(-1,-1,0,-1);
+				$this->load->view('pages/report_agency_detailed',$data);
+			}
+		}
+		$this->load->view('templates/footer');
+		}
+		else{
+		show_404();
+		}
+	}
+	public function user_departments($user_department=0)
+	{
+		if($this->session->userdata('logged_in')){
+		$data['userdata']=$this->session->userdata('logged_in');
+		$data['title']="User Department wise Summary Report";
+		$this->load->view('templates/header',$data);
+		$this->load->view('templates/left_nav');
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$data['user_departments']=$this->reports_model->get_summary_user_department();
+		$data['district']=$this->staff_model->get_districts();
+
+		$this->form_validation->set_rules('user_department', 'User Department',
+		'trim|required|xss_clean');
+		if ($this->form_validation->run() === FALSE && $user_department==0)
+		{
+			$this->load->view('pages/report_user_department_wise',$data);
+		}
+		else{
+
+			if($this->input->post('month') && $this->input->post('year')){
+				$data['projects']=$this->staff_model->get_projects();
+				$this->load->view('pages/report_user_department_detailed',$data);
+			}
+			else if($this->input->post('user_department') || $user_department!=0  || $this->input->post('district_id')){
+				$data['projects']=$this->staff_model->get_projects();
+				$this->load->view('pages/report_user_department_detailed',$data);
+			}
+			else if($this->input->post('project_id')){
+				$data['project']=$this->staff_model->get_projects();
+				$this->load->view('pages/report_user_department_detailed',$data);
+			}
+			else{
+				$data['projects']=$this->staff_model->get_projects(-1,-1,-1,-1,0);
+				$this->load->view('pages/report_user_department_detailed',$data);
 			}
 		}
 		$this->load->view('templates/footer');

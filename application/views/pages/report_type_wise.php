@@ -6,18 +6,20 @@
 	<thead>
 		<th>S.No</th>
 		<th>Facility Type</th>
-		<th>Admin Sanction Amt. (in Crores)</th>
-		<th>Agreement Amt. (in Crores)</th>
+		<th>Admin Sanction(Crores)</th>
+		<th>Agreement(Crores)</th>
 		<th>Total Works</th>
 		<th>Not Started</th>
 		<th>In Progress</th>
 		<th>Completed</th>
-		<th>Expenditure (in Crores)</th>
+		<th>Expenditure (Crores)</th>
+		<th>Balance (Crores)</th>
 	</thead>
 	<tbody>
 
 	<?php
 	$admin_sanction_amount=0;
+	$tech_sanction_amount=0;
 	$agreement_amount=0;
 	$total_projects=0;
 	$not_started=0;
@@ -32,7 +34,7 @@
 	<tr onclick="$('#select_facility_type_form_<?php echo $facility_type->facility_type_id;?>').submit();">
 		<td><?php echo $i++; ?></td>
 		<td><?php echo $facility_type->facility_type; ?>
-		<input type='hidden' value="<?php echo $facility_type->facility_type_id; ?>" name="facility_type" />
+		<input type='hidden' value="<?php if($facility_type->facility_type_id!=NULL) echo $facility_type->facility_type_id;else echo "0"; ?>" name="facility_type" />
 		</td>
 		<td class="text-right"><?php echo number_format($facility_type->admin_sanction_amount/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($facility_type->agreement_amount/10000000,2); ?></td>
@@ -41,10 +43,12 @@
 		<td class="text-right"><?php echo $facility_type->work_in_progress; ?></td>
 		<td class="text-right"><?php echo $facility_type->work_completed; ?></td>
 		<td class="text-right"><?php echo number_format($facility_type->expenses/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format(($facility_type->tech_sanction_amount-$facility_type->expenses)/10000000,2); ?></td>
 	</tr>
 	</form>
 	<?php
 	$admin_sanction_amount+=$facility_type->admin_sanction_amount;
+	$tech_sanction_amount+=$facility_type->tech_sanction_amount;
 	$agreement_amount+=$facility_type->agreement_amount;
 	$total_projects+=$facility_type->total_projects;
 	$not_started+=$facility_type->not_started;
@@ -62,6 +66,7 @@
 		<th class="text-right"><?php echo $work_in_progress;?></th>
 		<th class="text-right"><?php echo $work_completed;?></th>
 		<th class="text-right"><?php echo number_format($expenses/10000000,2);?></th>
+		<th class="text-right"><?php echo number_format(($tech_sanction_amount-$expenses)/10000000,2);?></th>
 	</tbody>
 	</table>
 	</div>

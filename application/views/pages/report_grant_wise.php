@@ -6,18 +6,20 @@
 	<thead>
 		<th>S.No</th>
 		<th>Grant</th>
-		<th>Admin Sanction Amt. (in Crores)</th>
-		<th>Agreement Amt. (in Crores)</th>
+		<th>Admin Sanction(Crores)</th>
+		<th>Agreement(Crores)</th>
 		<th>Total Works</th>
 		<th>Not Started</th>
 		<th>In Progress</th>
 		<th>Completed</th>
-		<th>Expenditure (in Crores)</th>
+		<th>Expenditure (Crores)</th>
+		<th>Balance (Crores)</th>
 	</thead>
 	<tbody>
 
 	<?php
 	$admin_sanction_amount=0;
+	$tech_sanction_amount=0;
 	$agreement_amount=0;
 	$total_projects=0;
 	$not_started=0;
@@ -41,10 +43,12 @@
 		<td class='text-right'><?php echo $grant->work_in_progress; ?></td>
 		<td class='text-right'><?php echo $grant->work_completed; ?></td>
 		<td class='text-right'><?php echo number_format($grant->expenses/10000000,2); ?></td>
+		<td class='text-right'><?php echo number_format(($grant->tech_sanction_amount-$grant->expenses)/10000000,2); ?></td>
 	</tr>
 	</form>
 	<?php
 	$admin_sanction_amount+=$grant->admin_sanction_amount;
+	$tech_sanction_amount+=$grant->tech_sanction_amount;
 	$agreement_amount+=$grant->agreement_amount;
 	$total_projects+=$grant->total_projects;
 	$not_started+=$grant->not_started;
@@ -63,6 +67,7 @@
 		<th class='text-right'><?php echo $work_in_progress;?></th>
 		<th class='text-right'><?php echo $work_completed;?></th>
 		<th class='text-right'><?php echo number_format($expenses/10000000,2);?></th>
+		<th class='text-right'><?php echo number_format(($tech_sanction_amount-$expenses)/10000000,2);?></th>
 	</tbody>
 	</table>
 	</div>

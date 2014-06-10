@@ -43,6 +43,16 @@ class Masters extends CI_Controller {
                   )
 			);
 		}
+		else if($type=="user_department"){
+			$title="Add User Department";
+			$config=array(
+               array(
+                     'field'   => 'user_department',
+                     'label'   => 'User Department',
+                     'rules'   => 'required|trim|xss_clean'
+                  )
+			);
+		}
 		else if($type=="division"){
 			$title="Add Division";
 			$config=array(
@@ -130,6 +140,16 @@ class Masters extends CI_Controller {
                      'field'   => 'agency_id',
                      'label'   => 'Agency',
                      'rules'   => 'required|trim|xss_clean'
+                  )
+			);
+		}
+		else if($type=="user_department"){
+			$title="Edit User Department";
+			$config=array(
+               array(
+                     'field'   => 'user_department',
+                     'label'   => 'User Department',
+                     'rules'   => 'trim|xss_clean'
                   )
 			);
 		}

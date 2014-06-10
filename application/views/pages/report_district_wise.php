@@ -6,20 +6,22 @@
 	<thead>
 		<th>S.No</th>
 		<th>District Name</th>
-		<th>Admin Sanction Amt. (in Crores)</th>
-		<th>Agreement Amt. (in Crores)</th>
+		<th>Tech Sanction(Crores)</th>
+		<th>Agreement(Crores)</th>
 		<th>Total Works</th>
 		<th>Not Started</th>
 		<th>In Progress</th>
 		<th>Completed</th>
 		<th>Medical</th>
 		<th>Non Medical</th>
-		<th>Expenditure (in Crores)</th>
+		<th>Expenditure (Crores)</th>
+		<th>Balance (Crores)</th>
 	</thead>
 	<tbody>
 
 	<?php
 	$admin_sanction_amount=0;
+	$tech_sanction_amount=0;
 	$agreement_amount=0;
 	$total_projects=0;
 	$not_started=0;
@@ -35,9 +37,9 @@
 	<tr onclick="$('#select_district_form_<?php echo $district->district_id;?>').submit();">
 		<td><?php echo $i++; ?></td>
 		<td><?php echo $district->district_name; ?>
-		<input type='hidden' value="<?php echo $district->district_id; ?>" name="district_id" />
+		<input type='hidden' value="<?php if($district->district_id!=NULL) echo $district->district_id; else echo "0" ?>" name="district_id" />
 		</td>
-		<td class="text-right"><?php echo number_format($district->admin_sanction_amount/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format($district->tech_sanction_amount/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($district->agreement_amount/10000000,2); ?></td>
 		<td class="text-right"><?php echo $district->total_projects; ?></td>
 		<td class="text-right"><?php echo $district->not_started; ?></td>
@@ -46,10 +48,12 @@
 		<td class="text-right"><?php echo $district->medical; ?></td>
 		<td class="text-right"><?php echo $district->non_medical; ?></td>
 		<td class="text-right"><?php echo number_format($district->expenses/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format(($district->tech_sanction_amount-$district->expenses)/10000000,2); ?></td>
 	</tr>
 	</form>
 	<?php
 	$admin_sanction_amount+=$district->admin_sanction_amount;
+	$tech_sanction_amount+=$district->tech_sanction_amount;
 	$agreement_amount+=$district->agreement_amount;
 	$total_projects+=$district->total_projects;
 	$not_started+=$district->not_started;
@@ -62,7 +66,7 @@
 	?>
 	<tr>
 		<th colspan="2">Total</th>
-		<th class="text-right"><?php echo number_format($admin_sanction_amount/10000000,2);?></th>
+		<th class="text-right"><?php echo number_format($tech_sanction_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($agreement_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo $total_projects;?></th>
 		<th class="text-right"><?php echo $not_started;?></th>
@@ -71,6 +75,7 @@
 		<th class="text-right"><?php echo $medical;?></th>
 		<th class="text-right"><?php echo $non_medical;?></th>
 		<th class="text-right"><?php echo number_format($expenses/10000000,2);?></th>
+		<th class="text-right"><?php echo number_format(($tech_sanction_amount-$expenses)/10000000,2);?></th>
 	</tbody>
 	</table>
 	</div>

@@ -1434,7 +1434,6 @@ th {
 .table-hover > tbody > tr:hover > td,
 .table-hover > tbody > tr:hover > th {
   background-color: #f5f5f5;
-  cursor:pointer;
 }
 table col[class*="col-"] {
   position: static;
@@ -1576,7 +1575,7 @@ legend {
 label {
   display: inline-block;
   margin-bottom: 5px;
-  font-weight: bold;
+  font-weight: normal;
 }
 input[type="search"] {
   -webkit-box-sizing: border-box;
@@ -1623,11 +1622,10 @@ output {
   vertical-align: middle;
 }
 .form-control {
+  width:100%;
   display: block;
-  width: 100%;
   height: 34px;
   padding: 6px 12px;
-  margin:5px;
   font-size: 14px;
   line-height: 1.428571429;
   color: #555555;
@@ -1854,6 +1852,36 @@ textarea.input-lg {
   }
   .form-inline .radio input[type="radio"],
   .form-inline .checkbox input[type="checkbox"] {
+    float: none;
+    margin-left: 0;
+  }
+}
+@media (min-width: 768px) {
+  .form-custom .form-group {
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+  }
+  .form-custom .form-control {
+	width:auto;
+    display: inline-block;
+  }
+  .form-custom select.form-control {
+    width: auto;
+  }
+  .form-custom .radio,
+  .form-custom .checkbox {
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+  }
+  .form-custom .radio input[type="radio"],
+  .form-custom .checkbox input[type="checkbox"] {
+    float: none;
+    margin-left: 0;
+  }
+  .form-custom .control-label {
     float: none;
     margin-left: 0;
   }
@@ -4249,7 +4277,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   display: inline;
   padding: .2em .6em .3em;
   font-size: 75%;
-  font-weight: bold;
+  font-weight: normal;
   line-height: 1;
   color: #ffffff;
   text-align: center;
@@ -6045,8 +6073,29 @@ td.visible-print {
     background:#eee;
  }
  
-#header-fixed {
-    position: fixed;
-    top: 0px; display:none;
-    background-color:white;
+.layout-div{
+	position:relative;
+	float:left;
+	border:1px solid #ccc;
+	cursor:pointer !important;
+	min-height:50px;
+	padding:5px;
+	display:none;
+}
+
+
+.star {
+	font-size:3em;	
+	color:#ccc;
+	margin:0;
+	padding:0;
+	top:-10px;
+	cursor:pointer;
+	transition:all 0.2s;
+	position:absolute;
+	float:right;
+	
+}
+.star:hover {
+	color:red;
 }

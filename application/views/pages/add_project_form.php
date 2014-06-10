@@ -1,5 +1,4 @@
 <link rel="stylesheet" href="<?php echo base_url();?>assets/css/metallic.css" >
-
 <script type="text/javascript" src="<?php echo base_url();?>assets/js/zebra_datepicker.js"></script>
 <script type="text/javascript">
 $(function(){
@@ -27,7 +26,7 @@ $(function(){
 	<div class="form-group">
 		<label for="project_name" class="col-md-4">Project Name</label>
 		<div  class="col-md-8">
-		<input type="text" class="form-control" placeholder="Project Name" id="project_name" name="project_name" />
+		<input type="text" class="form-control" placeholder="Project Name" id="project_name" name="project_name" required />
 		</div>
 	</div>
 	<div class="form_group">
@@ -51,7 +50,7 @@ $(function(){
 	<div class="form-group">
 		<label for="division" class="col-md-4" >Division</label>
 		<div  class="col-md-8">
-		<select name="division" id="division" class="form-control">
+		<select name="division" id="division" class="form-control" required >
 		<option value="">--SELECT--</option>
 		<?php foreach($divisions as $division){
 			echo "<option value='$division->division_id'>$division->division</option>";
@@ -63,7 +62,7 @@ $(function(){
 	<div class="form-group">
 		<label for="facility" class="col-md-4" >Facility</label>
 		<div  class="col-md-8">
-		<select name="facility" id="facility" class="form-control" >
+		<select name="facility" id="facility" class="form-control" required>
 		<option value="">--SELECT--</option>
 		<?php foreach($facilities as $facility){
 			echo "<option value='$facility->facility_id' name='$facility->division_id' hidden>$facility->facility_name</option>";
@@ -123,7 +122,7 @@ $(function(){
 	<div class="form_group">
 		<label for="grant" class="col-md-4">Grant</label>
 		<div  class="col-md-8">
-		<select name="grant" id="grant" class="form-control">
+		<select name="grant" id="grant" class="form-control" required >
 		<option value="">--SELECT--</option>
 		<?php foreach($grants as $grant){
 			echo "<option value='$grant->phase_id'>$grant->phase_name</option>";
@@ -133,9 +132,21 @@ $(function(){
 		</div>
 	</div>
 	<div class="form_group">
+		<label for="user_department" class="col-md-4">User Department</label>
+		<div  class="col-md-8">
+		<select name="user_department" id="user_department" class="form-control">
+		<option value="">--SELECT--</option>
+		<?php foreach($user_departments as $user_department){
+			echo "<option value='$user_department->user_department_id'>$user_department->user_department</option>";
+		}
+		?>
+		</select>		
+		</div>
+	</div>
+	<div class="form_group">
 		<label for="agency" class="col-md-4">Agency</label>
 		<div  class="col-md-8">
-		<select name="agency" id="agency" class="form-control">
+		<select name="agency" id="agency" class="form-control" >
 		<option value="">--SELECT--</option>
 		<?php foreach($agencies as $agency){
 			echo "<option value='$agency->agency_id'>$agency->agency_name</option>";

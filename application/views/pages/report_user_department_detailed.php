@@ -2,10 +2,10 @@
 		$admin_sanction=0;$tech_sanction=0;$expenditure_previous=0;$expenditure_current=0;$expenditure_cumilative=0;$agreement_amount=0;$balance=0;
 	?>
 	<div class="row">
-	<div class="col-md-12">
- 	<?php echo form_open('reports/grants',array('id'=>'select_month','role'=>'form'));?>
+	<div class="col-md-10">
+ 	<?php echo form_open('reports/user_departments',array('id'=>'select_month','role'=>'form'));?>
 	<button class="btn btn-lg pull-right" type="submit" name="select_month">></button>
-		<input type='hidden' value="<?php echo $projects[0]->grant_phase_id; ?>" name="grant" />
+		<input type='hidden' value="<?php echo $projects[0]->user_department_id; ?>" name="user_department" />
 	<select class="form-control pull-right" style="width:100px"  name="year" id="year">
 	<option selected disabled>Year</option>
 	<?php 
@@ -23,7 +23,6 @@
 	}
 	?>
 	</select>
-
 	<select name="district_id" id="district" style="width:150px"  class="form-control pull-right">
 		<option value="">District</option>
 		<?php
@@ -43,9 +42,9 @@
 			echo "<option value='$d->district_id'>$d->district_name</option>";
 		}
 		?>
-	</select>	
+	</select>
 	</form>
-	<h3><?php echo $projects[0]->phase_name;?> <?php if($this->input->post('district_id')) echo " in ".$projects[0]->district_name;?> <small> Click on any one to view </small></h3>
+	<h3>Projects in <?php echo $projects[0]->user_department;?> <small>Click on any one to view </small></h3>
 	<table id="header-fixed"  class="table table-hover table-bordered"></table>
 	<table class="table table-hover table-bordered" id="table-1">
 	<thead>
@@ -58,13 +57,13 @@
 	<th>Expenditure upto <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
 	<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month'),  0, 0)).", ".$this->input->post('year');?>
 	<?php } else { echo date("M, Y",strtotime("last month"));} ?>
-	</small>(Lakhs)</th>
+	</small> (Lakhs)</th>
 	
 	
 	<th>Expenditure during <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
 	<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month')+1,  0, 0)).", ".$this->input->post('year');?></small>
-	<?php } else{ echo date("M, Y"); } ?> (Lakhs)</th>
-	<th>Cumilative Expenditure(Lakhs)</th>
+	<?php } else{ echo date("M, Y"); } ?>(Lakhs)</th>
+	<th>Cumilative Expenditure (Lakhs)</th>
 	<th>Expenditure Percentage</th>
 	<th>Balance(Lakhs)</th>
 	<th>Status</th>
@@ -93,7 +92,7 @@
 		<td><?php echo $i++; ?></td>
 		<td><?php echo $project->project_name; ?>
 		<input type='hidden' value="<?php echo $project->project_id; ?>" name="project_id" />
-		</form>
+	</form>
 		</td>
 		<td><?php echo $project->facility_name; ?></td>
 		<td class="text-right"><?php echo number_format($project->admin_sanction_amount/100000,2); ?></td>

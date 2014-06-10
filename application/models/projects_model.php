@@ -17,6 +17,7 @@ class Projects_model extends CI_Model{
 		$agreement_date=$this->input->post('agreement_date');
 		$agreement_completion_date=$this->input->post('agreement_completion_date');
 		$grant=$this->input->post('grant');
+		$user_department=$this->input->post('user_department');
 		$agency=$this->input->post('agency');
 		$work_type=$this->input->post('work_type');
 		$data=array(
@@ -28,6 +29,7 @@ class Projects_model extends CI_Model{
 			'agreement_date'=>$agreement_date,
 			'agreement_completion_date'=>$agreement_completion_date,
 			'grant_phase_id'=>$grant,
+			'user_department_id'=>$user_department,
 			'agency_id'=>$agency,
 			'work_type_id'=>$work_type
 			);
@@ -59,6 +61,70 @@ class Projects_model extends CI_Model{
 		}
 	}
 	
+	function update_project(){
+		$project_name=$this->input->post('project_name');
+		$work_type=$this->input->post('work_type');
+		$facility_id=$this->input->post('facility');
+		$address=$this->input->post('project_address');
+		$ref_admin=$this->input->post('ref_admin');
+		$admin_amount=$this->input->post('admin_amount');
+		$ref_tech=$this->input->post('ref_tech');
+		$tech_amount=$this->input->post('tech_amount');
+		$agreement_date=date("Y-m-d",strtotime($this->input->post('agreement_date')));
+		$agreement_amount=$this->input->post('agreement_amount');
+		$agreement_number=$this->input->post('agreement_number');
+		$agreement_completion_date=date("Y-m-d",strtotime($this->input->post('agreement_completion_date')));
+		$grant_phase_id=$this->input->post('grant');
+		$user_department=$this->input->post('user_department');
+		$agency=$this->input->post('agency');
+		$project_id=$this->input->post('selected_project');
+		
+		$project_data=array(
+		'project_name'=>$project_name,
+		'facility_id'=>$facility_id,
+		'project_address'=>$address,
+		'agreement_id'=>$agreement_number,
+		'agreement_date'=>$agreement_date,
+		'agreement_amount'=>$agreement_amount,
+		'agreement_completion_date'=>$agreement_completion_date,
+		'grant_phase_id'=>$grant_phase_id,
+		'user_department_id'=>$user_department,
+		'agency_id'=>$agency,
+		'work_type_id'=>$work_type
+		);
+		$sanction_data=array(
+		'admin_sanction_id'=>$ref_admin,
+		'admin_sanction_amount'=>$admin_amount,
+		'tech_sanction_id'=>$ref_tech,
+		'tech_sanction_amount'=>$tech_amount
+		);
+		$i=0;
+		$expense_dates=$this->input->post('prev_expense_date');
+		$expense_amounts=$this->input->post('prev_expense_amount');
+		$expense_data=array();
+		if($this->input->post('expense_id') && count($this->input->post('expense_id'))>0){
+		foreach($this->input->post('expense_id') as $expense_id){
+		$expenses_data[]=array(
+		'expense_id'=>$expense_id,
+		'expense_date'=>date("Y-m-d",strtotime($expense_dates[$i])),
+		'expense_amount'=>$expense_amounts[$i],
+		);
+		$i++;
+		}
+		}
+		$this->db->trans_start();
+		$this->db->where('project_id',$project_id);
+		$this->db->update('projects',$project_data);
+		$this->db->where('project_id',$project_id);
+		$this->db->update('sanctions',$sanction_data);
+		if(isset($expenses_data) && count($expenses_data)>0)
+		$this->db->update_batch('project_expenses',$expenses_data,'expense_id');
+		$this->db->trans_complete();
+		if($this->db->trans_status()===FALSE){
+			return false;
+		}
+		else return true;
+	}
 	function update_expenses(){
 		$expenses=$this->input->post('expenditure');
 		$expense_date=$this->input->post('expense_date');
@@ -75,14 +141,16 @@ class Projects_model extends CI_Model{
 	}
 	function update_status(){
 		$status=$this->input->post('status');
+		$stage=$this->input->post('stage');
 		$status_remarks=$this->input->post('status_remarks');
 		$date=date("Y-m-d");
-		$probable_date=date("Y-m-d",strtotime($this->input->post('probable_date')));
+		$probable_date=date("Y-m-d",strtotime($this->input->post('probable_date_of_completion')));
 		$project_id=$this->input->post('selected_project');
 		$this->db->where('project_id',$project_id)->update('project_status',array('current'=>0));
 		$data=array(
 		'project_id'=>$project_id,
 		'status_type_id'=>$status,
+		'stage_id'=>$stage,
 		'remarks_1'=>$status_remarks,
 		'status_date'=>$date,
 		'probable_date_of_completion'=>$probable_date,

@@ -3,9 +3,9 @@
 	?>
 	<div class="row">
 	<div class="col-md-12">
- 	<?php echo form_open('reports/grants',array('id'=>'select_month','role'=>'form'));?>
+ 	<?php echo form_open('reports/agencies',array('id'=>'select_month','role'=>'form'));?>
 	<button class="btn btn-lg pull-right" type="submit" name="select_month">></button>
-		<input type='hidden' value="<?php echo $projects[0]->grant_phase_id; ?>" name="grant" />
+		<input type='hidden' value="<?php echo $projects[0]->agency_id; ?>" name="agency" />
 	<select class="form-control pull-right" style="width:100px"  name="year" id="year">
 	<option selected disabled>Year</option>
 	<?php 
@@ -45,7 +45,7 @@
 		?>
 	</select>	
 	</form>
-	<h3><?php echo $projects[0]->phase_name;?> <?php if($this->input->post('district_id')) echo " in ".$projects[0]->district_name;?> <small> Click on any one to view </small></h3>
+	<h3><?php echo $projects[0]->agency_name;?> <?php if($this->input->post('district_id')) echo " in ".$projects[0]->district_name;?> <small> Click on any one to view </small></h3>
 	<table id="header-fixed"  class="table table-hover table-bordered"></table>
 	<table class="table table-hover table-bordered" id="table-1">
 	<thead>
@@ -103,7 +103,7 @@
 		<td class="text-right"><?php echo number_format($project->expense_current_month/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expenses/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expenses/$project->agreement_amount*100);echo "%" ?></td>
-		<td class="text-right"><?php echo number_format(($project->tech_sanction_amount-$project->expenses)/100000,2); ?></td>
+		<td class="text-right"><?php echo number_format(($project->expenses-$project->tech_sanction_amount)/100000,2); ?></td>
 		<td><?php echo $project->status_type; ?></td>
 		<td style="min-width:200px;"><?php echo $project->remarks_1; ?></td>
 		<td><?php if($project->work_type_id=='M') echo "Medical";

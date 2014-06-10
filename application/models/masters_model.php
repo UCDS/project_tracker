@@ -36,6 +36,9 @@ class Masters_model extends CI_Model{
 		else if($type=="facility_types"){
 			$this->db->select("facility_type_id,facility_type")->from("facility_types")->order_by('facility_type');
 		}
+		else if($type=="user_department"){
+			$this->db->select("user_department_id,user_department")->from("user_departments")->order_by('user_department');
+		}
 		else if($type=="grants"){
 			$this->db->select("phase_id,phase_name")->from("grant_phase")->join('grants','grant_phase.grant_id=grants.grant_id')->order_by('phase_name');
 		}
@@ -63,8 +66,16 @@ class Masters_model extends CI_Model{
 			$table="facilities";
 		}
 		
+		if($type=="user_department"){
+			$data = array(
+					  'user_department'=>$this->input->post('user_department')
+			);
+			$this->db->where('user_department_id',$this->input->post('user_department_id'));
+			$table="user_departments";
+		}
+		
 		$this->db->trans_start();
-			$this->db->update($table,$data);
+		$this->db->update($table,$data);
 		$this->db->trans_complete();
 		if($this->db->trans_status()===FALSE){
 			return false;
@@ -84,6 +95,12 @@ class Masters_model extends CI_Model{
 					   'latitude'=>$this->input->post('latitude')
 			);
 		$table="facilities";
+		}
+		if($type=="user_department"){
+		$data = array(
+					  'user_department'=>$this->input->post('user_department')
+			);
+		$table="user_departments";
 		}
 		if($type=="facility_type"){
 		$data = array(
@@ -144,7 +161,8 @@ class Masters_model extends CI_Model{
 		else if($type=="division"){
 			$data = array(
 					  'district_id'=>$this->input->post('district'),
-					  'division_name'=>$this->input->post('division_name'),  'state'=>$this->input->post('state')
+					  'division_name'=>$this->input->post('division_name'),  
+					  'state'=>$this->input->post('state')
 					);
 			$table="divisions";
 		}
