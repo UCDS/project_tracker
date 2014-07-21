@@ -4,9 +4,8 @@ class Staff_model extends CI_Model{
 		parent::__construct();
 	}
 	function login($username, $password){
-	   $this -> db -> select('users.user_id,username,district_id');
+	   $this -> db -> select('users.user_id,username');
 	   $this -> db -> from('users');
-	   $this -> db -> join('user_district_link','users.user_id=user_district_link.user_id','left');
 	   $this -> db -> where('username', $username);
 	   $this -> db -> where('password', MD5($password));
 	 
@@ -19,6 +18,31 @@ class Staff_model extends CI_Model{
 	   {
 	     return false;
 	   }
+	}
+	function user_function($user_id){
+		$this->db->select('user_functions.function_id,user_function,add,edit,view')->from('users')
+		->join('user_function_link','users.user_id=user_function_link.user_id')
+		->join('user_functions','user_function_link.function_id=user_functions.function_id')
+		->where('user_function_link.user_id',$user_id);
+		$query=$this->db->get();
+		return $query->result();
+	}
+	
+	function user_division($user_id){
+		$this->db->select('divisions.division_id,division')->from('users')
+		->join('user_division_link','users.user_id=user_division_link.user_id')
+		->join('divisions','user_division_link.division_id=divisions.division_id')
+		->where('user_division_link.user_id',$user_id);
+		$query=$this->db->get();
+		return $query->result();
+	}
+	function user_department($user_id){
+		$this->db->select('user_departments.user_department_id,user_department')->from('users')
+		->join('user_department_link','users.user_id=user_department_link.user_id')
+		->join('user_departments','user_department_link.user_department_id=user_departments.user_department_id')
+		->where('user_department_link.user_id',$user_id);
+		$query=$this->db->get();
+		return $query->result();
 	}
 	function get($type){
 		if($type=="facility"){
@@ -65,7 +89,25 @@ class Staff_model extends CI_Model{
 		$query=$this->db->get();
 		return $query->result();
 	}
-	function get_facilities(){
+	function get_user_function(){
+		$this->db->select("function_id,user_function")->from("user_functions");
+		$query=$this->db->get();
+		return $query->result();
+	}
+	function get_staff(){
+		$this->db->select("staff_id,CONCAT(IF(first_name!='',first_name,''),' ',IF(last_name!='',last_name,'')) staff_name",false)
+		->from("staff");
+		$query=$this->db->get();
+		return $query->result();
+	}
+	function get_facilities($divisions=0){
+		if(count($divisions)>0){
+			$division_list=array();
+			foreach($divisions as $d){
+				$division_list[]=$d->division_id;
+			}
+			$this->db->where_in('divisions.division_id',$division_list);
+		}
 		if($this->input->post('facility_id')){
 			$facility_id=$this->input->post('facility_id');
 			$this->db->where('facility_id',$facility_id);
@@ -140,21 +182,40 @@ class Staff_model extends CI_Model{
 		$query=$this->db->get();
 		return $query->result();
 	}
+	function get_targets($project_id){
 	
+		$year_start=date("Y-m-d",strtotime("April 1"));
+		$year_current=date("Y-m-d");
+		if($year_current>=$year_start){ $year=date("Y-m-d",strtotime($year_start)); $year_end=date("Y-m-d",strtotime("March 31 Next year")); }
+		else { $year=date("Y",strtotime("April 1 Last year")); $year_end=date("Y-m-d",strtotime("March 31")); }
+		$this->db->select("MONTH(projection_month) month,YEAR(projection_month) year, target_amount")->from("project_targets")->where('project_id',$project_id)->where('current',1)->where("(projection_month BETWEEN '$year_start' AND '$year_end')");
+		$query=$this->db->get();
+		return $query->result();
+	}
 	
-	function get_projects($district_id=-1,$facility_type=-1,$agency_id=-1,$grant=-1,$user_department=-1){
+	function get_projects($divisions=-1,$division_id=-1,$facility_type=-1,$agency_id=-1,$grant=-1,$user_department=-1){
 		if($this->input->post('project_id') || $this->input->post('selected_project')){
 			if($this->input->post('project_id')) $project_id=$this->input->post('project_id');
 			else if($this->input->post('selected_project')) $project_id=$this->input->post('selected_project');
 			$this->db->where('projects.project_id',$project_id);
 		}
-		if($district_id!=-1 || $facility_type!=-1){
-			if($district_id==0){
+		if($division_id!=-1 || $facility_type!=-1){
+			if($division_id==0){
 			$this->db->where('projects.facility_id',0);
 			}
 			else{
-				$this->db->where('districts.district_id',$district_id);
+				$this->db->where('divisions.division_id',$division_id);
 			}
+		}
+		else if($divisions!=-1 && count($divisions)>0){
+			$division_list=array();
+			foreach($divisions as $d){
+				$division_list[]=$d->division_id;
+			}
+			$this->db->where_in('divisions.division_id',$division_list);
+		}
+		if($this->input->post('division_id')){
+			$this->db->where('divisions.division_id',$this->input->post('division_id'));
 		}
 		if($this->input->post('district_id')){
 			$this->db->where('districts.district_id',$this->input->post('district_id'));
@@ -189,7 +250,7 @@ class Staff_model extends CI_Model{
 			$month="MONTH(CURDATE())";
 			$year="YEAR(CURDATE())";
 		}
-		$this->db->select("expense_upto_last_month,expense_current_month,expenses,
+		$this->db->select("expense_upto_last_month,expense_current_month,expenses,target_upto_last_month,target_current_month,targets,
 		projects.*,districts.*,divisions.*,grant_phase.*,facilities.*,facility_type,project_status.*,sanctions.*,status_types.*,work_stages.stage_id,work_stages.stage,work_stages.status_type_id as status_id,agency.*,user_departments.*");
 		$this->db->from("projects")
 		->join('agency','projects.agency_id=agency.agency_id','left')
@@ -206,14 +267,92 @@ class Staff_model extends CI_Model{
 		->join("(SELECT project_id,SUM(CASE WHEN (month(project_expenses.expense_date)<$month AND YEAR(project_expenses.expense_date)=$year) OR (YEAR(project_expenses.expense_date)<$year)  THEN expense_amount ELSE 0 END) expense_upto_last_month,
 		SUM(CASE WHEN month(project_expenses.expense_date)=$month AND YEAR(project_expenses.expense_date)=$year THEN expense_amount ELSE 0 END) expense_current_month,
 		SUM(CASE WHEN (month(project_expenses.expense_date)<=$month AND YEAR(project_expenses.expense_date)<=$year) OR (YEAR(project_expenses.expense_date)<$year) THEN expense_amount ELSE 0 END) expenses
-		FROM project_expenses GROUP BY project_id) table_expenses",'projects.project_id=table_expenses.project_id','left');
+		FROM project_expenses GROUP BY project_id) table_expenses",'projects.project_id=table_expenses.project_id','left')
+		->join("(SELECT project_id,SUM(CASE WHEN (month(project_targets.projection_month)<$month AND YEAR(project_targets.projection_month)=$year) OR (YEAR(projection_month)<$year)  THEN target_amount ELSE 0 END) target_upto_last_month,
+		SUM(CASE WHEN month(project_targets.projection_month)=$month AND YEAR(project_targets.projection_month)=$year THEN target_amount ELSE 0 END) target_current_month,
+		SUM(CASE WHEN (month(project_targets.projection_month)<=$month AND YEAR(project_targets.projection_month)<=$year) OR (YEAR(project_targets.projection_month)<$year) THEN target_amount ELSE 0 END) targets 
+		FROM project_targets WHERE current=1 GROUP BY project_id) table_targets",'projects.project_id=table_targets.project_id','left');
 		$this->db->group_by('projects.project_id')
-		->order_by('grant_phase_id,facility_type','ASC');
-		$this->db->where('current',1);
+		->order_by('tech_sanction_amount','DESC');
+		$this->db->where('project_status.current',1);
+		
+		if($this->input->post('filter') && $this->input->post('filter')!=""){
+			if($this->input->post('filter')=="TS0"){
+				$this->db->where('tech_sanction_amount',0);
+			}
+			if($this->input->post('filter')=="AGT0"){
+				$this->db->where('agreement_amount',0);
+			}
+			if($this->input->post('filter')=="EXP0"){
+				$this->db->where('expense_upto_last_month',0);
+			}
+		}
 		if($query=$this->db->get()){
 			return $query->result();
 		}
 		else{ return false;}
 	}
+	
+	function create_user(){
+		$data=array(
+		'username'=>$this->input->post('username'),
+		'password'=>md5($this->input->post('password')),
+		'staff_id'=>$this->input->post('staff')
+		);
+		$this->db->trans_start();
+		$this->db->insert('users',$data);
+		$user_id=$this->db->insert_id();
+		$user_function=$this->input->post('user_function');
+		$division=$this->input->post('division');
+		$user_department=$this->input->post('user_department');
+		$user_function_data=array();
+		$user_division_data=array();
+		$user_department_data=array();
+		if(count($user_function)>0){
+			foreach($user_function as $u){
+				$add=0;
+				$edit=0;
+				$view=0;
+				if($this->input->post($u)){
+					foreach($this->input->post($u) as $access){
+						if($access=="add") $add=1;
+						if($access=="edit") $edit=1;
+						if($access=="view") $view=1;
+					}
+					$user_function_data[]=array(
+						'user_id'=>$user_id,
+						'function_id'=>$u,
+						'add'=>$add,
+						'edit'=>$edit,
+						'view'=>$view
+					);
+				}
+			}
+			$this->db->insert_batch('user_function_link',$user_function_data);
+		}
+		if(count($division)>0){
+		foreach($division as $d){
+
+				$user_division_data[]=array(
+					'user_id'=>$user_id,
+					'division_id'=>$d
+				);
+		}
+			$this->db->insert_batch('user_division_link',$user_division_data);
+		}
+		if(!!$user_department){
+		foreach($user_department as $u){
+
+				$user_department_data[]=array(
+					'user_id'=>$user_id,
+					'user_department_id'=>$u
+				);
+		}
+		$this->db->insert_batch('user_department_link',$user_department_data);
+		}
+		$this->db->trans_complete();
+		if($this->db->trans_status()===TRUE) return true; else return false;
+	}
+			
 }
 ?>

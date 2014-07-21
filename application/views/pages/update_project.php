@@ -7,6 +7,7 @@
 		cursor:pointer;
 		color:blue;
 	}
+	.ui-datepicker{ z-index: 9990999 !important;}
 </style>
 <script type="text/javascript" src="<?php echo base_url();?>assets/js/zebra_datepicker.js"></script>
 <script type="text/javascript">
@@ -27,13 +28,31 @@ $(function(){
 		$("#stage>option:eq(0)").prop('selected',true).show().prop('disabled',true);
 		$("#stage ."+status_type_id+"").show().prop('disabled',false);
 	});
+	$('#formtabs a').click(function (e) {
+	  e.preventDefault()
+	  $(this).tab('show')
+	});
+
 });
-</script>	<div class="row">
+</script>
+	<?php echo form_open_multipart('projects/update',array('id'=>'update_form','role'=>'form')); ?>
+	<div class="row">
 		<div class="col-md-10">
+
 			<?php if(isset($msg)){ ?>
-			<h3><?php echo $msg;?></h3>
+			<div class="alert alert-info"><?php echo $msg;?></div>
 			<?php } ?>
-			<?php echo form_open_multipart('projects/update',array('id'=>'update_form','role'=>'form')); ?>
+			<ul class="nav nav-tabs" id="formtabs">
+			  <li class="active"><a href="#project" data-toggle="tab">Project</a></li>
+			  <li><a href="#projectstatus" data-toggle="tab">Status</a></li>
+			  <li><a href="#expenses" data-toggle="tab">Expenses</a></li>
+			  <li><a href="#targets" data-toggle="tab">Targets</a></li>
+			  <li><a href="#image" data-toggle="tab">Image</a></li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div class="tab-content">
+			<div class="tab-pane fade in active" id="project">
 			<?php
 			foreach($project as $p){
 			?>
@@ -43,13 +62,6 @@ $(function(){
 			<th colspan="2" class='text-center'><?php echo $p->project_name; ?></th>
 			</thead>
 			<tbody>
-			<tr><td colspan="2">			
-			<img src="<?php echo base_url();?>assets/images/project_images/project_<?php echo $p->project_id;?>_image.jpg" class="thumbnail col-md-6 col-md-offset-3"  alt="No Image found" />
-			
-			<input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" />
-			<input type="file" class="btn btn-primary" name="project_image" size="20" />
-			</td>
-			</tr>
 			<tr>
 				<td>Project ID</td>
 				<td><?php echo $p->project_id; ?>
@@ -70,7 +82,7 @@ $(function(){
 				<td>Division</td>
 				<td>
 					<select name="division" id="division" class="form-control">
-					<option value="">--SELECT--</option>
+					<option value="" disabled>--SELECT--</option>
 					<?php foreach($divisions as $division){
 						echo "<option value='$division->division_id'";
 						if($division->division_id==$p->division_id) echo " selected ";
@@ -84,7 +96,7 @@ $(function(){
 				<td>Facility</td>
 				<td>
 					<select name="facility" id="facility" class="form-control" >
-					<option value="">--SELECT--</option>
+					<option value="" disabled>--SELECT--</option>
 					<?php foreach($facilities as $facility){
 						echo "<option value='$facility->facility_id' name='$facility->division_id'";
 						if($facility->facility_id==$p->facility_id) echo " selected ";
@@ -202,11 +214,17 @@ $(function(){
 				</td>
 			</tr>
 			<tr>
-			<th><input class='btn btn-lg btn-default btn-block col-md-3' type="submit" name="update_project" form="update_form" value="Update Project" /></th>
+			<td colspan="2" align="center">
+				<input class='btn btn-lg btn-primary' type="submit" name="update_project" form="update_form" value="Update Project" />
+			</td>
 			</tr>
 		</tbody>
 		</table>
-		<table class="table table-bordered">
+		</div>
+		
+		
+		<div class="tab-pane fade" id="projectstatus">		
+			<table class="table table-bordered">
 			<tr>
 				<td>Current Status</td>
 				<td>
@@ -245,9 +263,11 @@ $(function(){
 				<td><input type="text" class="form-control date" placeholder="Probable Date of Completion" id="probable_date_of_completion" form="update_form" value="<?php echo date("d-M-y",strtotime($p->probable_date_of_completion)); ?>" name="probable_date_of_completion" /></td>
 			</tr>
 			<tr>
-			<th><input class='btn btn-lg btn-default btn-block' type="submit" name="update_status" value="Update Physical Status" /></th>
+			<td colspan="2" align="center"><input class='btn btn-lg btn-primary' type="submit" name="update_status" value="Update Physical Status" /></td>
 			</tr>
 		</table>
+		</div>
+		<div class="tab-pane fade" id="expenses">		
 		<table class="table table-bordered">
 			<tr>
 				<td>Add Expenditure</td>
@@ -259,9 +279,80 @@ $(function(){
 			</td>
 			</tr>
 			<tr>
-			<th><input class='btn btn-lg btn-default btn-block' type="submit" name="update_expenses" value="Update Expenditure" /></th>
+			<td colspan="2" align="center"><input class='btn btn-lg btn-primary' type="submit" name="update_expenses" value="Update Expenditure" /></td>
 			</tr>
 		</table>
+		</div>
+		
+		  <div class="tab-pane fade" id="targets">
+			<small>Please enter all amounts in Lakhs.</small>
+			<table class="table table-bordered">
+				<?php
+					$existing=array();
+					$existing['month']=array();
+					$existing['year']=array();
+					$existing['target_amount']=array();
+					foreach($targets as $target){
+						$existing['month'][]=$target->month;
+						$existing['year'][]=$target->year;
+						$existing['target_amount'][]=$target->target_amount;
+					}
+					$year_start=date("Y-m-d",strtotime("April 1"));
+					$year_current=date("Y-m-d");
+					if($year_current>=$year_start){ $year=date("Y",strtotime($year_start)); }
+					else $year=date("Y",strtotime("April 1 Last year"));
+					for($i=0;$i<12;$i++){
+						$j=($i+3)%12+1;
+						?>
+						<tr>
+							<td>
+								
+								<input type="text" value="<?php echo $j;?>" name="projection_month[]" class="sr-only" hidden />
+								<input type="text" value="<?php echo $year;?>" name="projection_year[]" class="sr-only" hidden />
+								<?php echo date('F', mktime(0, 0, 0, $j, 10));?> <?php echo $year; 
+								if($j==12){
+									$year++;
+								}
+							?>
+							</td>
+							<td>
+								<input type="text" placeholder="Lakhs of Rupees" name="estimate_amount[]" value="<?php if(count($existing['target_amount'])>0){ echo $existing['target_amount'][$i]/100000;}?>" class="form-control" />
+							</td>
+						</tr>
+						<?php		
+						}
+						?>
+					<tr>
+					<td colspan="2" align="center">
+						<input type="submit" class="btn btn-lg btn-primary" value="Update Targets" name="update_targets" />
+					</td>
+					</tr>
+					
+			</table>
+		  </div>
+		  <div class="tab-pane fade" id="image">
+		  <table class="table table-bordered">
+			<tr>
+			<td>			
+			<div>
+				<img src="<?php echo base_url();?>assets/images/project_images/project_<?php echo $p->project_id;?>_image.jpg" class="thumbnail col-md-6 col-md-offset-3"  alt="No Image found" />
+			</div>
+			</td>
+			</tr>
+			<tr>
+			<td>
+			<div class="col-md-4 col-md-offset-2">
+				<input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" />
+				<input type="file" class="btn btn-default" name="project_image" size="20" />
+			</div>
+			<div class="col-md-3 col-md-offset-1">
+			<input class='btn btn-lg btn-primary btn-block' type="submit" name="update_image" form="update_form" value="Update Image" />	
+			</div>
+			</td>
+			</tr>
+		  </table>
+		 </div>
+		</div>
 			<?php
 			}
 			?>
@@ -273,28 +364,17 @@ $(function(){
 	
 	<div class="row">
 	<div class="col-md-6">
-	<h3>Projects<?php if($this->input->post('district_id') && count($projects)>0) echo " in ".$projects[0]->district_name;?>. <small>Click on any one to view and update</small></h3>
+	<h3>Projects<?php if($this->input->post('division_id') && count($projects)>0) echo " in ".$projects[0]->division;?>. <small>Click on any one to view and update</small></h3>
 	</div>
  	<?php echo form_open('projects/update',array('id'=>'select_filters','role'=>'form','class'=>'form-custom'));?>
 	<div class="col-md-6">
 	<div class="form-group">
-	<select name="district_id" id="district" style="width:150px"  class="form-control">
-		<option value="">District</option>
+	<select name="division_id" id="division" style="width:150px"  class="form-control">
+		<option value="">Division</option>
 		<?php
-		for ($e = 0; $e < count($district); $e++)
-		{
-		  for ($ee = $e+1; $ee < count($district); $ee++)
-		  {
-			if ($district[$ee]->district_id==$district[$e]->district_id)
-			{
-			array_splice($district,$ee,1);
-			$ee--;
-			}
-		  }
-		}
-		foreach($district as $d){
+		foreach($divisions as $d){
 		
-			echo "<option value='$d->district_id'>$d->district_name</option>";
+			echo "<option value='$d->division_id'>$d->division</option>";
 		}
 		?>
 	</select>
@@ -332,10 +412,9 @@ $(function(){
 	}
 	else {
 	?>
-	<table class="table table-hover table-bordered">
+	<table class="table table-hover table-striped table-bordered tablesorter" id="table-1">
 	<thead><th>S.No</th><th>Project ID</th><th>Project Name</th><th>Facility</th><th>Grant</th><th>Status</th></thead>
 	<tbody>
-
 	<?php
 	$i=1;
 	foreach($projects as $project){

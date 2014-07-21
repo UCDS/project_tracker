@@ -5,14 +5,31 @@ class Masters extends CI_Controller {
 		parent::__construct();
 		$this->load->model('projects_model');
 		$this->load->model('masters_model');
+		$this->load->model('staff_model');
+		if($this->session->userdata('logged_in')){
+		$userdata=$this->session->userdata('logged_in');
+		$user_id=$userdata['user_id'];
+		$this->data['divisions']=$this->staff_model->user_division($user_id);
+		$this->data['user_departments']=$this->staff_model->user_department($user_id);
+		$this->data['functions']=$this->staff_model->user_function($user_id);
+		}
+		else redirect('home','refresh');
 	}
 	function add($type=""){
 	 	$this->load->helper('form');
 		$this->load->library('form_validation');
 		$user=$this->session->userdata('logged_in');
-		$data['user_id']=$user[0]['user_id'];
+		$this->data['user_id']=$user['user_id'];
 		if($type=="facility"){
-			$title="Add Facility";
+
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="Facilities" && $f->add==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
+		$title="Add Facility";
 			$config=array(
                array(
                      'field'   => 'facility_name',
@@ -20,10 +37,17 @@ class Masters extends CI_Controller {
                      'rules'   => 'required|trim|xss_clean'
                   )
 			);
-			$data['facility_types']=$this->masters_model->get_data("facility_types");
-			$data['divisions']=$this->masters_model->get_data("divisions");	
+			$this->data['facility_types']=$this->masters_model->get_data("facility_types");
+			$this->data['divisions']=$this->masters_model->get_data("divisions");	
 		}
 		else if($type=="facility_type"){
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="Facility Types" && $f->add==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
 			$title="Add Facility Type";
 			$config=array(
                array(
@@ -34,6 +58,13 @@ class Masters extends CI_Controller {
 			);
 		}
 		else if($type=="agency"){
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="Agencies" && $f->add==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
 			$title="Add Agency";
 			$config=array(
                array(
@@ -44,6 +75,13 @@ class Masters extends CI_Controller {
 			);
 		}
 		else if($type=="user_department"){
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="User Departments" && $f->add==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
 			$title="Add User Department";
 			$config=array(
                array(
@@ -54,6 +92,13 @@ class Masters extends CI_Controller {
 			);
 		}
 		else if($type=="division"){
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="Divisions" && $f->add==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
 			$title="Add Division";
 			$config=array(
                array(
@@ -62,9 +107,16 @@ class Masters extends CI_Controller {
                      'rules'   => 'required|trim|xss_clean'
                   )
 			);	
-			$data['district']=$this->masters_model->get_data("districts");
+			$this->data['district']=$this->masters_model->get_data("districts");
 		}
 		else if($type=="grant"){
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="Schemes" && $f->add==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
 			$title="Add Grant";
 			$config=array(
                array(
@@ -78,40 +130,30 @@ class Masters extends CI_Controller {
                      'rules'   => 'required|trim|xss_clean'
                )
 			);
-			$data['grant_sources']=$this->masters_model->get_data("grant_sources");
-		}
-		else if($type=="user"){
-			$title="Add User";
-			$config=array(
-               array(
-                     'field'   => 'user_name',
-                     'label'   => 'User Name',
-                     'rules'   => 'required|trim|xss_clean'
-                  )
-			);
+			$this->data['grant_sources']=$this->masters_model->get_data("grant_sources");
 		}
 			
 		else{
 			show_404();
 		}
 		$page="pages/add_".$type."_form";
-		$data['title']=$title;
-		$this->load->view('templates/header',$data);
+		$this->data['title']=$title;
+		$this->load->view('templates/header',$this->data);
 		$this->load->view('templates/left_nav');
 		
 		$this->form_validation->set_rules($config);
 		if ($this->form_validation->run() === FALSE)
 		{
-			$this->load->view($page,$data);
+			$this->load->view($page,$this->data);
 		}
 		else{
 				if($this->masters_model->insert_data($type)){
-					$data['msg']="Inserted Successfully";
-					$this->load->view($page,$data);
+					$this->data['msg']="Inserted Successfully";
+					$this->load->view($page,$this->data);
 				}
 				else{
-					$data['msg']="Failed";
-					$this->load->view($page,$data);
+					$this->data['msg']="Failed";
+					$this->load->view($page,$this->data);
 				}
 		}
 		$this->load->view('templates/footer');
@@ -120,8 +162,15 @@ class Masters extends CI_Controller {
 	 	$this->load->helper('form');
 		$this->load->library('form_validation');
 		$user=$this->session->userdata('logged_in');
-		$data['user_id']=$user[0]['user_id'];
+		$this->data['user_id']=$user['user_id'];
 		if($type=="facility"){
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="Facilities" && $f->edit==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
 			$title="Edit Facility";
 			$config=array(
                array(
@@ -130,10 +179,17 @@ class Masters extends CI_Controller {
                      'rules'   => 'trim|xss_clean'
                   )
 			);
-			$data['facility_types']=$this->masters_model->get_data("facility_types");
-			$data['divisions']=$this->masters_model->get_data("divisions");	
+			$this->data['facility_types']=$this->masters_model->get_data("facility_types");
+			$this->data['divisions']=$this->masters_model->get_data("divisions");	
 		}
 		else if($type=="agency"){
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="Agencies" && $f->edit==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
 			$title="Edit Agency";
 			$config=array(
                array(
@@ -144,6 +200,13 @@ class Masters extends CI_Controller {
 			);
 		}
 		else if($type=="user_department"){
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="User Departments" && $f->edit==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
 			$title="Edit User Department";
 			$config=array(
                array(
@@ -154,6 +217,13 @@ class Masters extends CI_Controller {
 			);
 		}
 		else if($type=="division"){
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="Divisions" && $f->edit==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
 			$title="Edit Division";
 			$config=array(
                array(
@@ -162,9 +232,16 @@ class Masters extends CI_Controller {
                      'rules'   => 'required|trim|xss_clean'
                   )
 			);	
-			$data['district']=$this->masters_model->get_data("districts");
+			$this->data['district']=$this->masters_model->get_data("districts");
 		}
 		else if($type=="grant"){
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="Schemes" && $f->edit==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
 			$title="Edit Grant";
 			$config=array(
                array(
@@ -173,52 +250,41 @@ class Masters extends CI_Controller {
                      'rules'   => 'required|trim|xss_clean'
                   )
 			);
-			$data['grant_sources']=$this->masters_model->get_data("grant_sources");
-		}
-		else if($type=="user"){
-			$title="Edit User";
-			$config=array(
-               array(
-                     'field'   => 'user_id',
-                     'label'   => 'User',
-                     'rules'   => 'required|trim|xss_clean'
-                  )
-			);
-		}
-			
+			$this->data['grant_sources']=$this->masters_model->get_data("grant_sources");
+		}			
 		else{
 			show_404();
 		}
 		$page="pages/edit_".$type."_form";
-		$data['title']=$title;
-		$this->load->view('templates/header',$data);
+		$this->data['title']=$title;
+		$this->load->view('templates/header',$this->data);
 		$this->load->view('templates/left_nav');
 		
 		$this->form_validation->set_rules($config);
 		if ($this->form_validation->run() === FALSE)
 		{
-			$this->load->view($page,$data);
+			$this->load->view($page,$this->data);
 		}
 		else{
 			if($this->input->post('update')){
 				if($this->masters_model->update_data($type)){
-					$data['msg']="Updated Successfully";
-					$this->load->view($page,$data);
+					$this->data['msg']="Updated Successfully";
+					$this->load->view($page,$this->data);
 				}
 				else{
-					$data['msg']="Failed";
-					$this->load->view($page,$data);
+					$this->data['msg']="Failed";
+					$this->load->view($page,$this->data);
 				}
 			}
 			else if($this->input->post('select')){
-				$data[$type]=$this->masters_model->get_data($type);
-				$data['mode']="select";
-				$this->load->view($page,$data);
+				$this->data[$type]=$this->masters_model->get_data($type);
+				$this->data['mode']="select";
+				$this->load->view($page,$this->data);
 			}
 			else if($this->input->post('search')){
-				$data['mode']="search";
-				$data[$type]=$this->masters_model->get_data($type);
-				$this->load->view($page,$data);
+				$this->data['mode']="search";
+				$this->data[$type]=$this->masters_model->get_data($type);
+				$this->load->view($page,$this->data);
 			}
 		}
 		$this->load->view('templates/footer');

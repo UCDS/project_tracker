@@ -46,21 +46,22 @@
 	</div>	
 	<table class="table-hover table-bordered table-striped col-md-10">
 	<thead>
-		<th>S.No</th><th>User Department</th>
+		<th>S.No</th>
+		<th>User Department</th>
 	</thead>
 	<tbody>
 	<?php 
 	$i=1;
 	foreach($user_department as $ud){ ?>
-	<?php echo form_open('masters/edit/user_department',array('id'=>'select_user_department_form_'.$ud->user_department_id,'role'=>'form')); ?>
-	<tr onclick="$('#select_user_department_form_<?php echo $ud->user_department_id;?>').submit();" >
-		<td><?php echo $i++; ?></td>
-		<td><?php echo $ud->user_department; ?>
-		<input type="hidden" value="<?php echo $ud->user_department_id; ?>" name="user_department_id" />
-		<input type="hidden" value="select" name="select" />
-		</td>
-	</tr>
-	</form>
+		<?php echo form_open('masters/edit/user_department',array('id'=>'select_user_department_form_'.$ud->user_department_id,'role'=>'form'));?>
+		<tr onclick="$('#select_user_department_form_<?php echo $ud->user_department_id;?>').submit();" >
+			<td><?php echo $i++; ?></td>
+			<td><?php echo $ud->user_department; ?>
+			<input type="hidden" value="<?php echo $ud->user_department_id; ?>" name="user_department_id" />
+			<input type="hidden" value="select" name="select" />
+			</td>
+		</tr>
+		</form>
 	<?php } ?>
 	</tbody>
 	</table>

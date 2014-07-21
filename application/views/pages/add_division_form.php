@@ -11,8 +11,8 @@ $(function(){
 	});
 });
 </script>
-		<div class="col-md-8 col-md-offset-2">
-				<center>	<h3><u>ADD DIVISION</u></h3></center><br>
+	<div class="col-md-8 col-md-offset-2">
+		<center><b><?php if(isset($msg)) echo $msg; ?></b><h3><u>ADD DIVISION</u></h3></center><br>
 	<?php echo form_open('masters/add/division',array('role'=>'form')); ?>
 
 		<div class="form-group">
@@ -33,17 +33,6 @@ $(function(){
 		</select>
 		</div>
 	</div>	
-	<div class="form-group">
-		<label for="state" class="col-md-4" >State</label>
-		<div  class="col-md-8">
-		<select name="state" id="state" class="form-control">
-		<option value="">--SELECT--</option>
-		<?php foreach($state as $state){
-			echo "<option value=$state->state</option>";
-		}
-		?>
-		</select>		
-	</div>
 	
 	</div> 
    	<div class="col-md-3 col-md-offset-4">

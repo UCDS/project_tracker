@@ -1,7 +1,7 @@
 	<div class="row">
 	<div class="col-md-12 ">
 	<div class="col-md-7">
-	<h3>District wise summary report <small>Click on any one to view </small></h3>
+	<h3>Division wise summary report <small>Click on any one to view </small></h3>
 	<small>All amounts displayed in crores of rupees.</small>
 	</div>
 	<div class="col-md-5 pull-right">
@@ -18,7 +18,7 @@
 	<table class="table table-hover table-striped table-bordered tablesorter" id="table-1">
 	<thead>
 		<tr>
-			<th colspan="13" style="text-align:center">
+			<th colspan="15" style="text-align:center">
 				<?php if($this->input->post('state')){
 							if($this->input->post('state')=="TS") echo "Telangana";
 							else if($this->input->post('state')=="AP") echo "Andhra Pradesh";
@@ -28,7 +28,7 @@
 			</th>
 		</tr>
 		<th>S.No</th>
-		<th>District Name</th>
+		<th>Division Name</th>
 		<th>AS</th>
 		<th>TS</th>
 		<th>Agt</th>
@@ -60,43 +60,43 @@
 	$expenses_current=0;
 	$targets_current=0;
 	$i=1;
-	foreach($districts as $district){
+	foreach($districts as $division){
 	?>
-	<?php echo form_open('reports/districts',array('id'=>'select_district_form_'.$district->district_id,'role'=>'form')); ?>
-	<tr onclick="$('#select_district_form_<?php echo $district->district_id;?>').submit();">
+	<?php echo form_open('reports/divisions',array('id'=>'select_division_form_'.$division->division_id,'role'=>'form')); ?>
+	<tr onclick="$('#select_division_form_<?php echo $division->division_id;?>').submit();">
 		<td><?php echo $i++; ?></td>
-		<td><?php echo $district->district_name; ?>
-		<input type='hidden' value="<?php if($district->district_id!=NULL) echo $district->district_id; else echo "0" ?>" name="district_id" />
+		<td><?php echo $division->division; ?>
+		<input type='hidden' value="<?php if($division->division_id!=NULL) echo $division->division_id; else echo "0" ?>" name="division_id" />
 		</td>
-		<td class="text-right"><?php echo number_format($district->admin_sanction_amount/10000000,2); ?></td>
-		<td class="text-right"><?php echo number_format($district->tech_sanction_amount/10000000,2); ?></td>
-		<td class="text-right"><?php echo number_format($district->agreement_amount/10000000,2); ?></td>
-		<td class="text-right"><?php echo number_format($district->expenses_last_year/10000000,2); ?></td>
-		<td class="text-right"><?php echo number_format($district->expenses_current_year/10000000,2); ?></td>
-		<td class="text-right"><?php echo number_format($district->targets_current_year/10000000,2); ?></td>
-		<td class="text-right"><?php echo number_format(($district->admin_sanction_amount-($district->expenses_current_year+$district->expenses_last_year))/10000000,2); ?></td>
-		<td class="text-right"><?php echo $district->total_projects; ?></td>
-		<td class="text-right"><?php echo $district->not_started; ?></td>
-		<td class="text-right"><?php echo $district->work_in_progress; ?></td>
-		<td class="text-right"><?php echo $district->work_completed; ?></td>
-		<td class="text-right"><?php echo $district->medical; ?></td>
-		<td class="text-right"><?php echo $district->non_medical; ?></td>
+		<td class="text-right"><?php echo number_format($division->admin_sanction_amount/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format($division->tech_sanction_amount/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format($division->agreement_amount/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format($division->expenses_last_year/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format($division->expenses_current_year/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format($division->targets_current_year/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format(($division->admin_sanction_amount-($division->expenses_current_year+$division->expenses_last_year))/10000000,2); ?></td>
+		<td class="text-right"><?php echo $division->total_projects; ?></td>
+		<td class="text-right"><?php echo $division->not_started; ?></td>
+		<td class="text-right"><?php echo $division->work_in_progress; ?></td>
+		<td class="text-right"><?php echo $division->work_completed; ?></td>
+		<td class="text-right"><?php echo $division->medical; ?></td>
+		<td class="text-right"><?php echo $division->non_medical; ?></td>
 	</tr>
 	</form>
 	<?php
-	$admin_sanction_amount+=$district->admin_sanction_amount;
-	$tech_sanction_amount+=$district->tech_sanction_amount;
-	$agreement_amount+=$district->agreement_amount;
-	$total_projects+=$district->total_projects;
-	$not_started+=$district->not_started;
-	$work_in_progress+=$district->work_in_progress;
-	$work_completed+=$district->work_completed;
-	$medical+=$district->medical;
-	$non_medical+=$district->non_medical;
-	$expenses_prev+=$district->expenses_last_year;
-	$expenses_current+=$district->expenses_current_year;
-	$targets_current+=$district->targets_current_year;
-	$expenses+=$district->expenses_last_year+$district->expenses_current_year;
+	$admin_sanction_amount+=$division->admin_sanction_amount;
+	$tech_sanction_amount+=$division->tech_sanction_amount;
+	$agreement_amount+=$division->agreement_amount;
+	$total_projects+=$division->total_projects;
+	$not_started+=$division->not_started;
+	$work_in_progress+=$division->work_in_progress;
+	$work_completed+=$division->work_completed;
+	$medical+=$division->medical;
+	$non_medical+=$division->non_medical;
+	$expenses_prev+=$division->expenses_last_year;
+	$expenses_current+=$division->expenses_current_year;
+	$targets_current+=$division->targets_current_year;
+	$expenses+=$division->expenses_last_year+$division->expenses_current_year;
 	}
 	?>
 	</tbody>
@@ -116,6 +116,6 @@
 		<th class="text-right"><?php echo $medical;?></th>
 		<th class="text-right"><?php echo $non_medical;?></th>
 	</tr>
-	</table>
+</table>
 	</div>
 	</div>

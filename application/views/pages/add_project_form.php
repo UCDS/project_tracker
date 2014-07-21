@@ -51,7 +51,7 @@ $(function(){
 		<label for="division" class="col-md-4" >Division</label>
 		<div  class="col-md-8">
 		<select name="division" id="division" class="form-control" required >
-		<option value="">--SELECT--</option>
+		<option value="" disabled>--SELECT--</option>
 		<?php foreach($divisions as $division){
 			echo "<option value='$division->division_id'>$division->division</option>";
 		}
@@ -63,7 +63,7 @@ $(function(){
 		<label for="facility" class="col-md-4" >Facility</label>
 		<div  class="col-md-8">
 		<select name="facility" id="facility" class="form-control" required>
-		<option value="">--SELECT--</option>
+		<option value="" disabled>--SELECT--</option>
 		<?php foreach($facilities as $facility){
 			echo "<option value='$facility->facility_id' name='$facility->division_id' hidden>$facility->facility_name</option>";
 		}

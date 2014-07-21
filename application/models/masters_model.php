@@ -4,7 +4,7 @@ class Masters_model extends CI_Model{
 		parent::__construct();
 	}
 	
-	function get_data($type){
+	function get_data($type,$division=-1){
 		if($type=="facility"){
 			if($this->input->post('facility_id')){
 				$facility_id=$this->input->post('facility_id');
@@ -37,6 +37,9 @@ class Masters_model extends CI_Model{
 			$this->db->select("facility_type_id,facility_type")->from("facility_types")->order_by('facility_type');
 		}
 		else if($type=="user_department"){
+			if($this->input->post('user_department_id')){
+				$this->db->where('user_department_id',$this->input->post('user_department_id'));
+			}
 			$this->db->select("user_department_id,user_department")->from("user_departments")->order_by('user_department');
 		}
 		else if($type=="grants"){
@@ -47,6 +50,14 @@ class Masters_model extends CI_Model{
 		}
 		else if($type=="agencies"){
 			$this->db->select("agency_id,agency_name")->from("agency")->order_by('agency_name');
+		}
+		else if($type=="staff_category"){
+			
+			$this->db->select("staff_category_id,staff_category")->from("staff_category");
+		}
+		else if($type=="staff_role"){
+			
+			$this->db->select("staff_role_id,staff_role")->from("staff_role");
 		}
 
 		$query=$this->db->get();
@@ -161,9 +172,8 @@ class Masters_model extends CI_Model{
 		else if($type=="division"){
 			$data = array(
 					  'district_id'=>$this->input->post('district'),
-					  'division_name'=>$this->input->post('division_name'),  
-					  'state'=>$this->input->post('state')
-					);
+					  'division'=>$this->input->post('division_name')
+			);
 			$table="divisions";
 		}
 		else if($type=="user"){
@@ -184,6 +194,35 @@ class Masters_model extends CI_Model{
               'pincode'=>$this->input->post('pincode')
 			);
 			$table="users";
+		}		elseif($type=="staff"){
+		$data = array(
+					  'first_name'=>$this->input->post('first_name'),
+					  'last_name'=>$this->input->post('last_name'),
+					  'gender'=>$this->input->post('gender'),
+					  'date_of_birth'=>$this->input->post('date_of_birth'),
+					  'staff_role_id'=>$this->input->post('staff_role'),
+					  'staff_category_id'=>$this->input->post('staff_category'),
+					  'designation'=>$this->input->post('designation'),
+					  'staff_type'=>$this->input->post('staff_type'),
+					  'email'=>$this->input->post('email'),
+					  'phone'=>$this->input->post('phone')
+				);
+
+		$table="staff";
+		}
+		elseif($type=="staff_role"){
+		$data = array(
+					  'staff_role'=>$this->input->post('staff_role')
+		);
+
+		$table="staff_role";
+		}
+		elseif($type=="staff_category"){
+		$data = array(
+					  'staff_category'=>$this->input->post('staff_category')
+		);
+
+		$table="staff_category";
 		}
 		$this->db->trans_start();
 			$this->db->insert($table,$data);

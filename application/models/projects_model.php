@@ -161,6 +161,31 @@ class Projects_model extends CI_Model{
 		}
 		else return false;
 	}
+	
+	function update_targets(){
+		$months=$this->input->post('projection_month');
+		$years=$this->input->post('projection_year');
+		$estimates=$this->input->post('estimate_amount');
+		$date=date("Y-m-d");
+		$project_id=$this->input->post('selected_project');
+		$this->db->where('project_id',$project_id)->update('project_targets',array('current'=>0));
+		$data=array();
+		for($i=0;$i<12;$i++){
+			$data[]=array(
+			'project_id'=>$project_id,
+			'projection_month'=>date("Y-m-d",mktime(0,0,0,$months[$i],1,$years[$i],-1)),
+			'target_amount'=>$estimates[$i]*100000,
+			'current'=>1,
+			'datetime'=>$date
+			);
+		}
+		$this->db->trans_start();
+		if($this->db->insert_batch('project_targets',$data)){
+			$this->db->trans_complete();
+			return true;
+		}
+		else return false;
+	}
 		
 	/* Ajith's code */
 	
