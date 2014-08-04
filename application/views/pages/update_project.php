@@ -63,7 +63,10 @@ $(function(){
 			</thead>
 			<tbody>
 			<tr>
-				<td>Project ID</td>
+				<td>
+					<?php echo form_open('projects/update',array('id'=>'update_form','role'=>'form')); ?>
+					Project ID
+				</td>
 				<td><?php echo $p->project_id; ?>
 				</td>
 			</tr>
@@ -215,7 +218,8 @@ $(function(){
 			</tr>
 			<tr>
 			<td colspan="2" align="center">
-				<input class='btn btn-lg btn-primary' type="submit" name="update_project" form="update_form" value="Update Project" />
+				<input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" />
+				<input class='btn btn-lg btn-primary' type="submit" name="update_project" form="update_form" value="Update Project" /></form>
 			</td>
 			</tr>
 		</tbody>
@@ -228,6 +232,7 @@ $(function(){
 			<tr>
 				<td>Current Status</td>
 				<td>
+					<?php echo form_open('projects/update',array('id'=>'update_form','role'=>'form')); ?>
 					<select name="status" id="status" class="form-control">
 					<option value="" class="default" selected disabled >--SELECT--</option>
 					<?php foreach($status_types as $status){
@@ -260,17 +265,26 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Probable completion date</td>
-				<td><input type="text" class="form-control date" placeholder="Probable Date of Completion" id="probable_date_of_completion" form="update_form" value="<?php echo date("d-M-y",strtotime($p->probable_date_of_completion)); ?>" name="probable_date_of_completion" /></td>
+				<td>
+					<input type="text" class="form-control date" placeholder="Probable Date of Completion" id="probable_date_of_completion" form="update_form" value="<?php echo date("d-M-y",strtotime($p->probable_date_of_completion)); ?>" name="probable_date_of_completion" />
+				</td>
 			</tr>
 			<tr>
-			<td colspan="2" align="center"><input class='btn btn-lg btn-primary' type="submit" name="update_status" value="Update Physical Status" /></td>
+			<td colspan="2" align="center">
+					<input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" />
+					<input class='btn btn-lg btn-primary' type="submit" name="update_status" value="Update Physical Status" />
+				</form>
+			</td>
 			</tr>
 		</table>
 		</div>
 		<div class="tab-pane fade" id="expenses">		
 		<table class="table table-bordered">
 			<tr>
-				<td>Add Expenditure</td>
+				<td>					
+				<?php echo form_open('projects/update',array('id'=>'update_form','role'=>'form')); ?>
+				Add Expenditure
+				</td>
 				<td class='text-center'>
 				<div class='col-md-12'>
 				<input type="text" placeholder="Expenditure" class="form-control" name='expenditure' />
@@ -279,13 +293,18 @@ $(function(){
 			</td>
 			</tr>
 			<tr>
-			<td colspan="2" align="center"><input class='btn btn-lg btn-primary' type="submit" name="update_expenses" value="Update Expenditure" /></td>
+			<td colspan="2" align="center">				
+				<input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" />
+				<input class='btn btn-lg btn-primary' type="submit" name="update_expenses" value="Update Expenditure" />
+				</form>
+			</td>
 			</tr>
 		</table>
 		</div>
 		
 		  <div class="tab-pane fade" id="targets">
 			<small>Please enter all amounts in Lakhs.</small>
+			<?php echo form_open('projects/update',array('id'=>'update_form','role'=>'form')); ?>
 			<table class="table table-bordered">
 				<?php
 					$existing=array();
@@ -324,7 +343,9 @@ $(function(){
 						?>
 					<tr>
 					<td colspan="2" align="center">
+						<input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" />
 						<input type="submit" class="btn btn-lg btn-primary" value="Update Targets" name="update_targets" />
+						</form>
 					</td>
 					</tr>
 					
@@ -333,21 +354,47 @@ $(function(){
 		  <div class="tab-pane fade" id="image">
 		  <table class="table table-bordered">
 			<tr>
-			<td>			
-			<div>
-				<img src="<?php echo base_url();?>assets/images/project_images/project_<?php echo $p->project_id;?>_image.jpg" class="thumbnail col-md-6 col-md-offset-3"  alt="No Image found" />
-			</div>
+			<td>		
+				<?php echo form_open_multipart('projects/update',array('id'=>'update_image_form','role'=>'form')); ?>			
+			
+				<div id="myCarousel" class="carousel slide">
+				<ol class="carousel-indicators">
+				<?php $image_count=0; foreach($images as $image){ ?>
+				<li data-target="#myCarousel" data-slide-to="<?php echo $image_count;?>" <?php if($image_count==0) echo 'class="active"'; $image_count++;?> ></li>
+				<?php } ?>
+				</ol>
+				<!-- Carousel items -->
+				<div class="carousel-inner">
+				<?php $image_count=1; foreach($images as $image){ ?>
+				<div class="<?php if($image_count==1) echo "active"; $image_count++;?> item">
+					<img src="<?php echo base_url();?>assets/images/project_images/<?php echo $image->image_name;?>" class="col-md-12"  alt="No Image found" />
+					<div class="row">
+					<div class="carousel-caption">
+						<h4><?php echo $image->title;?></h4>
+						<input type="hidden" class="sr-only" name="remove_image_name" value="<?php echo $image->image_name;?>" />
+						<button class="btn btn-lg btn-danger" type="submit" name="remove_image" value="<?php echo $image->image_id;?>" >Remove</button>
+					</div>
+					</div>
+				</div>
+				<?php } ?>
+				</div>
+				<!-- Carousel nav -->
+				<a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+				<a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+				</div>
 			</td>
 			</tr>
 			<tr>
 			<td>
 			<div class="col-md-4 col-md-offset-2">
+				<input type="text" placeholder="Tell something about this photo." name="image_title" style="width:120%" maxlength="100" class="form-control" />
 				<input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" />
 				<input type="file" class="btn btn-default" name="project_image" size="20" />
 			</div>
 			<div class="col-md-3 col-md-offset-1">
-			<input class='btn btn-lg btn-primary btn-block' type="submit" name="update_image" form="update_form" value="Update Image" />	
+			<input class='btn btn-lg btn-primary btn-block' type="submit" name="update_image" form="update_image_form" value="Update Image" />	
 			</div>
+			</form>
 			</td>
 			</tr>
 		  </table>
@@ -356,7 +403,6 @@ $(function(){
 			<?php
 			}
 			?>
-			</form>		
 		</div>
 	</div>
 	<?php } 
@@ -419,18 +465,21 @@ $(function(){
 	$i=1;
 	foreach($projects as $project){
 	?>
-	<?php echo form_open('projects/update',array('id'=>'select_project_form_'.$project->project_id,'role'=>'form')); ?>
 	<tr onclick="$('#select_project_form_<?php echo $project->project_id;?>').submit();">
-		<td><?php echo $i++; ?>
+		<td>
+			<?php echo form_open('projects/update',array('id'=>'select_project_form_'.$project->project_id,'role'=>'form')); ?>
+			<?php echo $i++; ?>
+		</td>
 		<td><?php echo $project->project_id; ?>
 		<input type='hidden' value="<?php echo $project->project_id; ?>" name="project_id" />
 		</td>
 		<td><?php echo $project->project_name; ?></td>
 		<td><?php echo $project->facility_name; ?></td>
 		<td><?php echo $project->phase_name; ?></td>
-		<td><?php echo $project->status_type; ?></td>
+		<td><?php echo $project->status_type; ?>
+			</form>
+		</td>
 	</tr>
-	</form>
 	<?php
 	}
 	?>

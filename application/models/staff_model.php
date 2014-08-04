@@ -193,7 +193,17 @@ class Staff_model extends CI_Model{
 		return $query->result();
 	}
 	
-	function get_projects($divisions=-1,$division_id=-1,$facility_type=-1,$agency_id=-1,$grant=-1,$user_department=-1){
+	function get_images($project_id){
+		$this->db->select('*')->from('project_images')->where('project_id',$project_id)->order_by('image_id','desc')->limit(4);
+		$query=$this->db->get();
+		return $query->result();
+	}
+	
+	function get_projects($user_departments=0,$divisions=-1,$division_id=-1,$facility_type=-1,$agency_id=-1,$grant=-1,$user_department=-1){
+		$year_start=date("Y-m-d",strtotime("April 1"));
+		$year_current=date("Y-m-d");
+		if($year_current>=$year_start){ $year_start=date("Y-m-d",strtotime($year_start)); $year_end=date("Y-m-d",strtotime("March 31 Next year")); }
+		else { $year_start=date("Y-m-d",strtotime("April 1 Last year")); $year_end=date("Y-m-d",strtotime("March 31")); }
 		if($this->input->post('project_id') || $this->input->post('selected_project')){
 			if($this->input->post('project_id')) $project_id=$this->input->post('project_id');
 			else if($this->input->post('selected_project')) $project_id=$this->input->post('selected_project');
@@ -206,13 +216,6 @@ class Staff_model extends CI_Model{
 			else{
 				$this->db->where('divisions.division_id',$division_id);
 			}
-		}
-		else if($divisions!=-1 && count($divisions)>0){
-			$division_list=array();
-			foreach($divisions as $d){
-				$division_list[]=$d->division_id;
-			}
-			$this->db->where_in('divisions.division_id',$division_list);
 		}
 		if($this->input->post('division_id')){
 			$this->db->where('divisions.division_id',$this->input->post('division_id'));
@@ -242,6 +245,30 @@ class Staff_model extends CI_Model{
 		if($grant!=-1){
 				$this->db->where('projects.grant_phase_id',0);
 		}
+		if($this->input->post('state')){
+			$this->db->where('state',$this->input->post('state'));
+		}
+		if($user_departments!=0 && $user_departments!='0' && count($user_departments)>0){
+			$ud_id=array();
+			foreach($user_departments as $ud){
+				$ud_id[] = $ud->user_department_id;
+			}
+			$this->db->where_in('projects.user_department_id',$ud_id);
+			if($divisions!=-1 && count($divisions)>0){
+			$division_list=array();
+			foreach($divisions as $d){
+				$division_list[]=$d->division_id;
+			}
+			$this->db->where_in('divisions.division_id',$division_list);
+			}
+		}
+		else if($divisions!=-1 && count($divisions)>0){
+			$division_list=array();
+			foreach($divisions as $d){
+				$division_list[]=$d->division_id;
+			}
+			$this->db->where_in('divisions.division_id',$division_list);
+		}
 		if($this->input->post('month')){
 			$month=$this->input->post('month');
 			$year=$this->input->post('year');
@@ -250,7 +277,7 @@ class Staff_model extends CI_Model{
 			$month="MONTH(CURDATE())";
 			$year="YEAR(CURDATE())";
 		}
-		$this->db->select("expense_upto_last_month,expense_current_month,expenses,target_upto_last_month,target_current_month,targets,
+		$this->db->select("expense_upto_last_year,expense_upto_last_month,expense_current_month,expenses,target_upto_last_month,target_current_month,targets,
 		projects.*,districts.*,divisions.*,grant_phase.*,facilities.*,facility_type,project_status.*,sanctions.*,status_types.*,work_stages.stage_id,work_stages.stage,work_stages.status_type_id as status_id,agency.*,user_departments.*");
 		$this->db->from("projects")
 		->join('agency','projects.agency_id=agency.agency_id','left')
@@ -264,13 +291,15 @@ class Staff_model extends CI_Model{
 		->join('districts','divisions.district_id=districts.district_id','left')
 		->join('grant_phase','projects.grant_phase_id=grant_phase.phase_id','left')
 		->join('user_departments','projects.user_department_id=user_departments.user_department_id','left')
-		->join("(SELECT project_id,SUM(CASE WHEN (month(project_expenses.expense_date)<$month AND YEAR(project_expenses.expense_date)=$year) OR (YEAR(project_expenses.expense_date)<$year)  THEN expense_amount ELSE 0 END) expense_upto_last_month,
+		->join("(SELECT project_id,
+		SUM(CASE WHEN project_expenses.expense_date<'$year_start'  THEN expense_amount ELSE 0 END) expense_upto_last_year,
+		SUM(CASE WHEN ((month(project_expenses.expense_date)<$month AND YEAR(project_expenses.expense_date)=$year) OR (YEAR(project_expenses.expense_date)<$year)) AND expense_date>='$year_start'  THEN expense_amount ELSE 0 END) expense_upto_last_month,
 		SUM(CASE WHEN month(project_expenses.expense_date)=$month AND YEAR(project_expenses.expense_date)=$year THEN expense_amount ELSE 0 END) expense_current_month,
 		SUM(CASE WHEN (month(project_expenses.expense_date)<=$month AND YEAR(project_expenses.expense_date)<=$year) OR (YEAR(project_expenses.expense_date)<$year) THEN expense_amount ELSE 0 END) expenses
 		FROM project_expenses GROUP BY project_id) table_expenses",'projects.project_id=table_expenses.project_id','left')
 		->join("(SELECT project_id,SUM(CASE WHEN (month(project_targets.projection_month)<$month AND YEAR(project_targets.projection_month)=$year) OR (YEAR(projection_month)<$year)  THEN target_amount ELSE 0 END) target_upto_last_month,
 		SUM(CASE WHEN month(project_targets.projection_month)=$month AND YEAR(project_targets.projection_month)=$year THEN target_amount ELSE 0 END) target_current_month,
-		SUM(CASE WHEN (month(project_targets.projection_month)<=$month AND YEAR(project_targets.projection_month)<=$year) OR (YEAR(project_targets.projection_month)<$year) THEN target_amount ELSE 0 END) targets 
+		SUM(CASE WHEN projection_month >= '$year_start' AND projection_month<='$year_end' THEN target_amount ELSE 0 END) targets 
 		FROM project_targets WHERE current=1 GROUP BY project_id) table_targets",'projects.project_id=table_targets.project_id','left');
 		$this->db->group_by('projects.project_id')
 		->order_by('tech_sanction_amount','DESC');

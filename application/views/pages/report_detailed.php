@@ -8,7 +8,7 @@
 			case "user_departments" : $heading = "Projects in ".$projects[0]->user_department; break;
 			default : $heading=""; break;
 		}
-		$admin_sanction=0;$tech_sanction=0;$expenditure_previous=0;$target_previous=0;$expenditure_current=0;$target_current=0;$expenditure_cumilative=0;$targets_total=0;$agreement_amount=0;$balance=0;
+		$admin_sanction=0;$tech_sanction=0;$expenditure_previous_year=0;$expenditure_previous=0;$target_previous=0;$expenditure_current=0;$target_current=0;$expenditure_cumilative=0;$targets_total=0;$agreement_amount=0;$balance=0;
 	?>
 	<div class="row">
 	<div class="col-md-10">
@@ -18,7 +18,25 @@
 	</div>
 	<div class="col-md-5">
  	<?php echo form_open('reports/'.$report_type,array('id'=>'select_month','role'=>'form','class'=>'form-custom'));?>
-	<input type='hidden' value="<?php echo $projects[0]->division_id; ?>" name="division_id" />
+	<?php 
+		if($report_type=="grants"){ ?>
+		<input type='hidden' value="<?php echo $projects[0]->grant_phase_id; ?>" name="grant" />
+	<?php }
+		else if($report_type == "divisions"){ ?>
+			<input type='hidden' value="<?php echo $projects[0]->division_id; ?>" name="division_id" />
+		<?php } 	
+		else if($report_type == "districts"){ ?>
+			<input type='hidden' value="<?php echo $projects[0]->district_id; ?>" name="district_id" />
+		<?php } 	
+		else if($report_type == "user_departments"){ ?>
+			<input type='hidden' value="<?php echo $projects[0]->user_department_id; ?>" name="user_department" />
+		<?php } 	
+		else if($report_type == "facility_types"){ ?>
+			<input type='hidden' value="<?php echo $projects[0]->facility_type_id; ?>" name="facility_type" />
+		<?php } 	
+		else if($report_type == "agencies"){ ?>
+			<input type='hidden' value="<?php echo $projects[0]->agency_id; ?>" name="agency" />
+		<?php } 	?>
 	<select class="form-control" style="width:100px" name="month" id="month">
 	<option selected disabled>Month</option>
 	<?php 
@@ -67,27 +85,30 @@
 	<th>S.No</th>
 	<th>Project ID</th>
 	<th>Project Name</th>
-	<th>Facility</th>
+	<th>Facility Name</th>
+	<th>Scheme</th>
 	<th>AS</th>
 	<th>TS</th>
 	<th>Agt</th>
-	<th>Exp. upto <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
+	<th>Cum. Exp. prev. years</th>
+	<th>Exp. DY upto <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
 	<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month'),  0, 0)).", ".$this->input->post('year');?>
 	<?php } else { echo date("M, Y",strtotime("last month"));} ?>
 	</small></th>
-	<th>Target upto <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
+	<th>Target DY upto <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
 	<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month'),  0, 0)).", ".$this->input->post('year');?>
 	<?php } else { echo date("M, Y",strtotime("last month"));} ?>
 	</small></th>
-	<th>Exp. during <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
+	<th>%Ach During year</th>
+	<th>Exp. DM <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
 	<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month')+1,  0, 0)).", ".$this->input->post('year');?></small>
 	<?php } else{ echo date("M, Y"); } ?></th>
-	<th>Target during <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
+	<th>Target DM <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
 	<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month')+1,  0, 0)).", ".$this->input->post('year');?></small>
 	<?php } else{ echo date("M, Y"); } ?></th>
 	<th>Cum. Exp.</th>
-	<th>Cum. Target</th>
-	<th>Exp %</th>
+	<th>Total Target for the year</th>
+	<th>Exp % over TS</th>
 	<th>Balance</th>
 	<th>Status</th>
 	<th>Stage <hr />Remarks</th>
@@ -109,21 +130,26 @@
 	}
 	
 	?>
-	<?php echo form_open('reports/projects',array('id'=>'select_project_form_'.$project->project_id,'role'=>'form')); ?>
 	
 	<tr style="<?php echo $color; ?>" onclick="$('#select_project_form_<?php echo $project->project_id;?>').submit();">
-		<td><?php echo $i++; ?></td>
+		<td>
+			<?php echo form_open('reports/projects',array('id'=>'select_project_form_'.$project->project_id,'role'=>'form')); ?>
+			<?php echo $i++; ?>
+		</td>
 		<td><?php echo $project->project_id; ?></td>
 		<td><?php echo $project->project_name; ?>
-		<input type='hidden' value="<?php echo $project->project_id; ?>" name="project_id" />
-	</form>
+		<input type='hidden' value="<?php echo $project->project_id; ?>" form="select_project_form_<?php echo $project->project_id;?>" name="project_id" />
+		</form>
 		</td>
 		<td><?php echo $project->facility_name; ?></td>
+		<td><?php echo $project->phase_name; ?></td>
 		<td class="text-right"><?php echo number_format($project->admin_sanction_amount/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->tech_sanction_amount/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->agreement_amount/100000,2); ?></td>
+		<td class="text-right"><?php echo number_format($project->expense_upto_last_year/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expense_upto_last_month/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->target_upto_last_month/100000,2); ?></td>
+		<td class="text-right"><?php echo number_format(($project->expense_upto_last_month/$project->target_upto_last_month)*100,1); ?>%</td>
 		<td class="text-right"><?php echo number_format($project->expense_current_month/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->target_current_month/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expenses/100000,2); ?></td>
@@ -141,6 +167,7 @@
 		$admin_sanction+=$project->admin_sanction_amount;
 		$tech_sanction+=$project->tech_sanction_amount;
 		$agreement_amount+=$project->agreement_amount;
+		$expenditure_previous_year+=$project->expense_upto_last_year;
 		$expenditure_previous+=$project->expense_upto_last_month;
 		$target_previous+=$project->target_upto_last_month;
 		$expenditure_current+=$project->expense_current_month;
@@ -151,12 +178,14 @@
 	?>
 	</tbody>
 	<tr>
-		<th colspan="4">Total</th>
+		<th colspan="5">Total</th>
 		<th class="text-right"><?php echo number_format($admin_sanction/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($tech_sanction/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($agreement_amount/100000,2);?></th>
+		<th class="text-right"><?php echo number_format($expenditure_previous_year/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($expenditure_previous/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($target_previous/100000,2);?></th>
+		<th class="text-right"><?php echo number_format(($expenditure_previous/$target_previous)*100,1);?>%</th>
 		<th class="text-right"><?php echo number_format($expenditure_current/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($target_current/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($expenditure_cumilative/100000,2);?></th>

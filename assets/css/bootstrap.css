@@ -5301,6 +5301,7 @@ button.close {
 }
 .carousel {
   position: relative;
+  height:400px !important;
 }
 .carousel-inner {
   position: relative;
@@ -5318,6 +5319,7 @@ button.close {
   display: block;
   max-width: 100%;
   height: auto;
+  max-height:400px;
   line-height: 1;
 }
 .carousel-inner > .active,

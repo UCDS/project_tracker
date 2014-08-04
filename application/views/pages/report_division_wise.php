@@ -5,7 +5,7 @@
 	<small>All amounts displayed in crores of rupees.</small>
 	</div>
 	<div class="col-md-5 pull-right">
-		<?php echo form_open('reports/districts',array('class'=>'form-custom')); ?>
+		<?php echo form_open('reports/divisions',array('class'=>'form-custom')); ?>
 		Select State
 		<select name="state" class="form-control">
 			<option value="">All</option>
@@ -32,9 +32,11 @@
 		<th>AS</th>
 		<th>TS</th>
 		<th>Agt</th>
-		<th>Cum. Exp prev.</th>
-		<th>Cum. Exp current</th>
-		<th>Cum. Targets current</th>
+		<th>Cum. Exp prev. years</th>
+		<th>Exp during year</th>
+		<th>Targets during year</th>
+		<th>%Ach during year</th>
+		<th>Cum. Exp</th>
 		<th>Balance</th>
 		<th>Total Works</th>
 		<th>Not Started</th>
@@ -62,10 +64,15 @@
 	$i=1;
 	foreach($districts as $division){
 	?>
-	<?php echo form_open('reports/divisions',array('id'=>'select_division_form_'.$division->division_id,'role'=>'form')); ?>
 	<tr onclick="$('#select_division_form_<?php echo $division->division_id;?>').submit();">
-		<td><?php echo $i++; ?></td>
+		<td>	
+			<?php echo form_open('reports/divisions',array('id'=>'select_division_form_'.$division->division_id,'role'=>'form')); ?>
+			<?php echo $i++; ?>
+		</td>
 		<td><?php echo $division->division; ?>
+		<?php if($this->input->post('state')) { ?>
+		<input type='hidden' value="<?php echo $this->input->post('state'); ?>" name="state" />
+		<?php } ?>
 		<input type='hidden' value="<?php if($division->division_id!=NULL) echo $division->division_id; else echo "0" ?>" name="division_id" />
 		</td>
 		<td class="text-right"><?php echo number_format($division->admin_sanction_amount/10000000,2); ?></td>
@@ -74,15 +81,17 @@
 		<td class="text-right"><?php echo number_format($division->expenses_last_year/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($division->expenses_current_year/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($division->targets_current_year/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format(($division->expenses_current_year/$division->targets_current_year)*100,2); ?>%</td>
+		<td class="text-right"><?php echo number_format(($division->expenses_current_year+$division->expenses_last_year)/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format(($division->admin_sanction_amount-($division->expenses_current_year+$division->expenses_last_year))/10000000,2); ?></td>
 		<td class="text-right"><?php echo $division->total_projects; ?></td>
 		<td class="text-right"><?php echo $division->not_started; ?></td>
 		<td class="text-right"><?php echo $division->work_in_progress; ?></td>
 		<td class="text-right"><?php echo $division->work_completed; ?></td>
 		<td class="text-right"><?php echo $division->medical; ?></td>
-		<td class="text-right"><?php echo $division->non_medical; ?></td>
+		<td class="text-right"><?php echo $division->non_medical; ?>
+	</form></td>
 	</tr>
-	</form>
 	<?php
 	$admin_sanction_amount+=$division->admin_sanction_amount;
 	$tech_sanction_amount+=$division->tech_sanction_amount;
@@ -108,6 +117,8 @@
 		<th class="text-right"><?php echo number_format($expenses_prev/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($expenses_current/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($targets_current/10000000,2);?></th>
+		<th class="text-right"><?php echo number_format(($expenses_current/$targets_current)*100,2);?></th>
+		<th class="text-right"><?php echo number_format($expenses/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format(($admin_sanction_amount-$expenses)/10000000,2);?></th>
 		<th class="text-right"><?php echo $total_projects;?></th>
 		<th class="text-right"><?php echo $not_started;?></th>

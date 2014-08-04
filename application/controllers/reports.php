@@ -18,7 +18,7 @@ class Reports extends CI_Controller {
 		if($this->session->userdata('logged_in')){
 		$this->data['userdata']=$this->session->userdata('logged_in');
 		$this->data['title']="Reports";
-		$this->data['district_summary']=$this->reports_model->get_summary_districts();
+		$this->data['district_summary']=$this->reports_model->get_summary_districts($this->data['user_departments'],$this->data['divisions']);
 		$this->load->view('templates/header',$this->data);
 		$this->load->view('templates/left_nav');
 		$this->load->view('pages/reports');
@@ -45,7 +45,7 @@ class Reports extends CI_Controller {
 		$this->load->view('templates/left_nav');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
-		$this->data['districts']=$this->reports_model->get_summary_districts();
+		$this->data['districts']=$this->reports_model->get_summary_districts($this->data['user_departments'],$this->data['divisions']);
 
 		$this->form_validation->set_rules('district_id', 'Distrct',
 		'trim|required|xss_clean');
@@ -56,22 +56,21 @@ class Reports extends CI_Controller {
 		else{
 
 			if($this->input->post('month')){
-				$this->data['projects']=$this->staff_model->get_projects($this->input->post('district_id'));
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->input->post('district_id'));
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('district_id')){
-				$this->data['projects']=$this->staff_model->get_projects();
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('project_id')){
-				$this->data['project']=$this->staff_model->get_projects();
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_project_detailed',$this->data);
 			}
 			else{
-				$this->data['projects']=$this->staff_model->get_projects(-1,0,-1,-1,-1);
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions'],0,-1,-1,-1);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
-
 		}
 		$this->load->view('templates/footer');
 		}
@@ -96,7 +95,7 @@ class Reports extends CI_Controller {
 		$this->load->view('templates/left_nav');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
-		$this->data['districts']=$this->reports_model->get_summary_divisions();
+		$this->data['districts']=$this->reports_model->get_summary_divisions($this->data['user_departments'],$this->data['divisions']);
 
 		$this->form_validation->set_rules('division_id', 'Division',
 		'trim|required|xss_clean');
@@ -107,19 +106,19 @@ class Reports extends CI_Controller {
 		else{
 
 			if($this->input->post('month')){
-				$this->data['projects']=$this->staff_model->get_projects(-1,$this->input->post('division_id'));
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions'],$this->input->post('division_id'));
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('division_id')){
-				$this->data['projects']=$this->staff_model->get_projects();
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('project_id')){
-				$this->data['project']=$this->staff_model->get_projects();
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_project_detailed',$this->data);
 			}
 			else{
-				$this->data['projects']=$this->staff_model->get_projects(-1,0,-1,-1,-1);
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions'],0,-1,-1,-1);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 
@@ -140,7 +139,7 @@ class Reports extends CI_Controller {
 		$this->load->view('templates/left_nav');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
-		$this->data['facility_types']=$this->reports_model->get_summary_facility_type();
+		$this->data['facility_types']=$this->reports_model->get_summary_facility_type($this->data['user_departments'],$this->data['divisions']);
 		$this->data['district']=$this->staff_model->get_districts();
 
 		$this->form_validation->set_rules('facility_type', 'facility type',
@@ -152,19 +151,19 @@ class Reports extends CI_Controller {
 		else{
 
 			if($this->input->post('month') && $this->input->post('year')){
-				$this->data['projects']=$this->staff_model->get_projects();
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('facility_type') || $facility_type!=0 || $this->input->post('district_id') ){
-				$this->data['projects']=$this->staff_model->get_projects();
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('project_id')){
-				$this->data['project']=$this->staff_model->get_projects();
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_project_detailed',$this->data);
 			}
 			else{
-				$this->data['projects']=$this->staff_model->get_projects(-1,-1,0,-1,-1);
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions'],-1,0,-1,-1);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 		}
@@ -178,13 +177,13 @@ class Reports extends CI_Controller {
 	{
 		if($this->session->userdata('logged_in')){
 		$this->data['userdata']=$this->session->userdata('logged_in');
-		$this->data['title']="Grant wise Summary Report";
+		$this->data['title']="Scheme wise Summary Report";
 		$this->data['report_type']="grants";
 		$this->load->view('templates/header',$this->data);
 		$this->load->view('templates/left_nav');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
-		$this->data['grants']=$this->reports_model->get_summary_grant();
+		$this->data['grants']=$this->reports_model->get_summary_grant($this->data['user_departments'],$this->data['divisions']);
 		$this->data['district']=$this->staff_model->get_districts();
 
 		$this->form_validation->set_rules('grant', 'Grant',
@@ -196,19 +195,19 @@ class Reports extends CI_Controller {
 		else{
 
 			if($this->input->post('month') && $this->input->post('year')){
-				$this->data['projects']=$this->staff_model->get_projects();
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('grant') || $grant!=0  || $this->input->post('district_id')){
-				$this->data['projects']=$this->staff_model->get_projects();
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('project_id')){
-				$this->data['project']=$this->staff_model->get_projects();
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_project_detailed',$this->data);
 			}
 			else{
-				$this->data['projects']=$this->staff_model->get_projects(-1,-1,-1,-1,0);
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions'],-1,-1,-1,0);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 		}
@@ -228,7 +227,7 @@ class Reports extends CI_Controller {
 		$this->load->view('templates/left_nav');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
-		$this->data['agencies']=$this->reports_model->get_summary_agency();
+		$this->data['agencies']=$this->reports_model->get_summary_agency($this->data['user_departments'],$this->data['divisions']);
 		$this->data['district']=$this->staff_model->get_districts();
 
 		$this->form_validation->set_rules('agency', 'Agency',
@@ -240,19 +239,19 @@ class Reports extends CI_Controller {
 		else{
 
 			if($this->input->post('month') && $this->input->post('year')){
-				$this->data['projects']=$this->staff_model->get_projects();
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('agency') || $agency!=0  || $this->input->post('district_id')){
-				$this->data['projects']=$this->staff_model->get_projects();
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('project_id')){
-				$this->data['project']=$this->staff_model->get_projects();
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_project_detailed',$this->data);
 			}
 			else{
-				$this->data['projects']=$this->staff_model->get_projects(-1,-1,-1,0,-1);
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions'],-1,-1,0,-1);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 		}
@@ -272,7 +271,7 @@ class Reports extends CI_Controller {
 		$this->load->view('templates/left_nav');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
-		$this->data['user_departments']=$this->reports_model->get_summary_user_department();
+		$this->data['user_departments']=$this->reports_model->get_summary_user_department($this->data['user_departments'],$this->data['divisions']);
 		$this->data['district']=$this->staff_model->get_districts();
 
 		$this->form_validation->set_rules('user_department', 'User Department',
@@ -282,21 +281,20 @@ class Reports extends CI_Controller {
 			$this->load->view('pages/report_user_department_wise',$this->data);
 		}
 		else{
-
 			if($this->input->post('month') && $this->input->post('year')){
-				$this->data['projects']=$this->staff_model->get_projects();
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('user_department') || $user_department!=0  || $this->input->post('district_id')){
-				$this->data['projects']=$this->staff_model->get_projects();
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 			else if($this->input->post('project_id')){
-				$this->data['project']=$this->staff_model->get_projects();
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_project_detailed',$this->data);
 			}
 			else{
-				$this->data['projects']=$this->staff_model->get_projects(-1,-1,-1,-1,-1,0);
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions'],-1,-1,-1,-1,0);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
 		}
@@ -319,12 +317,12 @@ class Reports extends CI_Controller {
 		'trim|required|xss_clean');
 		if ($this->form_validation->run() === FALSE)
 		{
-			$this->data['projects']=$this->staff_model->get_projects();
+			$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 			$this->load->view('pages/report_projects',$this->data);
 		}
 		else{
 			if($this->input->post('project_id')){
-				$this->data['project']=$this->staff_model->get_projects();
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_project_detailed',$this->data);
 			}
 		}

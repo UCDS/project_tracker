@@ -216,6 +216,23 @@ class Masters extends CI_Controller {
                   )
 			);
 		}
+		else if($type=="facility_types"){
+			$access=0;
+			foreach($this->data['functions'] as $f){
+				if($f->user_function=="Facility Types" && $f->edit==1){
+					$access=1;
+				}
+			}
+			if($access==0) show_404();
+			$title="Edit Facility Types";
+			$config=array(
+               array(
+                     'field'   => 'facility_type',
+                     'label'   => 'Facility Type',
+                     'rules'   => 'trim|xss_clean'
+                  )
+			);
+		}
 		else if($type=="division"){
 			$access=0;
 			foreach($this->data['functions'] as $f){

@@ -32,9 +32,11 @@
 		<th>AS</th>
 		<th>TS</th>
 		<th>Agt</th>
-		<th>Cum. Exp prev.</th>
-		<th>Cum. Exp current</th>
-		<th>Cum. Targets current</th>
+		<th>Cum. Exp prev. years</th>
+		<th>Exp during year</th>
+		<th>Targets during year</th>
+		<th>%Ach during year</th>
+		<th>Cum. Exp</th>
 		<th>Balance</th>
 		<th>Total Works</th>
 		<th>Not Started</th>
@@ -62,11 +64,16 @@
 	$i=1;
 	foreach($agencies as $agency){
 	?>
-	<?php echo form_open('reports/agencies',array('id'=>'select_agency_form_'.$agency->agency_id,'role'=>'form')); ?>
 	
 	<tr onclick="$('#select_agency_form_<?php echo $agency->agency_id;?>').submit();">
-		<td><?php echo $i; ?></td>
+		<td>
+			<?php echo form_open('reports/agencies',array('id'=>'select_agency_form_'.$agency->agency_id,'role'=>'form')); ?>
+			<?php echo $i; ?>
+		</td>
 		<td><?php echo $agency->agency_name; ?>
+		<?php if($this->input->post('state')) { ?>
+		<input type='hidden' value="<?php echo $this->input->post('state'); ?>" name="state" />
+		<?php } ?>
 		<input type='hidden' value="<?php echo $agency->agency_id; ?>" name="agency" />
 		</td>
 		<td class="text-right"><?php echo number_format($agency->admin_sanction_amount/10000000,2); ?></td>
@@ -75,15 +82,17 @@
 		<td class="text-right"><?php echo number_format($agency->expenses_last_year/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($agency->expenses_current_year/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($agency->targets_current_year/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format(($agency->expenses_current_year/$agency->targets_current_year)*100,2); ?>%</td>
+		<td class="text-right"><?php echo number_format(($agency->expenses_current_year+$agency->expenses_last_year)/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format(($agency->admin_sanction_amount-($agency->expenses_current_year+$agency->expenses_last_year))/10000000,2); ?></td>
 		<td class="text-right"><?php echo $agency->total_projects; ?></td>
 		<td class="text-right"><?php echo $agency->not_started; ?></td>
 		<td class="text-right"><?php echo $agency->work_in_progress; ?></td>
 		<td class="text-right"><?php echo $agency->work_completed; ?></td>
 		<td class="text-right"><?php echo $agency->medical; ?></td>
-		<td class="text-right"><?php echo $agency->non_medical; ?></td>
+		<td class="text-right"><?php echo $agency->non_medical; ?>
+		</form></td>
 	</tr>
-	</form>
 	<?php
 	$admin_sanction_amount+=$agency->admin_sanction_amount;
 	$tech_sanction_amount+=$agency->tech_sanction_amount;
@@ -109,6 +118,8 @@
 		<th class="text-right"><?php echo number_format($expenses_prev/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($expenses_current/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($targets_current/10000000,2);?></th>
+		<th class="text-right"><?php echo number_format(($expenses_current/$targets_current)*100,2);?></th>
+		<th class="text-right"><?php echo number_format($expenses/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format(($admin_sanction_amount-$expenses)/10000000,2);?></th>
 		<th class="text-right"><?php echo $total_projects;?></th>
 		<th class="text-right"><?php echo $not_started;?></th>

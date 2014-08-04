@@ -32,9 +32,11 @@
 		<th>AS</th>
 		<th>TS</th>
 		<th>Agt</th>
-		<th>Cum. Exp prev.</th>
-		<th>Cum. Exp current</th>
-		<th>Cum. Targets current</th>
+		<th>Cum. Exp prev. years</th>
+		<th>Exp during year</th>
+		<th>Targets during year</th>
+		<th>%Ach during year</th>
+		<th>Cum. Exp</th>
 		<th>Balance</th>
 		<th>Total Works</th>
 		<th>Not Started</th>
@@ -62,11 +64,16 @@
 	$i=1;
 	foreach($user_departments as $user_department){
 	?>
-	<?php echo form_open('reports/user_departments',array('id'=>'select_user_department_form_'.$user_department->user_department_id,'role'=>'form')); ?>
 	
 	<tr onclick="$('#select_user_department_form_<?php echo $user_department->user_department_id;?>').submit();">
-		<td><?php echo $i; ?></td>
+		<td>
+			<?php echo form_open('reports/user_departments',array('id'=>'select_user_department_form_'.$user_department->user_department_id,'role'=>'form')); ?>
+			<?php echo $i++; ?>
+		</td>
 		<td><?php echo $user_department->user_department; ?>
+		<?php if($this->input->post('state')) { ?>
+		<input type='hidden' value="<?php echo $this->input->post('state'); ?>" name="state" />
+		<?php } ?>
 		<input type='hidden' value="<?php echo $user_department->user_department_id; ?>" name="user_department" />
 		</td>
 		<td class="text-right"><?php echo number_format($user_department->admin_sanction_amount/10000000,2); ?></td>
@@ -75,15 +82,19 @@
 		<td class="text-right"><?php echo number_format($user_department->expenses_last_year/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($user_department->expenses_current_year/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($user_department->targets_current_year/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format(($user_department->expenses_current_year/$user_department->targets_current_year)*100,2); ?>%</td>
+		<td class="text-right"><?php echo number_format(($user_department->expenses_current_year+$user_department->expenses_last_year)/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format(($user_department->admin_sanction_amount-($user_department->expenses_current_year+$user_department->expenses_last_year))/10000000,2); ?></td>
 		<td class="text-right"><?php echo $user_department->total_projects; ?></td>
 		<td class="text-right"><?php echo $user_department->not_started; ?></td>
 		<td class="text-right"><?php echo $user_department->work_in_progress; ?></td>
 		<td class="text-right"><?php echo $user_department->work_completed; ?></td>
 		<td class="text-right"><?php echo $user_department->medical; ?></td>
-		<td class="text-right"><?php echo $user_department->non_medical; ?></td>
+		<td class="text-right">
+			<?php echo $user_department->non_medical; ?>	
+			</form>
+		</td>
 	</tr>
-	</form>
 	<?php
 	$admin_sanction_amount+=$user_department->admin_sanction_amount;
 	$tech_sanction_amount+=$user_department->tech_sanction_amount;
@@ -109,6 +120,8 @@
 		<th class="text-right"><?php echo number_format($expenses_prev/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($expenses_current/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($targets_current/10000000,2);?></th>
+		<th class="text-right"><?php echo number_format(($expenses_current/$targets_current)*100,2);?></th>
+		<th class="text-right"><?php echo number_format($expenses/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format(($admin_sanction_amount-$expenses)/10000000,2);?></th>
 		<th class="text-right"><?php echo $total_projects;?></th>
 		<th class="text-right"><?php echo $not_started;?></th>

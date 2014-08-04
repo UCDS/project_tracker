@@ -72,7 +72,7 @@ class Projects extends CI_Controller {
 		$this->data['user_departments']=$this->staff_model->get_user_departments(1);
 
 		$this->data['title']="Update Projects";
-		$this->data['projects']=$this->staff_model->get_projects($this->data['divisions'],0);
+		$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions'],0);
 		$this->load->view('templates/header',$this->data);
 		$this->load->view('templates/left_nav');
 		$this->load->library('form_validation');
@@ -90,7 +90,17 @@ class Projects extends CI_Controller {
 			$this->data['agencies']=$this->staff_model->get_agencies();
 			$this->data['status_types']=$this->staff_model->get_status_types();
 			$this->data['stages']=$this->staff_model->get_work_stages();
-			
+			if($this->input->post('selected_project')){
+				$project_id = $this->input->post('selected_project');
+			}
+			else if($this->input->post('project_id')){
+				$project_id=$this->input->post('project_id');
+			}
+			if(isset($project_id)){
+				$this->data['expenses']=$this->staff_model->get_expenses($project_id);
+				$this->data['targets']=$this->staff_model->get_targets($project_id);
+				$this->data['images']=$this->staff_model->get_images($project_id);
+			}
 			if($this->input->post('update_status')){
 
 				if($this->projects_model->update_status()){
@@ -100,20 +110,19 @@ class Projects extends CI_Controller {
 				$this->data['msg']="Error in updating, please retry.";
 				}
 					
-				$this->data['project']=$this->staff_model->get_projects($this->data['divisions']);
-				$this->data['expenses']=$this->staff_model->get_expenses($this->input->post('selected_project'));
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 			}
 			else if($this->input->post('update_expenses')){
 	
 				if($this->projects_model->update_expenses()==TRUE){
 				$this->data['msg']="Updated successfully!";			
+				$this->data['expenses']=$this->staff_model->get_expenses($project_id);
 				}
 				else{
 				$this->data['msg']="Error in updating, please retry.";
 				}	
 				
-				$this->data['project']=$this->staff_model->get_projects($this->data['divisions']);
-				$this->data['expenses']=$this->staff_model->get_expenses($this->input->post('selected_project'));
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 			}
 			else if($this->input->post('update_project')){	
 				if($this->projects_model->update_project()==TRUE){
@@ -123,22 +132,21 @@ class Projects extends CI_Controller {
 				$this->data['msg']="Error in updating, please retry.";
 				}	
 				
-				$this->data['project']=$this->staff_model->get_projects($this->data['divisions']);
-				$this->data['expenses']=$this->staff_model->get_expenses($this->input->post('selected_project'));	
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 			}
 			else if($this->input->post('update_targets')){	
 				if($this->projects_model->update_targets()==TRUE){
+				$this->data['targets']=$this->staff_model->get_targets($project_id);
 				$this->data['msg']="Updated successfully!";			
 				}
 				else{
 				$this->data['msg']="Error in updating, please retry.";
 				}	
 				
-				$this->data['project']=$this->staff_model->get_projects($this->data['divisions']);
-				$this->data['expenses']=$this->staff_model->get_expenses($this->input->post('selected_project'));	
-				$this->data['targets']=$this->staff_model->get_targets($this->input->post('selected_project'));	
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 			}
-			if(!empty($_FILES['project_image']['name'])){
+			if(!empty($_FILES['project_image']['name'])){		
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 						$config['upload_path'] = './assets/images/project_images/';
 						$config['allowed_types'] = 'gif|jpg|png';
 						$config['max_size']	= '1000000000';
@@ -146,32 +154,43 @@ class Projects extends CI_Controller {
 						$config['max_height']  = '11768';
 						$config['overwrite']  = TRUE;
 						$ext = end(explode(".", strtolower($_FILES['project_image']['name'])));
-						$config['file_name'] = "project_".$this->input->post('selected_project')."_image.".$ext;
+						$config['file_name'] = "project_".$this->input->post('selected_project')."_".date("dmyhis").".".$ext;
 						$this->load->library('upload', $config);
 
 						if ( ! $this->upload->do_upload('project_image'))
 						{
-							$this->data['project']=$this->staff_model->get_projects($this->data['divisions']);
-							$this->data['expenses']=$this->staff_model->get_expenses($this->input->post('selected_project'));
 							echo $this->upload->display_errors();
 						}
 						else
-						{
-							$this->data['project']=$this->staff_model->get_projects($this->data['divisions']);
-							$this->data['expenses']=$this->staff_model->get_expenses($this->input->post('selected_project'));
-							$this->data['msg'] = "Updated image successfully!";
+						{	
+							if($this->projects_model->update_image($config['file_name'])){
+								$this->data['images']=$this->staff_model->get_images($project_id);
+								$this->data['msg'] = "Updated image successfully!";
+							}
+							else{
+								$this->data['msg'] = "Image could not be uploaded.";
+							}
 
 						}
 			}
-
+			if($this->input->post('remove_image')){
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$path_to_file = base_url().'assets/images/project_images/'.$this->input->post('remove_image_name');
+				if($this->projects_model->remove_image($this->input->post('remove_image'),$path_to_file)) {
+					
+					$this->data['images']=$this->staff_model->get_images($project_id);
+					$this->data['msg'] = "Image was removed successfully!";				
+				}
+				else{
+					$this->data['msg']="Image could not be removed.";
+				}
+			}
 			if($this->input->post('project_id')){
-				$this->data['project']=$this->staff_model->get_projects($this->data['divisions']);
-				$this->data['expenses']=$this->staff_model->get_expenses($this->input->post('project_id'));
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->data['targets']=$this->staff_model->get_targets($this->input->post('project_id'));
 			}
 			if($this->input->post('division_id') || $this->input->post('grant')){
-				$this->data['projects']=$this->staff_model->get_projects($this->data['divisions']);
-				$this->data['expenses']=$this->staff_model->get_expenses($this->input->post('project_id'));
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 			}	
 			$this->load->view('pages/update_project',$this->data);
 		}

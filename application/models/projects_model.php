@@ -186,6 +186,35 @@ class Projects_model extends CI_Model{
 		}
 		else return false;
 	}
+	
+	function update_image($image){
+		$project_id=$this->input->post('selected_project');
+		$title=$this->input->post('image_title');
+		$data=array(
+			'project_id'=>$project_id,
+			'image_name'=>$image,
+			'title'=>$title
+		);
+		$this->db->trans_start();
+		if($this->db->insert('project_images',$data)){
+			$this->db->trans_complete();
+			return true;
+		}
+		else return false;
+	}
+	
+	function remove_image($image_id,$path){
+		$this->db->trans_start();
+		$this->db->where('image_id',$image_id);
+		$this->db->delete('project_images');
+		if(unlink($path))
+		$this->db->trans_complete();
+		else { $this->db->trans_rollback(); return false; }
+		if($this->db->trans_status()===FALSE){
+			return false;
+		}
+		else return true;
+	}
 		
 	/* Ajith's code */
 	

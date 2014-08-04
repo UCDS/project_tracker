@@ -21,7 +21,7 @@
 						}
 						foreach($functions as $f){
 							if($f->user_function == "Reports - Scheme"){ ?>
-							<li><a href="<?php echo base_url();?>reports/grants">Grant</a></li>
+							<li><a href="<?php echo base_url();?>reports/grants">Scheme</a></li>
 						<?php break; } 
 						}
 						foreach($functions as $f){
@@ -75,7 +75,7 @@
 				}
 				foreach($functions as $f){
 					if($f->user_function=="Facilities" && $f->add==1){ ?>
-						<li><a href="<?php echo base_url();?>masters/add/facility">Facility</a></li>
+						<li><a href="<?php echo base_url();?>masters/add/facility">Facility Name</a></li>
 				<?php 
 					break;
 					}
@@ -142,7 +142,7 @@
 				}
 				foreach($functions as $f){
 					if($f->user_function=="Facilities" && $f->edit==1){ ?>
-						<li><a href="<?php echo base_url();?>masters/edit/facility">Facility</a></li>
+						<li><a href="<?php echo base_url();?>masters/edit/facility">Facility Name</a></li>
 					<?php 
 						break;
 					}
@@ -150,6 +150,13 @@
 				foreach($functions as $f){
 					if($f->user_function=="User Departments" && $f->edit==1){ ?>
 						<li><a href="<?php echo base_url();?>masters/edit/user_department">User Department</a></li>
+					<?php
+						break;
+					}
+				}
+				foreach($functions as $f){
+					if($f->user_function=="Facility Types" && $f->edit==1){ ?>
+						<li><a href="<?php echo base_url();?>masters/edit/facility_types">Facility Types</a></li>
 					<?php
 						break;
 					}

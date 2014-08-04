@@ -34,11 +34,22 @@ class Masters_model extends CI_Model{
 			$this->db->select("division_id,division")->from("divisions")->order_by('division');
 		}
 		else if($type=="facility_types"){
+			if($this->input->post('facility_type_id')){
+				$this->db->where('facility_type_id',$this->input->post('facility_type_id'));
+			}
+			if($this->input->post('search')){
+				$facility_type=strtolower($this->input->post('search_facility_type'));
+				$this->db->like('LOWER(facility_type)',$facility_type,'after');
+			}
 			$this->db->select("facility_type_id,facility_type")->from("facility_types")->order_by('facility_type');
 		}
 		else if($type=="user_department"){
 			if($this->input->post('user_department_id')){
 				$this->db->where('user_department_id',$this->input->post('user_department_id'));
+			}
+			if($this->input->post('search')){
+				$user_department=strtolower($this->input->post('search_user_department'));
+				$this->db->like('LOWER(user_department)',$user_department,'after');
 			}
 			$this->db->select("user_department_id,user_department")->from("user_departments")->order_by('user_department');
 		}
@@ -83,6 +94,13 @@ class Masters_model extends CI_Model{
 			);
 			$this->db->where('user_department_id',$this->input->post('user_department_id'));
 			$table="user_departments";
+		}
+		if($type=="facility_types"){
+			$data = array(
+					  'facility_type'=>$this->input->post('facility_type')
+			);
+			$this->db->where('facility_type_id',$this->input->post('facility_type_id'));
+			$table="facility_types";
 		}
 		
 		$this->db->trans_start();

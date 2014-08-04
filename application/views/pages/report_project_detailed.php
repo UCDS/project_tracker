@@ -7,9 +7,27 @@
 			<thead><th colspan="2" class='text-center'><?php echo $p->project_name; ?></th></thead>
 			<tbody>
 
-			<tr><td colspan="2">			
-			<img src="<?php echo base_url();?>assets/images/project_images/project_<?php echo $p->project_id;?>_image.jpg" class="thumbnail col-md-6 col-md-offset-3"  alt="No Image found" />
-			</td>
+			<tr>
+				<td colspan="2">			
+					<div id="myCarousel" class="carousel slide">
+					<ol class="carousel-indicators">
+					<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+					<li data-target="#myCarousel" data-slide-to="1"></li>
+					<li data-target="#myCarousel" data-slide-to="2"></li>
+					</ol>
+					<!-- Carousel items -->
+					<div class="carousel-inner">
+					<div class="active item">
+						<img src="<?php echo base_url();?>assets/images/project_images/project_<?php echo $p->project_id;?>_image.jpg" class="thumbnail col-md-6 col-md-offset-3"  alt="No Image found" />
+					</div>
+					<div class="item">…</div>
+					<div class="item">…</div>
+					</div>
+					<!-- Carousel nav -->
+					<a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+					<a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+					</div>
+				</td>
 			</tr>
 			<tr>
 				<td>Project ID</td>
