@@ -36,6 +36,14 @@ class Staff_model extends CI_Model{
 		$query=$this->db->get();
 		return $query->result();
 	}
+	function user_state($user_id){
+		$this->db->select('states.state_id,state')->from('users')
+		->join('user_state_link','users.user_id=user_state_link.user_id')
+		->join('states','user_state_link.state_id=states.state_id')
+		->where('user_state_link.user_id',$user_id);
+		$query=$this->db->get();
+		return $query->result();
+	}
 	function user_department($user_id){
 		$this->db->select('user_departments.user_department_id,user_department')->from('users')
 		->join('user_department_link','users.user_id=user_department_link.user_id')
@@ -44,6 +52,21 @@ class Staff_model extends CI_Model{
 		$query=$this->db->get();
 		return $query->result();
 	}
+	function change_password($user_id){
+		$this->db->select('password')->from('users')->where('user_id',$user_id);
+		$query=$this->db->get();
+		$password=$query->row();
+		$form_password=$this->input->post('old_password');
+		if($password->password==md5($form_password)){
+			$this->db->where('user_id',$user_id);
+			if($this->db->update('users',array('password'=>md5($this->input->post('password'))))){
+				return true;
+				}
+			else return false;
+		}
+		else return false;
+	}
+		
 	function get($type){
 		if($type=="facility"){
 			if($this->input->post('facility_id')){
@@ -86,6 +109,11 @@ class Staff_model extends CI_Model{
 	}
 	function get_divisions(){
 		$this->db->select("division_id,division")->from("divisions")->order_by('division');
+		$query=$this->db->get();
+		return $query->result();
+	}
+	function get_states(){
+		$this->db->select("state_id,state")->from("states")->order_by('state');
 		$query=$this->db->get();
 		return $query->result();
 	}
@@ -182,15 +210,35 @@ class Staff_model extends CI_Model{
 		$query=$this->db->get();
 		return $query->result();
 	}
+	function get_bills($project_id){
+		$this->db->select("*")->from("project_bills")->where('project_id',$project_id)->order_by('bill_id')->where('active',1);
+		$query=$this->db->get();
+		return $query->result();
+	}
 	function get_targets($project_id){
 	
 		$year_start=date("Y-m-d",strtotime("April 1"));
 		$year_current=date("Y-m-d");
-		if($year_current>=$year_start){ $year=date("Y-m-d",strtotime($year_start)); $year_end=date("Y-m-d",strtotime("March 31 Next year")); }
-		else { $year=date("Y",strtotime("April 1 Last year")); $year_end=date("Y-m-d",strtotime("March 31")); }
+		if($year_current>=$year_start){ $year_start=date("Y-m-d",strtotime($year_start)); $year_end=date("Y-m-d",strtotime("March 31 Next year")); }
+		else { $year_start=date("Y-m-d",strtotime("April 1 Last year")); $year_end=date("Y-m-d",strtotime("March 31")); }
 		$this->db->select("MONTH(projection_month) month,YEAR(projection_month) year, target_amount")->from("project_targets")->where('project_id',$project_id)->where('current',1)->where("(projection_month BETWEEN '$year_start' AND '$year_end')");
 		$query=$this->db->get();
 		return $query->result();
+	}
+	function get_expense_targets($project_id){		
+		$year_start=date("Y-m-d",strtotime("April 1"));
+		$year_current=date("Y-m-d");
+		if($year_current>=$year_start){ $year_start=date("Y-m-d",strtotime($year_start)); $year_end=date("Y-m-d",strtotime("March 31 Next year")); }
+		else { $year_start=date("Y-m-d",strtotime("April 1 Last year")); $year_end=date("Y-m-d",strtotime("March 31")); }
+		$this->db->select('SUM(expense_amount) expense_amount,target_amount,projection_month')
+		->from("(SELECT target_amount,project_id,MONTH(projection_month) month,projection_month FROM project_targets WHERE project_id =$project_id AND current=1 AND (projection_month BETWEEN '$year_start' AND '$year_end')) targets")
+		->join("(SELECT expense_amount,project_id,MONTH(expense_date) month,expense_date FROM project_expenses WHERE project_id = $project_id AND (expense_date BETWEEN '$year_start' AND '$year_end')) expenses",'targets.month = expenses.month','left')
+		->group_by('MONTH(projection_month)')
+		->order_by('projection_month');
+		$query=$this->db->get();
+		return $query->result();
+
+	
 	}
 	
 	function get_images($project_id){
@@ -223,18 +271,18 @@ class Staff_model extends CI_Model{
 		if($this->input->post('district_id')){
 			$this->db->where('districts.district_id',$this->input->post('district_id'));
 		}
-		if($facility_type!=-1 || $this->input->post('facility_type')){
-				if($this->input->post('facility_type')) $facility_type=$this->input->post('facility_type');
+		if($facility_type!=-1 || $this->input->post('facility_type_id')){
+				if($this->input->post('facility_type_id')) $facility_type=$this->input->post('facility_type_id');
 				$this->db->where('facilities.facility_type_id',$facility_type);
 		}
-		if($this->input->post('grant')){
-				$this->db->where('grant_phase_id',$this->input->post('grant'));
+		if($this->input->post('phase_id')){
+				$this->db->where('grant_phase_id',$this->input->post('phase_id'));
 		}
-		if($this->input->post('agency')){
-				$this->db->where('projects.agency_id',$this->input->post('agency'));
+		if($this->input->post('agency_id')){
+				$this->db->where('projects.agency_id',$this->input->post('agency_id'));
 		}
-		if($this->input->post('user_department')){
-				$this->db->where('projects.user_department_id',$this->input->post('user_department'));
+		if($this->input->post('user_department_id')){
+				$this->db->where('projects.user_department_id',$this->input->post('user_department_id'));
 		}
 		if($agency_id!=-1){
 				$this->db->where('projects.agency_id',0);
@@ -277,11 +325,12 @@ class Staff_model extends CI_Model{
 			$month="MONTH(CURDATE())";
 			$year="YEAR(CURDATE())";
 		}
-		$this->db->select("expense_upto_last_year,expense_upto_last_month,expense_current_month,expenses,target_upto_last_month,target_current_month,targets,
+		$this->db->select("expense_upto_last_year,expense_upto_last_month,expense_current_month,expenses,target_upto_last_month,target_current_month,targets,pending_bills,COUNT(image_id) image_count,
 		projects.*,districts.*,divisions.*,grant_phase.*,facilities.*,facility_type,project_status.*,sanctions.*,status_types.*,work_stages.stage_id,work_stages.stage,work_stages.status_type_id as status_id,agency.*,user_departments.*");
 		$this->db->from("projects")
 		->join('agency','projects.agency_id=agency.agency_id','left')
 		->join('project_status','projects.project_id=project_status.project_id')
+		->join('project_images','projects.project_id=project_images.project_id','left')
 		->join('status_types','project_status.status_type_id=status_types.status_type_id','left')
 		->join('work_stages','project_status.stage_id=work_stages.stage_id','left')
 		->join('sanctions','projects.project_id=sanctions.project_id','left')
@@ -300,7 +349,10 @@ class Staff_model extends CI_Model{
 		->join("(SELECT project_id,SUM(CASE WHEN (month(project_targets.projection_month)<$month AND YEAR(project_targets.projection_month)=$year) OR (YEAR(projection_month)<$year)  THEN target_amount ELSE 0 END) target_upto_last_month,
 		SUM(CASE WHEN month(project_targets.projection_month)=$month AND YEAR(project_targets.projection_month)=$year THEN target_amount ELSE 0 END) target_current_month,
 		SUM(CASE WHEN projection_month >= '$year_start' AND projection_month<='$year_end' THEN target_amount ELSE 0 END) targets 
-		FROM project_targets WHERE current=1 GROUP BY project_id) table_targets",'projects.project_id=table_targets.project_id','left');
+		FROM project_targets WHERE current=1 GROUP BY project_id) table_targets",'projects.project_id=table_targets.project_id','left')
+		->join("(SELECT project_id, 
+			 SUM(bill_amount) pending_bills
+			 FROM project_bills WHERE active=1  GROUP BY project_id) table_bills" ,'projects.project_id=table_bills.project_id','left');
 		$this->db->group_by('projects.project_id')
 		->order_by('tech_sanction_amount','DESC');
 		$this->db->where('project_status.current',1);
@@ -368,6 +420,16 @@ class Staff_model extends CI_Model{
 				);
 		}
 			$this->db->insert_batch('user_division_link',$user_division_data);
+		}
+		if(count($state)>0){
+		foreach($state as $s){
+
+				$user_state_data[]=array(
+					'user_id'=>$user_id,
+					'state_id'=>$s
+				);
+		}
+			$this->db->insert_batch('user_state_link',$user_state_data);
 		}
 		if(!!$user_department){
 		foreach($user_department as $u){

@@ -9,24 +9,155 @@ class Reports extends CI_Controller {
 		$userdata=$this->session->userdata('logged_in');
 		$user_id=$userdata['user_id'];
 		$this->data['divisions']=$this->staff_model->user_division($user_id);
+		$this->data['states']=$this->staff_model->user_state($user_id);
 		$this->data['user_departments']=$this->staff_model->user_department($user_id);
 		$this->data['functions']=$this->staff_model->user_function($user_id);
 		}
 		else redirect('home','refresh');
 	}
-	public function index(){
+	public function summary($type=0){
+	// if($type==0){
+		// if($this->session->userdata('logged_in')){
+		// $this->data['userdata']=$this->session->userdata('logged_in');
+		// $this->data['title']="Reports";
+		// $this->data['district_summary']=$this->reports_model->get_summary_districts($this->data['user_departments'],$this->data['divisions']);
+		// $this->load->view('templates/header',$this->data);
+		// $this->load->view('templates/left_nav');
+		// $this->load->view('pages/reports');
+		// $this->load->view('templates/footer');
+		// }
+		// else{
+		// show_404();
+		// }
+	// }
+		$access=0;
+		switch($type){
+		case "divisions" :
+				$name="Division";
+				$col_name="division";
+				$id="division_id";
+				foreach($this->data['functions'] as $f){
+					if($f->user_function=="Reports - District" && $f->view==1){
+						$access=1;
+					}
+				}
+				break;
+		case "districts" :
+				$name="District";
+				$col_name="district_name";
+				$id="district_id";
+				foreach($this->data['functions'] as $f){
+					if($f->user_function=="Reports - District" && $f->view==1){
+						$access=1;
+					}
+				}
+				break;
+		case "user_departments" :
+				$name="User Department";
+				$col_name="user_department";
+				$id="user_department_id";
+				foreach($this->data['functions'] as $f){
+					if($f->user_function=="Reports - User Department" && $f->view==1){
+						$access=1;
+					}
+				}
+				break;
+		case "schemes" :
+				$name="Scheme";
+				$col_name="phase_name";
+				$id="phase_id";
+				foreach($this->data['functions'] as $f){
+					if($f->user_function=="Reports - User Department" && $f->view==1){
+						$access=1;
+					}
+				}
+				break;
+		case "facility_types" :
+				$name="Facility Type";
+				$col_name="facility_type";
+				$id="facility_type_id";
+				foreach($this->data['functions'] as $f){
+					if($f->user_function=="Reports - Facility type" && $f->view==1){
+						$access=1;
+					}
+				}
+				break;
+		case "facilities" :
+				$name="Facility";
+				$col_name="facility_name";
+				$id="facility_id";
+				foreach($this->data['functions'] as $f){
+					if($f->user_function=="Reports - Facility type" && $f->view==1){
+						$access=1;
+					}
+				}
+				break;
+		case "agencies" :
+				$name="Agency";
+				$col_name="agency_name";
+				$id="agency_id";
+				foreach($this->data['functions'] as $f){
+					if($f->user_function=="Reports - Agency" && $f->view==1){
+						$access=1;
+					}
+				}
+				break;
+		default : 
+				$name="";
+				$id="district_id";
+				$col_name="district_name";
+				foreach($this->data['functions'] as $f){
+					if($f->user_function=="Reports - District" && $f->view==1){
+						$access=1;
+					}
+				}
+				break;
+		}
+		if($access==0) show_404();
 		if($this->session->userdata('logged_in')){
+		$this->data['type']=$type;
+		$this->data['name']=$name;
+		$this->data['col_name']=$col_name;
+		$this->data['id']=$id;
 		$this->data['userdata']=$this->session->userdata('logged_in');
-		$this->data['title']="Reports";
-		$this->data['district_summary']=$this->reports_model->get_summary_districts($this->data['user_departments'],$this->data['divisions']);
+		$this->data['title']="$name Summary Report";
 		$this->load->view('templates/header',$this->data);
 		$this->load->view('templates/left_nav');
-		$this->load->view('pages/reports');
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$this->data['summary']=$this->reports_model->get_summary_report($type,$this->data['user_departments'],$this->data['states'],$this->data['divisions']);
+
+		$this->form_validation->set_rules("$id", "$name",
+		'trim|required|xss_clean');
+		if ($this->form_validation->run() === FALSE)
+		{
+			$this->load->view('pages/report_summary',$this->data);
+		}
+		else{
+
+			if($this->input->post('month')){
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_detailed',$this->data);
+			}
+			else if($this->input->post("$id")){
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_detailed',$this->data);
+			}
+			else if($this->input->post('project_id')){
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_project_detailed',$this->data);
+			}
+			else{
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_detailed',$this->data);
+			}
+		}
 		$this->load->view('templates/footer');
 		}
 		else{
 		show_404();
 		}
+	
 	}
 	public function districts($district_id=0)
 	{
@@ -322,6 +453,10 @@ class Reports extends CI_Controller {
 		}
 		else{
 			if($this->input->post('project_id')){
+				$project_id=$this->input->post('project_id');
+				$this->data['expense_targets']=$this->staff_model->get_expense_targets($project_id);
+				$this->data['expenses']=$this->staff_model->get_expenses($project_id);
+				$this->data['images']=$this->staff_model->get_images($project_id);
 				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_project_detailed',$this->data);
 			}

@@ -5319,7 +5319,7 @@ button.close {
   display: block;
   max-width: 100%;
   height: auto;
-  max-height:400px;
+  max-height:380px;
   line-height: 1;
 }
 .carousel-inner > .active,
@@ -6100,4 +6100,41 @@ td.visible-print {
 }
 .star:hover {
 	color:red;
+}
+.columnSelector, .hidden {
+  display: none;
+}
+.columnSelectorButton {
+  background: #99bfe6;
+  border: #888 1px solid;
+  color: #111;
+  border-radius: 5px;
+  padding: 5px;
+}
+/* this won't work in IE8 & older */
+#colSelect1:checked + label {
+    background: #5797d7;
+    border-color: #555;
+}
+#colSelect1:checked ~ #columnSelector {
+  display: block;
+  z-index:10000000000;
+}
+.columnSelector {
+  position: absolute;
+  top: 30px;
+  padding: 10px;
+  background: #fff;
+  border: #99bfe6 1px solid;
+  border-radius: 5px;
+}
+.columnSelector label {
+  display: block;
+}
+.columnSelector label:nth-child(1) {
+  border-bottom: #99bfe6 solid 1px;
+  margin-bottom: 5px;
+}
+.columnSelector .disabled {
+  color: #ddd;
 }

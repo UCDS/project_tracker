@@ -128,6 +128,7 @@ class Projects_model extends CI_Model{
 	function update_expenses(){
 		$expenses=$this->input->post('expenditure');
 		$expense_date=$this->input->post('expense_date');
+		if(!$expense_date) return false;
 		$project_id=$this->input->post('selected_project');
 		$data=array(
 		'project_id'=>$project_id,
@@ -135,6 +136,34 @@ class Projects_model extends CI_Model{
 		'expense_date'=>$expense_date
 		);
 		if($this->db->insert('project_expenses',$data)){
+			return true;
+		}
+		else return false;
+	}
+	function update_bills(){
+		$amount=$this->input->post('bill_amount');
+		$bill_date=$this->input->post('bill_date');
+		$payer=$this->input->post('payer');
+		$voucher=$this->input->post('voucher_number');
+		if(!$bill_date) return false;
+		$project_id=$this->input->post('selected_project');
+		$data=array(
+		'project_id'=>$project_id,
+		'bill_amount'=>$amount,
+		'payer'=>$payer,
+		'voucher_number'=>$voucher,
+		'bill_date'=>$bill_date
+		);
+		if($this->db->insert('project_bills',$data)){
+			return true;
+		}
+		else return false;
+	}
+	function delete_bill(){
+		$bill_id=$this->input->post('bill_id');
+		$this->db->where('bill_id',$bill_id);
+		if($this->db->update('project_bills',array('active'=>0))){
+			echo $this->db->last_query();
 			return true;
 		}
 		else return false;

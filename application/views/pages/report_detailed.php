@@ -1,15 +1,18 @@
 	<?php 
-		switch($report_type){
+		switch($type){
 			case "divisions" : $heading="Projects in ".$projects[0]->division; break;
 			case "districts" : $heading = "Projects "; break;
-			case "grants" : $heading = $projects[0]->phase_name." Works "; break;
+			case "schemes" : $heading = $projects[0]->phase_name." Works "; break;
 			case "facility_types" : $heading = $projects[0]->facility_type; break;
+			case "facilities" : $heading = $projects[0]->facility_name; break;
 			case "agencies" : $heading = "Projects by ".$projects[0]->agency_name; break;
 			case "user_departments" : $heading = "Projects in ".$projects[0]->user_department; break;
 			default : $heading=""; break;
 		}
 		$admin_sanction=0;$tech_sanction=0;$expenditure_previous_year=0;$expenditure_previous=0;$target_previous=0;$expenditure_current=0;$target_current=0;$expenditure_cumilative=0;$targets_total=0;$agreement_amount=0;$balance=0;
+		$pending_bills=0;
 	?>
+	<?php if(count($projects)==0){ echo "No Projects to display. You might not have access to view this report."; } else { ?> 
 	<div class="row">
 	<div class="col-md-10">
 	<div class="col-md-7">
@@ -17,26 +20,9 @@
 	<small>All amounts are shown in Lakhs of rupees</small>
 	</div>
 	<div class="col-md-5">
- 	<?php echo form_open('reports/'.$report_type,array('id'=>'select_month','role'=>'form','class'=>'form-custom'));?>
-	<?php 
-		if($report_type=="grants"){ ?>
-		<input type='hidden' value="<?php echo $projects[0]->grant_phase_id; ?>" name="grant" />
-	<?php }
-		else if($report_type == "divisions"){ ?>
-			<input type='hidden' value="<?php echo $projects[0]->division_id; ?>" name="division_id" />
-		<?php } 	
-		else if($report_type == "districts"){ ?>
-			<input type='hidden' value="<?php echo $projects[0]->district_id; ?>" name="district_id" />
-		<?php } 	
-		else if($report_type == "user_departments"){ ?>
-			<input type='hidden' value="<?php echo $projects[0]->user_department_id; ?>" name="user_department" />
-		<?php } 	
-		else if($report_type == "facility_types"){ ?>
-			<input type='hidden' value="<?php echo $projects[0]->facility_type_id; ?>" name="facility_type" />
-		<?php } 	
-		else if($report_type == "agencies"){ ?>
-			<input type='hidden' value="<?php echo $projects[0]->agency_id; ?>" name="agency" />
-		<?php } 	?>
+ 	<?php echo form_open('reports/summary/'.$type,array('id'=>'select_month','role'=>'form','class'=>'form-custom'));?>
+		<input type='hidden' value="<?php echo $projects[0]->$id; ?>" name="<?php echo $id;?>" />
+
 	<select class="form-control" style="width:100px" name="month" id="month">
 	<option selected disabled>Month</option>
 	<?php 
@@ -54,24 +40,21 @@
 	}
 	?>
 	</select>
-	<?php if(isset($district) && count($district)>0){ ?>
+	<?php 
+	$district=array();
+	foreach($projects as $p){
+		$district[]=array(
+			'district_id'=>$p->district_id,
+			'district_name'=>$p->district_name
+		);
+	}
+	$district=array_unique($district);
+	if(isset($district) && count($district)>0){ ?>
 	<select name="district_id" id="district" style="width:150px"  class="form-control">
 		<option value="">District</option>
 		<?php
-		for ($e = 0; $e < count($district); $e++)
-		{
-		  for ($ee = $e+1; $ee < count($district); $ee++)
-		  {
-			if ($district[$ee]->district_id==$district[$e]->district_id)
-			{
-			array_splice($district,$ee,1);
-			$ee--;
-			}
-		  }
-		}
 		foreach($district as $d){
-		
-			echo "<option value='$d->district_id'>$d->district_name</option>";
+			echo "<option value='$d[district_id]'>$d[district_name]</option>";
 		}
 		?>
 	</select>	
@@ -80,6 +63,19 @@
 
 	</form>
 	</div>
+
+	<div class="col-md-12">
+	
+		<div class="col-md-5 pull-right">
+		<input id="colSelect1" type="checkbox" class="sr-only" hidden />
+		<label class="btn btn-default btn-md" for="colSelect1">Select Columns</label>
+		<div id="columnSelector" class="columnSelector col-md-4"></div>
+		<button type="button" class="btn btn-default btn-md print">
+		  <span class="glyphicon glyphicon-print"></span> Print
+		</button>
+		</div>
+	</div>
+	<div class="row"></div>
 	<table class="table table-hover table-bordered tablesorter" id="table-1">
 	<thead>
 	<th>S.No</th>
@@ -107,12 +103,14 @@
 	<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month')+1,  0, 0)).", ".$this->input->post('year');?></small>
 	<?php } else{ echo date("M, Y"); } ?></th>
 	<th>Cum. Exp.</th>
+	<th>Pending Bills</th>
 	<th>Total Target for the year</th>
 	<th>Exp % over TS</th>
 	<th>Balance</th>
 	<th>Status</th>
 	<th>Stage <hr />Remarks</th>
 	<th>Work Type</th>
+	<th>Images</th>
 	</thead>
 	<tbody>
 
@@ -153,6 +151,7 @@
 		<td class="text-right"><?php echo number_format($project->expense_current_month/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->target_current_month/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expenses/100000,2); ?></td>
+		<td class="text-right"><?php echo number_format($project->pending_bills/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->targets/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expenses/$project->tech_sanction_amount*100);echo "%" ?></td>
 		<td class="text-right"><?php echo number_format(($project->tech_sanction_amount-$project->expenses)/100000,2); ?></td>
@@ -162,6 +161,7 @@
 			else if($project->work_type_id=='N') echo "Non-Medical"; 
 			?>
 		</td>
+		<td class="text-right"><?php echo $project->image_count; ?></td>
 	</tr>
 	<?php
 		$admin_sanction+=$project->admin_sanction_amount;
@@ -174,6 +174,7 @@
 		$target_current+=$project->target_current_month;
 		$expenditure_cumilative+=$project->expenses;
 		$targets_total+=$project->targets;
+		$pending_bills+=$project->pending_bills;
 	}
 	?>
 	</tbody>
@@ -189,10 +190,13 @@
 		<th class="text-right"><?php echo number_format($expenditure_current/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($target_current/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($expenditure_cumilative/100000,2);?></th>
+		<th class="text-right"><?php echo number_format($pending_bills/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($targets_total/100000,2);?></th>
 		<th class="text-right"><?php echo number_format(($expenditure_cumilative/$tech_sanction)*100);echo "%"; ?></th>
 		<th class="text-right"><?php echo number_format(($admin_sanction-$expenditure_cumilative)/100000,2); ?></th>
+		<th></th>
 	</tr>
 	</table>
 	</div>
 	</div>
+	<?php } ?>

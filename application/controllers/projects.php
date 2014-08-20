@@ -98,6 +98,7 @@ class Projects extends CI_Controller {
 			}
 			if(isset($project_id)){
 				$this->data['expenses']=$this->staff_model->get_expenses($project_id);
+				$this->data['bills']=$this->staff_model->get_bills($project_id);
 				$this->data['targets']=$this->staff_model->get_targets($project_id);
 				$this->data['images']=$this->staff_model->get_images($project_id);
 			}
@@ -124,14 +125,38 @@ class Projects extends CI_Controller {
 				
 				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 			}
-			else if($this->input->post('update_project')){	
-				if($this->projects_model->update_project()==TRUE){
+			else if($this->input->post('update_bills')){
+	
+				if($this->projects_model->update_bills()==TRUE){
 				$this->data['msg']="Updated successfully!";			
+				$this->data['bills']=$this->staff_model->get_bills($project_id);
 				}
 				else{
 				$this->data['msg']="Error in updating, please retry.";
 				}	
 				
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+			}
+			else if($this->input->post('delete_bill')){
+	
+				if($this->projects_model->delete_bill()==TRUE){
+				$this->data['msg']="Bill removed successfully!";			
+				$this->data['bills']=$this->staff_model->get_bills($project_id);
+				}
+				else{
+				$this->data['msg']="Error in updating, please retry.";
+				}	
+				
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+			}
+			else if($this->input->post('update_project')){	
+				if($this->projects_model->update_project()==TRUE){
+				$this->data['msg']="Updated successfully!";						
+				$this->data['expenses']=$this->staff_model->get_expenses($project_id);			
+				}
+				else{
+				$this->data['msg']="Error in updating, please retry.";
+				}	
 				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 			}
 			else if($this->input->post('update_targets')){	
@@ -149,9 +174,9 @@ class Projects extends CI_Controller {
 				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 						$config['upload_path'] = './assets/images/project_images/';
 						$config['allowed_types'] = 'gif|jpg|png';
-						$config['max_size']	= '1000000000';
-						$config['max_width']  = '11924';
-						$config['max_height']  = '11768';
+						$config['max_size']	= '1000';
+						$config['max_width']  = '1024';
+						$config['max_height']  = '768';
 						$config['overwrite']  = TRUE;
 						$ext = end(explode(".", strtolower($_FILES['project_image']['name'])));
 						$config['file_name'] = "project_".$this->input->post('selected_project')."_".date("dmyhis").".".$ext;

@@ -6,32 +6,37 @@
 					<li class="disabled"><a href="#">Summary</a></li>
 						<?php foreach($functions as $f){
 							if($f->user_function == "Reports - District"){ ?>
-							<li><a href="<?php echo base_url();?>reports/divisions">Division</a></li>
+							<li><a href="<?php echo base_url();?>reports/summary/divisions">Division</a></li>
 						<?php break; }
 						}
 						foreach($functions as $f){
 							if($f->user_function == "Reports - District"){ ?>
-							<li><a href="<?php echo base_url();?>reports/districts">District</a></li>
+							<li><a href="<?php echo base_url();?>reports/summary/districts">District</a></li>
 						<?php break; }
 						}
 						foreach($functions as $f){
 							if($f->user_function == "Reports - Facility type"){ ?>
-							<li><a href="<?php echo base_url();?>reports/facility_types">Facility Type</a></li>
+							<li><a href="<?php echo base_url();?>reports/summary/facility_types">Facility Type</a></li>
+						<?php break; } 
+						}
+						foreach($functions as $f){
+							if($f->user_function == "Reports - Facility type"){ ?>
+							<li><a href="<?php echo base_url();?>reports/summary/facilities">Facility</a></li>
 						<?php break; } 
 						}
 						foreach($functions as $f){
 							if($f->user_function == "Reports - Scheme"){ ?>
-							<li><a href="<?php echo base_url();?>reports/grants">Scheme</a></li>
+							<li><a href="<?php echo base_url();?>reports/summary/schemes">Scheme</a></li>
 						<?php break; } 
 						}
 						foreach($functions as $f){
 							if($f->user_function == "Reports - User Department"){ ?>
-							<li><a href="<?php echo base_url();?>reports/user_departments">User Department</a></li>
+							<li><a href="<?php echo base_url();?>reports/summary/user_departments">User Department</a></li>
 						<?php break; }
 						}
 						foreach($functions as $f){
 							if($f->user_function == "Reports - Agency"){ ?>
-							<li><a href="<?php echo base_url();?>reports/agencies">Agency</a></li>
+							<li><a href="<?php echo base_url();?>reports/summary/agencies">Agency</a></li>
 						<?php break; }
 						} ?>
 				<ul>

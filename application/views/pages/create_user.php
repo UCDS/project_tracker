@@ -71,6 +71,25 @@
 						<table class="table table-bordered table-hover table-striped">
 							<thead>
 								<th>#</th>
+								<th>State</th>
+							</thead>
+							<tbody>
+							<?php
+							$i=1;
+							foreach($states as $s){ ?>
+								<tr>
+									<td><?php echo $i++;?>
+									<td><?php echo $s->state;?></td>
+									<td><input type="checkbox" value="<?php echo $s->state_id;?>" name="state[]" /></td>
+								</tr>
+							<?php } ?>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-md-12">
+						<table class="table table-bordered table-hover table-striped">
+							<thead>
+								<th>#</th>
 								<th>Division</th>
 							</thead>
 							<tbody>

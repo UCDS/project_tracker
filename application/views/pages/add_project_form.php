@@ -122,7 +122,7 @@ $(function(){
 	<div class="form_group">
 		<label for="grant" class="col-md-4">Grant</label>
 		<div  class="col-md-8">
-		<select name="grant" id="grant" class="form-control" required >
+		<select name="grant" id="grant" class="select-box selectized" required >
 		<option value="">--SELECT--</option>
 		<?php foreach($grants as $grant){
 			echo "<option value='$grant->phase_id'>$grant->phase_name</option>";
@@ -134,7 +134,7 @@ $(function(){
 	<div class="form_group">
 		<label for="user_department" class="col-md-4">User Department</label>
 		<div  class="col-md-8">
-		<select name="user_department" id="user_department" class="form-control">
+		<select name="user_department" id="user_department" class="select-box selectized">
 		<option value="">--SELECT--</option>
 		<?php foreach($user_departments as $user_department){
 			echo "<option value='$user_department->user_department_id'>$user_department->user_department</option>";
@@ -146,7 +146,7 @@ $(function(){
 	<div class="form_group">
 		<label for="agency" class="col-md-4">Agency</label>
 		<div  class="col-md-8">
-		<select name="agency" id="agency" class="form-control" >
+		<select name="agency" id="agency" class="select-box selectized" >
 		<option value="">--SELECT--</option>
 		<?php foreach($agencies as $agency){
 			echo "<option value='$agency->agency_id'>$agency->agency_name</option>";
