@@ -294,7 +294,7 @@ class Staff_model extends CI_Model{
 				$this->db->where('projects.grant_phase_id',0);
 		}
 		if($this->input->post('state')){
-			$this->db->where('state',$this->input->post('state'));
+			$this->db->where('state_id',$this->input->post('state'));
 		}
 		if($user_departments!=0 && $user_departments!='0' && count($user_departments)>0){
 			$ud_id=array();

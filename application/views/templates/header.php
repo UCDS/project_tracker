@@ -133,18 +133,56 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li <?php if(current_url()==base_url()){ echo "class='active'";}?>><a href="<?php echo base_url();?>home">Home</a></li>
-	<?php if($this->session->userdata('logged_in')) { ?>
-			<li class="dropdown">
-			<a <?php if(preg_match("/masters/",current_url()) || preg_match("/projects/",current_url())){ echo "class='active'";}?> href="<?php echo base_url();?>projects/create">Operations</a></li>
-            <li <?php if(preg_match("/reports/",current_url())){ echo "class='active'";}?>>
-				<a href="<?php echo base_url();?>reports/summary/districts">Reports</a>
+			<?php if($this->session->userdata('logged_in')) { ?>
+			<li>
+				<a <?php if(preg_match("/masters/",current_url()) || preg_match("/projects/",current_url())){ echo "class='active'";}?> href="<?php echo base_url();?>projects/create">Operations</a>
+			</li>
+            <li  class="dropdown <?php if(preg_match("/reports/",current_url())){ echo "active";}?>">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports <span class="caret"></span></a>
+					<ul class="dropdown-menu" role="menu">
+				  	<li class="disabled"><a href="#">Summary</a></li>
+						<?php foreach($functions as $f){
+							if($f->user_function == "Reports - District"){ ?>
+							<li><a href="<?php echo base_url();?>reports/summary/divisions">Division</a></li>
+						<?php break; }
+						}
+						foreach($functions as $f){
+							if($f->user_function == "Reports - District"){ ?>
+							<li><a href="<?php echo base_url();?>reports/summary/districts">District</a></li>
+						<?php break; }
+						}
+						foreach($functions as $f){
+							if($f->user_function == "Reports - Facility type"){ ?>
+							<li><a href="<?php echo base_url();?>reports/summary/facility_types">Facility Type</a></li>
+						<?php break; } 
+						}
+						foreach($functions as $f){
+							if($f->user_function == "Reports - Facility type"){ ?>
+							<li><a href="<?php echo base_url();?>reports/summary/facilities">Facility</a></li>
+						<?php break; } 
+						}
+						foreach($functions as $f){
+							if($f->user_function == "Reports - Scheme"){ ?>
+							<li><a href="<?php echo base_url();?>reports/summary/schemes">Scheme</a></li>
+						<?php break; } 
+						}
+						foreach($functions as $f){
+							if($f->user_function == "Reports - User Department"){ ?>
+							<li><a href="<?php echo base_url();?>reports/summary/user_departments">User Department</a></li>
+						<?php break; }
+						}
+						foreach($functions as $f){
+							if($f->user_function == "Reports - Agency"){ ?>
+							<li><a href="<?php echo base_url();?>reports/summary/agencies">Agency</a></li>
+						<?php break; }
+						} ?>
+				</ul>
 			</li>
 	<?php } ?>
             
 		</ul>
 	<?php if($this->session->userdata('logged_in')) { ?>
           <ul class="nav navbar-nav navbar-right">
-            
             <li class="dropdown  <?php if(preg_match("^".base_url()."user_panel^",current_url())){ echo "active";}?>">
 			<a href="#" class="dropdown-toggle js-activated" data-toggle="dropdown"><?php $logged_in=$this->session->userdata('logged_in');echo $logged_in['username']; ?> <b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -158,5 +196,6 @@
         </div><!--/.nav-collapse -->
       </div>
     </div>
-	
+	<?php if(!preg_match("/reports/",current_url())){ ?>
 	<div class="container">
+	<?php } ?>

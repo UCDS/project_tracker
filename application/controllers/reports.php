@@ -16,20 +16,6 @@ class Reports extends CI_Controller {
 		else redirect('home','refresh');
 	}
 	public function summary($type=0){
-	// if($type==0){
-		// if($this->session->userdata('logged_in')){
-		// $this->data['userdata']=$this->session->userdata('logged_in');
-		// $this->data['title']="Reports";
-		// $this->data['district_summary']=$this->reports_model->get_summary_districts($this->data['user_departments'],$this->data['divisions']);
-		// $this->load->view('templates/header',$this->data);
-		// $this->load->view('templates/left_nav');
-		// $this->load->view('pages/reports');
-		// $this->load->view('templates/footer');
-		// }
-		// else{
-		// show_404();
-		// }
-	// }
 		$access=0;
 		switch($type){
 		case "divisions" :
@@ -122,7 +108,6 @@ class Reports extends CI_Controller {
 		$this->data['userdata']=$this->session->userdata('logged_in');
 		$this->data['title']="$name Summary Report";
 		$this->load->view('templates/header',$this->data);
-		$this->load->view('templates/left_nav');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
 		$this->data['summary']=$this->reports_model->get_summary_report($type,$this->data['user_departments'],$this->data['states'],$this->data['divisions']);
@@ -159,6 +144,8 @@ class Reports extends CI_Controller {
 		}
 	
 	}
+	
+	/*
 	public function districts($district_id=0)
 	{
 		$access=0;
@@ -435,13 +422,13 @@ class Reports extends CI_Controller {
 		show_404();
 		}
 	}
+	*/
 	public function projects()
 	{
 		if($this->session->userdata('logged_in')){
 		$this->data['userdata']=$this->session->userdata('logged_in');
 		$this->data['title']="Project Detailed Report";
 		$this->load->view('templates/header',$this->data);
-		$this->load->view('templates/left_nav');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('project_id', 'Project',

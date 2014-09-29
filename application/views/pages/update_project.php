@@ -142,7 +142,7 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Agreement Date</td>
-				<td><input type="text" class="form-control date" placeholder="Agreement Date" id="agreement_date" value="<?php echo date("d-M-y",strtotime($p->agreement_date)); ?>" name="agreement_date" /></td>
+				<td><input type="text" class="form-control date" placeholder="Agreement Date" id="agreement_date" value="<?php echo date("d-M-y",strtotime($p->agreement_date)); ?>" name="agreement_date" form="update_project_form" /></td>
 			</tr>
 			<tr>
 				<td>Agreement Number</td>
@@ -154,17 +154,17 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Completion date as per agreement</td>
-				<td><input type="text" class="form-control date" placeholder="as per Agreement" id="agreement_completion_date" value="<?php echo date("d-M-y",strtotime($p->agreement_completion_date)); ?>" name="agreement_completion_date" /></td>
+				<td><input type="text" class="form-control date" placeholder="as per Agreement" id="agreement_completion_date" value="<?php echo date("d-M-y",strtotime($p->agreement_completion_date)); ?>" name="agreement_completion_date" form="update_project_form"  /></td>
 			</tr>
 			<tr>
-				<td>Grant</td>
+				<td>Grant <?php echo $p->grant_phase_id;?></td>
 				<td>		
 					<select name="grant" id="grant" class="select-box selectized" required>
 					<option value="">--SELECT--</option>
 					<?php foreach($grants as $grant){
 						echo "<option value='$grant->phase_id' ";
 						if($grant->phase_id==$p->grant_phase_id) echo " selected ";
-						echo ">$grant->phase_name</option>";
+						echo ">$grant->phase_name $grant->phase_id</option>";
 					}
 					?>
 					</select>	
@@ -175,7 +175,7 @@ $(function(){
 				<td>		
 					<select name="user_department" id="user_department" class="select-box selectized" required >
 					<option value="">--SELECT--</option>
-					<?php foreach($user_departments as $user_department){
+					<?php foreach($user_department_list as $user_department){
 						echo "<option value='$user_department->user_department_id' ";
 						if($user_department->user_department_id==$p->user_department_id) echo " selected ";
 						echo ">$user_department->user_department</option>";
@@ -187,7 +187,7 @@ $(function(){
 			<tr>
 				<td>Agency</td>
 				<td>
-					<select name="agency" id="agency" class="select-box selectized" required>
+					<select name="agency" id="agency" class="select-box selectized">
 					<option value="">--SELECT--</option>
 					<?php foreach($agencies as $agency){
 						echo "<option value='$agency->agency_id'";
@@ -361,7 +361,7 @@ $(function(){
 					<option value="EE">EE</option>
 				<input type="text" placeholder="Date of Submission" class="form-control date" name='bill_date' form="update_bill_form" id="bill_date" required/>
 				<input type="number" placeholder="Gross Amount" class="form-control" name='bill_amount' min="0" required />
-				<input type="number" placeholder="Voucher No." class="form-control" name='voucher_number' min="0" required />
+				<input type="number" placeholder="Voucher No." class="form-control" name='voucher_number' min="0" hidden />
 				</div>
 				</td>
 			</tr>

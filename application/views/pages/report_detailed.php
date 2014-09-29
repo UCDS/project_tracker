@@ -48,7 +48,7 @@
 			'district_name'=>$p->district_name
 		);
 	}
-	$district=array_unique($district);
+	$district=array_map("unserialize", array_unique(array_map("serialize", $district)));;
 	if(isset($district) && count($district)>0){ ?>
 	<select name="district_id" id="district" style="width:150px"  class="form-control">
 		<option value="">District</option>
@@ -86,6 +86,9 @@
 	<th>AS</th>
 	<th>TS</th>
 	<th>Agt</th>
+	<th>Agt. Date</th>
+	<th>Comp. Date as per Agt.</th>
+	<th>Probable Date of Comp.</th>
 	<th>Cum. Exp. prev. years</th>
 	<th>Exp. DY upto <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
 	<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month'),  0, 0)).", ".$this->input->post('year');?>
@@ -108,9 +111,11 @@
 	<th>Exp % over TS</th>
 	<th>Balance</th>
 	<th>Status</th>
-	<th>Stage <hr />Remarks</th>
+	<th>Stage</th>
+	<th>Remarks</th>
 	<th>Work Type</th>
 	<th>Images</th>
+	<th>Division</th>
 	</thead>
 	<tbody>
 
@@ -144,6 +149,9 @@
 		<td class="text-right"><?php echo number_format($project->admin_sanction_amount/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->tech_sanction_amount/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->agreement_amount/100000,2); ?></td>
+		<td class="text-right"><?php if($project->agreement_date!=0) echo date("d-M-Y",strtotime($project->agreement_date));?></td>
+		<td class="text-right"><?php if($project->agreement_completion_date!=0) echo date("d-M-Y",strtotime($project->agreement_completion_date));?></td>
+		<td class="text-right"><?php if($project->probable_date_of_completion!=0) echo date("d-M-Y",strtotime($project->probable_date_of_completion));?></td>
 		<td class="text-right"><?php echo number_format($project->expense_upto_last_year/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expense_upto_last_month/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->target_upto_last_month/100000,2); ?></td>
@@ -156,12 +164,14 @@
 		<td class="text-right"><?php echo number_format($project->expenses/$project->tech_sanction_amount*100);echo "%" ?></td>
 		<td class="text-right"><?php echo number_format(($project->tech_sanction_amount-$project->expenses)/100000,2); ?></td>
 		<td><?php echo $project->status_type; ?></td>
-		<td style="min-width:200px;"><?php echo $project->stage;?> <hr /><?php echo $project->remarks_1; ?></td>
+		<td style="min-width:200px;"><?php echo $project->stage;?></td>
+		<td><?php echo $project->remarks_1; ?></td>
 		<td><?php if($project->work_type_id=='M') echo "Medical";
 			else if($project->work_type_id=='N') echo "Non-Medical"; 
 			?>
 		</td>
 		<td class="text-right"><?php echo $project->image_count; ?></td>
+		<td class="text-right"><?php echo $project->division; ?></td>
 	</tr>
 	<?php
 		$admin_sanction+=$project->admin_sanction_amount;
@@ -183,6 +193,9 @@
 		<th class="text-right"><?php echo number_format($admin_sanction/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($tech_sanction/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($agreement_amount/100000,2);?></th>
+		<th class="text-right"></th>
+		<th class="text-right"></th>
+		<th class="text-right"></th>
 		<th class="text-right"><?php echo number_format($expenditure_previous_year/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($expenditure_previous/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($target_previous/100000,2);?></th>

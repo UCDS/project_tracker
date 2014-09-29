@@ -7,12 +7,12 @@
 		</div>
 		<div class="col-md-5 pull-right">
 			<?php if(count($states)>1){ ?>
-			<?php echo form_open("reports/$type",array('class'=>'form-custom')); ?>
+			<?php echo form_open("reports/summary/$type",array('class'=>'form-custom')); ?>
 			Select State
 			<select name="state" class="form-control">
 				<option value="">All</option>
-				<option value="AP">Andhra Pradesh</option>
-				<option value="TS">Telangana</option>
+				<option value="1">Andhra Pradesh</option>
+				<option value="2">Telangana</option>
 			</select>
 			<input type="submit" class="btn btn-primary" name="state_submit" value="Submit" />
 			</form>
@@ -155,8 +155,13 @@
 	}
 	?>
 	</tbody>
-	<tr>
-		<th colspan="2">Total</th>
+	<tr onclick="$('#select_form_all').submit();">
+		<th colspan="2">	
+			<?php echo form_open("reports/summary/$type",array('id'=>'select_form_all','role'=>'form')); ?>
+				<input type='hidden' value="0" form="select_form_all" name="<?php echo $id;?>" />
+			</form>
+			Total
+		</th>
 		<th class="text-right"><?php echo number_format($admin_sanction_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($tech_sanction_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($agreement_amount/10000000,2);?></th>

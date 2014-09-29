@@ -69,10 +69,9 @@ class Projects extends CI_Controller {
 		$user=$this->session->userdata('logged_in');
 		$this->data['user_id']=$user['user_id'];
 		$this->data['grant']=$this->staff_model->get_grants(1);
-		$this->data['user_departments']=$this->staff_model->get_user_departments(1);
+		$this->data['user_department_list']=$this->staff_model->get_user_departments(1);
 
 		$this->data['title']="Update Projects";
-		$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions'],0);
 		$this->load->view('templates/header',$this->data);
 		$this->load->view('templates/left_nav');
 		$this->load->library('form_validation');
@@ -81,12 +80,13 @@ class Projects extends CI_Controller {
 		'trim|xss_clean');
 		if ($this->form_validation->run() === FALSE)
 		{
-			$this->load->view('pages/update_project');
+			$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions'],0);
+			$this->load->view('pages/update_project',$this->data);
 		}
 		else{
 			$this->data['facilities']=$this->staff_model->get_facilities($this->data['divisions']);
 			$this->data['grants']=$this->staff_model->get_grants();
-			$this->data['user_departments']=$this->staff_model->get_user_departments(1);
+			$this->data['user_department_list']=$this->staff_model->get_user_departments(1);
 			$this->data['agencies']=$this->staff_model->get_agencies();
 			$this->data['status_types']=$this->staff_model->get_status_types();
 			$this->data['stages']=$this->staff_model->get_work_stages();

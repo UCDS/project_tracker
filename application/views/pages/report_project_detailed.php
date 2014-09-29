@@ -21,6 +21,7 @@
 		});
 	});
 </script>
+<div class="container">
 	<div class="row">
 			
 			<ul class="nav nav-tabs" id="formtabs">

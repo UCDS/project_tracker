@@ -6,7 +6,7 @@ class Reports_model extends CI_Model{
 	
 	function get_summary_report($type,$user_departments=0,$states=0,$divisions=-1){
 		if($this->input->post('state_submit') && $this->input->post('state')!=""){
-			$this->db->where('state',$this->input->post('state'));
+			$this->db->where('state_id',$this->input->post('state'));
 		}
 		
 		if($user_departments!=0 && $user_departments!='0' && count($user_departments)>0){

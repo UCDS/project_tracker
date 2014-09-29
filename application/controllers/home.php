@@ -33,7 +33,7 @@ class Home extends CI_Controller {
 	}
 
 	function login()
-	{	
+	{
 		if(!$this->session->userdata('logged_in')){
 			
 		$this->data['title']="Login";
