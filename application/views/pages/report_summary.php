@@ -3,7 +3,7 @@
 		<div class="col-md-7">
 		<h3><?php echo $title;?><small>Click on any one to view </small></h3>
 		
-		<small>All amounts displayed in crores of rupees.</small>
+		All amounts displayed in crores of rupees.
 		</div>
 		<div class="col-md-5 pull-right">
 			<?php if(count($states)>1){ ?>
@@ -18,16 +18,53 @@
 			</form>
 			<?php } ?>
 		</div>
+	</div>
 	<div class="col-md-12">
-	
-		<div class="col-md-5 pull-right">
-		<input id="colSelect1" type="checkbox" class="sr-only" hidden />
-		<label class="btn btn-default btn-md" for="colSelect1">Select Columns</label>
-		<div id="columnSelector" class="columnSelector col-md-4"></div>
-		<button type="button" class="btn btn-default btn-md print">
-		  <span class="glyphicon glyphicon-print"></span> Print
-		</button>
-		</div>
+	<br />
+ 	<?php echo form_open('reports/summary/'.$type,array('id'=>'select_month','role'=>'form','class'=>'form-custom'));?>
+	<div class="col-md-4 pull-right">
+	<input id="colSelect1" type="checkbox" class="sr-only" hidden />
+	<label class="btn btn-default btn-md" for="colSelect1">Select Columns</label>
+	<div id="columnSelector" class="columnSelector col-md-4 row"></div>
+	<button type="button" class="btn btn-default btn-md print">
+	  <span class="glyphicon glyphicon-print"></span> Print
+	</button>
+	</div>
+	<div class="col-md-6">
+	<small>Get report as on</small>
+	<select class="form-control" style="width:100px" name="month" id="month">
+	<option selected disabled>Month</option>
+	<?php 
+	$m=0;
+	for($i=1;$i<=12;$i++){
+		echo "<option value='".date("m", mktime(0, 0, 0, $i+1, 0, 0))."'";
+		if($this->input->post('month') && $this->input->post('month')==$i) { echo " selected "; $m=1;}
+		else if($m==0 && $i==date("m") ) echo " selected ";
+		echo ">".date("M", mktime(0, 0, 0, $i+1, 0, 0))."</option>";
+	}
+	?>
+	</select>
+	<select class="form-control" style="width:100px"  name="year" id="year">
+	<option selected disabled>Year</option>
+	<?php 
+	$year=date("Y");
+	$y=0;
+	for($i=2009;$i<=$year+1;$i++){
+		echo "<option value='$i'";
+		if($this->input->post('year') && $this->input->post('year')==$i){ echo " selected "; $y=1; }
+		else if($y==0 && $i==date("Y")) echo " selected ";
+		echo ">$i</option>";
+	}
+	?>
+	</select>
+	<select name="cumilative_report" class="form-control">
+	<option value="0" selected>Yearly Report</option>
+	<option value="1" <?php if($this->input->post('cumilative_report')) echo " selected ";?>>Cumilative Report</option>
+	</select>
+	<button class="btn btn-sm" type="submit" name="select_month">Go</button>
+	</form>
+	</div>
+	</div>
 	</div>
 	<div class="row"></div>
 	<h5>
@@ -49,14 +86,10 @@
 		<th>TS</th>
 		<th>Agt</th>
 		<th>Cum. Exp. prev. years</th>
-		<th>Exp. DY upto <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
-		<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month'),  0, 0)).", ".$this->input->post('year');?>
-		<?php } else { echo date("M, Y",strtotime("last month"));} ?>
-		</small></th>
-		<th>Target DY upto <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
-		<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month'),  0, 0)).", ".$this->input->post('year');?>
-		<?php } else { echo date("M, Y",strtotime("last month"));} ?>
-		</small></th>
+		<th>Cum. Exp. Last FY</th>
+		<th>Balace Work as on 1st April</th>
+		<th>Exp. DY upto last month</small></th>
+		<th>Target DY upto last month</small></th>
 		<th>%Ach During year</th>
 		<th>Exp. DM <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
 		<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month')+1,  0, 0)).", ".$this->input->post('year');?></small>
@@ -73,8 +106,6 @@
 		<th>Not Started</th>
 		<th>In Progress</th>
 		<th>Completed</th>
-		<th>Medical</th>
-		<th>Non Medical</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -91,6 +122,7 @@
 	$non_medical=0;
 	$expenses=0;
 	$expenses_prev=0;
+	$expenses_prev_year=0;
 	$expenses_current=0;
 	$expenses_current_month=0;
 	$targets_current=0;
@@ -106,8 +138,15 @@
 			<?php echo $i++; ?>
 		</td>
 		<td><?php echo $row->$col_name; ?>
+		<input type='hidden' class="sr-only" value="<?php if($this->input->post('cumilative_report')) echo "1"; else echo "0"; ?>" name="cumilative_report" />
 		<?php if($this->input->post('state')) { ?>
-		<input type='hidden' value="<?php echo $this->input->post('state'); ?>" name="state" />
+		<input type='hidden' class="sr-only" value="<?php echo $this->input->post('state'); ?>" name="state" />
+		<?php } ?>
+		<?php if($this->input->post('year')) { ?>
+		<input type='hidden' class="sr-only" value="<?php echo $this->input->post('year'); ?>" name="year" />
+		<?php } ?>
+		<?php if($this->input->post('month')) { ?>
+		<input type='hidden' class="sr-only" value="<?php echo $this->input->post('month'); ?>" name="month" />
 		<?php } ?>
 		<input type='hidden' value="<?php if($row->$id!=NULL) echo $row->$id; else echo "'0'" ?>" name="<?php echo $id;?>" />
 		</td>
@@ -115,6 +154,8 @@
 		<td class="text-right"><?php echo number_format($row->tech_sanction_amount/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($row->agreement_amount/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($row->expenses_last_year/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format($row->expenses_previous_year/10000000,2); ?></td>
+		<td class="text-right"><?php echo number_format(($row->tech_sanction_amount-$row->expenses_last_year)/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($row->expenses_current_year/10000000,2); ?></td>
 		<td class="text-right"><?php echo number_format($row->targets_current_year/10000000,2); ?></td>
 		<td class="text-right"><?php if($row->targets_current_year>0) echo number_format(($row->expenses_current_year/$row->targets_current_year)*100,2); else echo 0;?>%</td>
@@ -128,9 +169,7 @@
 		<td class="text-right"><?php echo $row->total_projects; ?></td>
 		<td class="text-right"><?php echo $row->not_started; ?></td>
 		<td class="text-right"><?php echo $row->work_in_progress; ?></td>
-		<td class="text-right"><?php echo $row->work_completed; ?></td>
-		<td class="text-right"><?php echo $row->medical; ?></td>
-		<td class="text-right"><?php echo $row->non_medical; ?>
+		<td class="text-right"><?php echo $row->work_completed; ?>
 			</form>
 		</td>
 	</tr>
@@ -145,6 +184,7 @@
 	$medical+=$row->medical;
 	$non_medical+=$row->non_medical;
 	$expenses_prev+=$row->expenses_last_year;
+	$expenses_prev_year+=$row->expenses_previous_year;
 	$expenses_current+=$row->expenses_current_year;
 	$expenses_current_month+=$row->expense_current_month;
 	$targets_current+=$row->targets_current_year;
@@ -156,16 +196,19 @@
 	?>
 	</tbody>
 	<tr onclick="$('#select_form_all').submit();">
-		<th colspan="2">	
+		<th>	
 			<?php echo form_open("reports/summary/$type",array('id'=>'select_form_all','role'=>'form')); ?>
 				<input type='hidden' value="0" form="select_form_all" name="<?php echo $id;?>" />
 			</form>
 			Total
 		</th>
+		<th></th>
 		<th class="text-right"><?php echo number_format($admin_sanction_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($tech_sanction_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($agreement_amount/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($expenses_prev/10000000,2);?></th>
+		<th class="text-right"><?php echo number_format($expenses_prev_year/10000000,2);?></th>
+		<th class="text-right"><?php echo number_format(($tech_sanction_amount-$expenses_prev)/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($expenses_current/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format($targets_current/10000000,2);?></th>
 		<th class="text-right"><?php echo number_format(($expenses_current/$targets_current)*100,2);?>%</th>

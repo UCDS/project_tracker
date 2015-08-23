@@ -31,6 +31,8 @@ class Projects extends CI_Controller {
 		$this->data['grants']=$this->staff_model->get_grants();
 		$this->data['user_departments']=$this->staff_model->get_user_departments();
 		$this->data['agencies']=$this->staff_model->get_agencies();
+		$this->data['staff']=$this->staff_model->get_staff();
+		$this->data['work_type']=$this->staff_model->get_work_type();
 		$this->data['title']="Create Project";
 		$this->load->view('templates/header',$this->data);
 		$this->load->view('templates/left_nav');
@@ -70,6 +72,7 @@ class Projects extends CI_Controller {
 		$this->data['user_id']=$user['user_id'];
 		$this->data['grant']=$this->staff_model->get_grants(1);
 		$this->data['user_department_list']=$this->staff_model->get_user_departments(1);
+		$this->data['staff']=$this->staff_model->get_staff();
 
 		$this->data['title']="Update Projects";
 		$this->load->view('templates/header',$this->data);
@@ -99,13 +102,42 @@ class Projects extends CI_Controller {
 			if(isset($project_id)){
 				$this->data['expenses']=$this->staff_model->get_expenses($project_id);
 				$this->data['bills']=$this->staff_model->get_bills($project_id);
+				$this->data['extensions']=$this->staff_model->get_extensions($project_id);
 				$this->data['targets']=$this->staff_model->get_targets($project_id);
 				$this->data['images']=$this->staff_model->get_images($project_id);
+				$this->data['pendencies']=$this->staff_model->get_pendencies($project_id);
+				$this->data['pendency_types']=$this->staff_model->get_pendency_types();
 			}
 			if($this->input->post('update_status')){
 
 				if($this->projects_model->update_status()){
 				$this->data['msg']="Updated successfully!";
+				}
+				else{
+				$this->data['msg']="Error in updating, please retry.";
+				}
+					
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+			}
+			else if($this->input->post('update_extension')){
+				if($this->input->post('extension_date') && $this->input->post('approval_date')){
+				if($this->projects_model->update_extension()){
+				$this->data['msg']="Updated successfully!";
+				$this->data['extensions']=$this->staff_model->get_extensions($project_id);
+				}
+				else{
+				$this->data['msg']="Error in updating, please retry.";
+				}
+				}
+				else{
+				$this->data['msg']="Error in updating, please retry.";
+				}
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+			}
+			else if($this->input->post('delete_extension')){
+
+				if($this->projects_model->delete_extension()){
+				$this->data['msg']="Extension Deleted successfully!";
 				}
 				else{
 				$this->data['msg']="Error in updating, please retry.";
@@ -142,6 +174,30 @@ class Projects extends CI_Controller {
 				if($this->projects_model->delete_bill()==TRUE){
 				$this->data['msg']="Bill removed successfully!";			
 				$this->data['bills']=$this->staff_model->get_bills($project_id);
+				}
+				else{
+				$this->data['msg']="Error in updating, please retry.";
+				}	
+				
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+			}
+			else if($this->input->post('update_pendency')){
+	
+				if($this->projects_model->update_pendency()==TRUE){
+				$this->data['msg']="Updated successfully!";			
+				$this->data['pendencies']=$this->staff_model->get_pendencies($project_id);
+				}
+				else{
+				$this->data['msg']="Error in updating, please retry.";
+				}	
+				
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+			}
+			else if($this->input->post('delete_pendency')){
+	
+				if($this->projects_model->delete_pendency()==TRUE){
+				$this->data['msg']="Pendency removed successfully!";			
+				$this->data['pendencies']=$this->staff_model->get_pendencies($project_id);
 				}
 				else{
 				$this->data['msg']="Error in updating, please retry.";

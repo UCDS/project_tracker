@@ -62,11 +62,53 @@ class Masters_model extends CI_Model{
 		else if($type=="agencies"){
 			$this->db->select("agency_id,agency_name")->from("agency")->order_by('agency_name');
 		}
-		else if($type=="staff_category"){
+		else if($type=='staff')
+		{
+			if($this->input->post('search'))
+			{
+				$staff = strtolower($this->input->post('staff'));
+				$this->db->like('LOWER(first_name)',$staff,'after');
+			}
+			if($this->input->post('select'))
+			{
+				$staff_id = $this->input->post('staff_id');
+				$this->db->where('staff_id',$staff_id);
+			}
+			$this->db->select("staff_id,first_name,last_name,gender,date_of_birth,staff.staff_role_id,
+			staff.staff_category_id,staff_category,staff_role,staff_type,reporting_officer_id,designation,email,phone,staff.division_id,division,status")->from("staff")
+			->join('divisions','staff.division_id = divisions.division_id','left')
+			->join('staff_category','staff.staff_category_id = staff_category.staff_category_id','left')
+			->join('staff_role','staff.staff_role_id = staff_role.staff_role_id','left');
+			
+		}
+		else if($type=="staff_category")
+		{	
+			if($this->input->post('search'))
+			{
+				$staff_category = strtolower($this->input->post('staff_category'));
+				$this->db->like('LOWER(staff_category)',$staff_category,'after');
+			}
+			if($this->input->post('staff_category_id'))
+			{
+				
+				$staff_category_id = $this->input->post('staff_category_id');
+				$this->db->where('staff_category_id',$staff_category_id);
+			}
 			
 			$this->db->select("staff_category_id,staff_category")->from("staff_category");
 		}
-		else if($type=="staff_role"){
+		else if($type=="staff_role")
+		{
+		if($this->input->post('search'))
+			{
+				$staff_role = strtolower($this->input->post('staff_role'));
+				$this->db->like('LOWER(staff_role)',$staff_role,'after');
+			}
+			if($this->input->post('staff_role_id'))
+			{
+				$staff_role_id = $this->input->post('staff_role_id');
+				$this->db->where('staff_role_id',$staff_role_id);
+			}
 			
 			$this->db->select("staff_role_id,staff_role")->from("staff_role");
 		}
@@ -101,6 +143,72 @@ class Masters_model extends CI_Model{
 			);
 			$this->db->where('facility_type_id',$this->input->post('facility_type_id'));
 			$table="facility_types";
+		}
+		else if($type == 'staff')
+		{
+			if($this->input->post('date_of_birth')){
+				if($this->input->post('date_of_birth')){
+					$date = $this->input->post('date_of_birth');
+					$date = date("Y-m-d",strtotime($date));
+				}
+				else
+					$date=0;
+			}
+			else $date=0;
+			if($this->input->post('update')=="Archive"){
+
+			$data = array(
+					 'status'=>0
+					);
+			}
+			else if($this->input->post('update')=="Restore"){
+
+			$data = array(
+					 'status'=>1
+					);
+			}
+			else{
+			$data = array(
+					  'first_name'=>$this->input->post('first_name'),
+					  'last_name'=>$this->input->post('last_name'),
+					  'gender'=>$this->input->post('gender'),
+					  'date_of_birth'=>$date,
+					  'staff_role_id'=>$this->input->post('staff_role'),
+					  'staff_category_id'=>$this->input->post('staff_category'),
+					  'designation'=>$this->input->post('designation'),
+					  'staff_type'=>$this->input->post('staff_type'),
+					  'email'=>$this->input->post('email'),
+					  'phone'=>$this->input->post('phone'),
+					  'division_id'=>$this->input->post('division'),
+					  'reporting_officer_id'=>$this->input->post('reporting_officer')
+					);
+			}
+			$this->db->where('staff_id',$this->input->post('staff_id'));
+			$table = 'staff';
+		}
+		
+ 		else if($type=='staff_role')
+		{
+			//cunstructing array for attributes to be updated.
+			$data = array(
+						'staff_role' => $this->input->post('staff_role'),
+						'staff_role_id' => $this->input->post('staff_role_id')
+					);
+			//setting where condition		
+			$this->db->where('staff_role_id',$data['staff_role_id']);
+			$table = 'staff_role';
+		}
+ 		
+		else if($type=='staff_category')
+		{
+			//cunstructing array for attributes to be updated.
+			$data = array(
+						'staff_category_id' => $this->input->post('staff_category_id'),
+						'staff_category' => $this->input->post('staff_category')
+					);
+			//setting where condition		
+			$this->db->where('staff_category_id',$data['staff_category_id']);
+			$table = 'staff_category';
 		}
 		
 		$this->db->trans_start();
@@ -223,7 +331,9 @@ class Masters_model extends CI_Model{
 					  'designation'=>$this->input->post('designation'),
 					  'staff_type'=>$this->input->post('staff_type'),
 					  'email'=>$this->input->post('email'),
-					  'phone'=>$this->input->post('phone')
+					  'phone'=>$this->input->post('phone'),
+					  'division_id'=>$this->input->post('division'),
+					  'reporting_officer_id'=>$this->input->post('reporting_officer')
 				);
 
 		$table="staff";

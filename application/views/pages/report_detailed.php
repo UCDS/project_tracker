@@ -6,6 +6,7 @@
 			case "facility_types" : $heading = $projects[0]->facility_type; break;
 			case "facilities" : $heading = $projects[0]->facility_name; break;
 			case "agencies" : $heading = "Projects by ".$projects[0]->agency_name; break;
+			case "staff" : $heading = "Projects in ".$projects[0]->division." assigned to ".$projects[0]->staff_name; break;
 			case "user_departments" : $heading = "Projects in ".$projects[0]->user_department; break;
 			default : $heading=""; break;
 		}
@@ -14,20 +15,33 @@
 	?>
 	<?php if(count($projects)==0){ echo "No Projects to display. You might not have access to view this report."; } else { ?> 
 	<div class="row">
-	<div class="col-md-10">
-	<div class="col-md-7">
-	<h3><?php echo $heading;?> <?php if($this->input->post('district_id')) echo " in ".$projects[0]->district_name;?> <small>Click on any one to view </small></h3>
+	<div class="col-md-12">
+	<div class="col-md-4">
+	<h3><?php if($this->input->post("$id")) {
+		echo $heading;
+		if($this->input->post('district_id')) echo " in ".$projects[0]->district_name;
+	}
+	else echo "All Projects";
+	?> 
+	<small>Click on any one to view </small></h3>
 	<small>All amounts are shown in Lakhs of rupees</small>
 	</div>
-	<div class="col-md-5">
+	<div class="col-md-8">
+	<div class="panel panel-default">
+	<div class="panel-body">
  	<?php echo form_open('reports/summary/'.$type,array('id'=>'select_month','role'=>'form','class'=>'form-custom'));?>
-		<input type='hidden' value="<?php echo $projects[0]->$id; ?>" name="<?php echo $id;?>" />
+		<input type='hidden' value="<?php if($this->input->post("$id"))echo $projects[0]->$id; else echo 0; ?>" name="<?php echo $id;?>" />
 
+	
 	<select class="form-control" style="width:100px" name="month" id="month">
 	<option selected disabled>Month</option>
 	<?php 
+	$m=0;
 	for($i=1;$i<=12;$i++){
-		echo "<option value='".date("m", mktime(0, 0, 0, $i+1, 0, 0, 0))."'>".date("M", mktime(0, 0, 0, $i+1, 0, 0, 0))."</option>";
+		echo "<option value='".date("m", mktime(0, 0, 0, $i+1, 0, 0))."'";
+		if($this->input->post('month') && $this->input->post('month')==$i) { echo " selected "; $m=1;}
+		else if($m==0 && $i==date("m") ) echo " selected ";
+		echo ">".date("M", mktime(0, 0, 0, $i+1, 0, 0))."</option>";
 	}
 	?>
 	</select>
@@ -35,8 +49,12 @@
 	<option selected disabled>Year</option>
 	<?php 
 	$year=date("Y");
+	$y=0;
 	for($i=2009;$i<=$year+1;$i++){
-		echo "<option value='$i'>$i</option>";
+		echo "<option value='$i'";
+		if($this->input->post('year') && $this->input->post('year')==$i){ echo " selected "; $y=1; }
+		else if($y==0 && $i==date("Y")) echo " selected ";
+		echo ">$i</option>";
 	}
 	?>
 	</select>
@@ -59,9 +77,22 @@
 		?>
 	</select>	
 	<?php } ?>
+	<select name="agreement_filter" style="width:200px"  class="form-control">
+		<option value="" selected>All Projects</option>
+		<option value="in" <?php if($this->input->post('agreement_filter')=='in') echo " selected ";?> >Projects in Time</option>
+		<option value="out" <?php if($this->input->post('agreement_filter')=="out") echo " selected "; ?> >Projects beyond Agreement Date</option>
+	</select>
+	<select name="status_filter" style="width:200px"  class="form-control">
+		<option value="" selected>Status</option>
+		<option value="1" <?php if($this->input->post('status_filter')=='1') echo " selected ";?> >Not Started</option>
+		<option value="2" <?php if($this->input->post('status_filter')=='2') echo " selected ";?> >In Progress</option>
+		<option value="3" <?php if($this->input->post('status_filter')=="3") echo " selected "; ?> >Completed</option>
+	</select>
 	<button class="btn btn-sm pull-right" type="submit" name="select_month">Go</button>
 
 	</form>
+	</div>
+	</div>
 	</div>
 
 	<div class="col-md-12">
@@ -74,6 +105,12 @@
 		  <span class="glyphicon glyphicon-print"></span> Print
 		</button>
 		</div>
+	</div>
+
+	<div class="pull-right">
+		<span style="width:10px;background:#FAB4B4;margin:5px;">&nbsp&nbsp&nbsp&nbsp </span> Works Not Started <br />
+		<span style="width:10px;background:#FFECD6;margin:5px;">&nbsp&nbsp&nbsp&nbsp </span> Works in Progress <br />
+		<span style="width:10px;background:#D6FFDB;margin:5px;">&nbsp&nbsp&nbsp&nbsp </span> Works Completed
 	</div>
 	<div class="row"></div>
 	<table class="table table-hover table-bordered tablesorter" id="table-1">
@@ -88,7 +125,9 @@
 	<th>Agt</th>
 	<th>Agt. Date</th>
 	<th>Comp. Date as per Agt.</th>
-	<th>Probable Date of Comp.</th>
+	<th>Extended Date</th>
+	<th>Days Left for Agt. Comp. Date</th>
+	<th>Probable/Actual Date of Comp.</th>
 	<th>Cum. Exp. prev. years</th>
 	<th>Exp. DY upto <?php if($this->input->post('month')&& $this->input->post('year')) { ?>
 	<small><?php echo date("M", mktime(0, 0, 0, $this->input->post('month'),  0, 0)).", ".$this->input->post('year');?>
@@ -110,12 +149,17 @@
 	<th>Total Target for the year</th>
 	<th>Exp % over TS</th>
 	<th>Balance</th>
-	<th>Status</th>
-	<th>Stage</th>
+	<th>Overall Status</th>
+	<th>Physical Stage</th>
+	<th>Final Bill</th>
+	<th>Final Bill Date</th>
+	<th>HO Pendency</th>
 	<th>Remarks</th>
 	<th>Work Type</th>
 	<th>Images</th>
 	<th>Division</th>
+	<th>User Department</th>
+	<th>Recording Officer</th>
 	</thead>
 	<tbody>
 
@@ -151,6 +195,15 @@
 		<td class="text-right"><?php echo number_format($project->agreement_amount/100000,2); ?></td>
 		<td class="text-right"><?php if($project->agreement_date!=0) echo date("d-M-Y",strtotime($project->agreement_date));?></td>
 		<td class="text-right"><?php if($project->agreement_completion_date!=0) echo date("d-M-Y",strtotime($project->agreement_completion_date));?></td>
+		<td class="text-right"><?php if(!!$project->completion_date) echo date("d-M-Y",strtotime($project->completion_date));?></td>
+		<td class="text-right">
+			<?php 
+				if($project->status_type_id<3) {
+					if($project->completion_date!=0) echo (strtotime($project->completion_date)-strtotime(date("Y-m-d")))/60/60/24;
+					else if($project->agreement_completion_date!=0) echo (strtotime($project->agreement_completion_date)-strtotime(date("Y-m-d")))/60/60/24;
+				}
+			?>
+		</td>
 		<td class="text-right"><?php if($project->probable_date_of_completion!=0) echo date("d-M-Y",strtotime($project->probable_date_of_completion));?></td>
 		<td class="text-right"><?php echo number_format($project->expense_upto_last_year/100000,2); ?></td>
 		<td class="text-right"><?php echo number_format($project->expense_upto_last_month/100000,2); ?></td>
@@ -164,14 +217,25 @@
 		<td class="text-right"><?php echo number_format($project->expenses/$project->tech_sanction_amount*100);echo "%" ?></td>
 		<td class="text-right"><?php echo number_format(($project->tech_sanction_amount-$project->expenses)/100000,2); ?></td>
 		<td><?php echo $project->status_type; ?></td>
-		<td style="min-width:200px;"><?php echo $project->stage;?></td>
-		<td><?php echo $project->remarks_1; ?></td>
-		<td><?php if($project->work_type_id=='M') echo "Medical";
-			else if($project->work_type_id=='N') echo "Non-Medical"; 
+		<td><?php echo $project->stage;?></td>
+		<td><?php if(!!$project->final_bill) echo "Paid"; else echo "Not Paid";?></td>
+		<td><?php if(!!$project->final_bill && $project->final_bill_date!='0') echo $project->final_bill_date;?></td>
+		<td>
+			<?php 
+				foreach($pendencies as $pendency) {
+					if($pendency->project_id == $project->project_id) { 
+						echo $pendency->pendency_type."<br />";
+					}
+				}
 			?>
 		</td>
+		<td><?php echo $project->remarks_1; ?></td>
+		<td><?php echo $project->work_type;?>
+		</td>
 		<td class="text-right"><?php echo $project->image_count; ?></td>
-		<td class="text-right"><?php echo $project->division; ?></td>
+		<td><?php echo $project->division; ?></td>
+		<td><?php echo $project->user_department; ?></td>
+		<td class="text-right"><?php echo $project->designation; ?> - <?php echo $project->staff_name;?></td>
 	</tr>
 	<?php
 		$admin_sanction+=$project->admin_sanction_amount;
@@ -189,10 +253,16 @@
 	?>
 	</tbody>
 	<tr>
-		<th colspan="5">Total</th>
+		<th>Total</th>
+		<th class="text-right"></th>
+		<th class="text-right"></th>
+		<th class="text-right"></th>
+		<th class="text-right"></th>
 		<th class="text-right"><?php echo number_format($admin_sanction/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($tech_sanction/100000,2);?></th>
 		<th class="text-right"><?php echo number_format($agreement_amount/100000,2);?></th>
+		<th class="text-right"></th>
+		<th class="text-right"></th>
 		<th class="text-right"></th>
 		<th class="text-right"></th>
 		<th class="text-right"></th>

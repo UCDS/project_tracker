@@ -88,6 +88,16 @@ class Reports extends CI_Controller {
 					}
 				}
 				break;
+		case "staff" :
+				$name="Staff";
+				$col_name="staff_name";
+				$id="staff_id";
+				foreach($this->data['functions'] as $f){
+					if($f->user_function=="Reports - District" && $f->view==1){
+						$access=1;
+					}
+				}
+				break;
 		default : 
 				$name="";
 				$id="district_id";
@@ -110,17 +120,137 @@ class Reports extends CI_Controller {
 		$this->load->view('templates/header',$this->data);
 		$this->load->helper('form');
 		$this->load->library('form_validation');
-		$this->data['summary']=$this->reports_model->get_summary_report($type,$this->data['user_departments'],$this->data['states'],$this->data['divisions']);
 
-		$this->form_validation->set_rules("$id", "$name",
-		'trim|required|xss_clean');
+		$this->form_validation->set_rules("$id", "$name", 'trim|required|xss_clean');
 		if ($this->form_validation->run() === FALSE)
 		{
+			$this->data['summary']=$this->reports_model->get_summary_report($type,$this->data['user_departments'],$this->data['states'],$this->data['divisions']);
 			$this->load->view('pages/report_summary',$this->data);
 		}
 		else{
 
 			if($this->input->post('month')){
+				$this->data['pendencies']=$this->staff_model->get_pendencies(0,$this->data['user_departments'],$this->data['divisions']);
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_detailed',$this->data);
+			}
+			else if($this->input->post("$id")){
+				$this->data['pendencies']=$this->staff_model->get_pendencies(0,$this->data['user_departments'],$this->data['divisions']);
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_detailed',$this->data);
+			}
+			else if($this->input->post('project_id')){
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_project_detailed',$this->data);
+			}
+			else{
+				$this->data['pendencies']=$this->staff_model->get_pendencies(0,$this->data['user_departments'],$this->data['divisions']);
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_detailed',$this->data);
+			}
+		}
+		$this->load->view('templates/footer');
+		}
+		else{
+		show_404();
+		}
+	
+	}
+	
+	public function physical_financial($type=0){
+		$access=0;
+		$name="District";
+		$col_name="district_name";
+		$id="district_id";
+		foreach($this->data['functions'] as $f){
+			if($f->user_function=="Reports - District" && $f->view==1){
+				$access=1;
+			}
+		}
+		if($access==0) show_404();
+		if($this->session->userdata('logged_in')){
+		$this->data['type']=$type;
+		$this->data['name']=$name;
+		$this->data['col_name']=$col_name;
+		$this->data['id']=$id;
+		$this->data['userdata']=$this->session->userdata('logged_in');
+		$this->data['title']="Physical & Financial Report";
+		$this->load->view('templates/header',$this->data);
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$this->data['summary']=$this->reports_model->get_summary_report($type,$this->data['user_departments'],$this->data['states'],$this->data['divisions']);
+		$this->form_validation->set_rules("$id", "$name",
+		'trim|xss_clean');
+		if ($this->form_validation->run() === FALSE)
+		{
+			$this->load->view('pages/report_financial_physical',$this->data);
+		}
+		else{
+			if($this->input->post('medical') || $this->input->post('nonmedical')){
+				$this->data['type_selected']=1;
+				$this->load->view('pages/report_financial_physical',$this->data);
+			}	
+			else if($this->input->post('month')){
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_detailed',$this->data);
+			}
+			else if($this->input->post("$id")){
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_detailed',$this->data);
+			}
+			else if($this->input->post('project_id')){
+				$this->data['project']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_project_detailed',$this->data);
+			}
+			else{
+				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
+				$this->load->view('pages/report_detailed',$this->data);
+			}
+		}
+		$this->load->view('templates/footer');
+		}
+		else{
+		show_404();
+		}
+	
+	}
+		
+	public function staff(){
+		$access=0;
+		$name="Division";
+		$col_name="staff_name";
+		$id="staff_id";
+		$type="staff";
+		foreach($this->data['functions'] as $f){
+			if($f->user_function=="Reports - District" && $f->view==1){
+				$access=1;
+			}
+		}
+		if($access==0) show_404();
+		if($this->session->userdata('logged_in')){
+		$this->data['type']=$type;
+		$this->data['name']=$name;
+		$this->data['col_name']=$col_name;
+		$this->data['id']=$id;
+		$this->data['staff']=$this->staff_model->get_staff();
+		$this->data['userdata']=$this->session->userdata('logged_in');
+		$this->data['title']="Staff Wise Summary Report";
+		$this->load->view('templates/header',$this->data);
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$this->data['summary']=$this->reports_model->get_summary_report($type,$this->data['user_departments'],$this->data['states'],$this->data['divisions']);
+		$this->form_validation->set_rules("$id", "$name",
+		'trim|xss_clean');
+		if ($this->form_validation->run() === FALSE)
+		{
+			$this->load->view('pages/report_summary_staff',$this->data);
+		}
+		else{
+			if($this->input->post('medical') || $this->input->post('nonmedical')){
+				$this->data['type_selected']=1;
+				$this->load->view('pages/report_summary_staff',$this->data);
+			}	
+			else if($this->input->post('month')){
 				$this->data['projects']=$this->staff_model->get_projects($this->data['user_departments'],$this->data['divisions']);
 				$this->load->view('pages/report_detailed',$this->data);
 			}
@@ -455,4 +585,4 @@ class Reports extends CI_Controller {
 		}
 	}
 }
-
+?>

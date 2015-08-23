@@ -14,12 +14,15 @@ class Projects_model extends CI_Model{
 		$agreement_id=$this->input->post('agreement_number');
 		$estimate_amount=$this->input->post('admin_amount');
 		$agreement_amount=$this->input->post('agreement_amount');
-		$agreement_date=$this->input->post('agreement_date');
-		$agreement_completion_date=$this->input->post('agreement_completion_date');
+		if($this->input->post('agreement_date')) $agreement_date=date("Y-m-d",strtotime($this->input->post('agreement_date')));
+		else $agreement_date=0;
+		if($this->input->post('agreement_completion_date')) $agreement_completion_date=date("Y-m-d",strtotime($this->input->post('agreement_completion_date')));
+		else $agreement_completion_date = 0;
 		$grant=$this->input->post('grant');
 		$user_department=$this->input->post('user_department');
 		$agency=$this->input->post('agency');
 		$work_type=$this->input->post('work_type');
+		$staff=$this->input->post('staff');
 		$data=array(
 			'project_name'=>$project_name,
 			'project_address'=>$address,
@@ -31,7 +34,8 @@ class Projects_model extends CI_Model{
 			'grant_phase_id'=>$grant,
 			'user_department_id'=>$user_department,
 			'agency_id'=>$agency,
-			'work_type_id'=>$work_type
+			'work_type_id'=>$work_type,
+			'staff_id'=>$staff
 			);
 		$this->db->trans_start();
 		$this->db->insert('projects',$data);
@@ -70,14 +74,15 @@ class Projects_model extends CI_Model{
 		$admin_amount=$this->input->post('admin_amount');
 		$ref_tech=$this->input->post('ref_tech');
 		$tech_amount=$this->input->post('tech_amount');
-		$agreement_date=date("Y-m-d",strtotime($this->input->post('agreement_date')));
+		if($this->input->post('agreement_date')) $agreement_date=date("Y-m-d",strtotime($this->input->post('agreement_date'))); else $agreement_date=0;
 		$agreement_amount=$this->input->post('agreement_amount');
 		$agreement_number=$this->input->post('agreement_number');
-		$agreement_completion_date=date("Y-m-d",strtotime($this->input->post('agreement_completion_date')));
+		if($this->input->post('agreement_completion_date')) $agreement_completion_date=date("Y-m-d",strtotime($this->input->post('agreement_completion_date')));else $agreement_completion_date=0;
 		$grant_phase_id=$this->input->post('grant');
 		$user_department=$this->input->post('user_department');
 		$agency=$this->input->post('agency');
 		$project_id=$this->input->post('selected_project');
+		$staff=$this->input->post('staff');
 		
 		$project_data=array(
 		'project_name'=>$project_name,
@@ -90,7 +95,8 @@ class Projects_model extends CI_Model{
 		'grant_phase_id'=>$grant_phase_id,
 		'user_department_id'=>$user_department,
 		'agency_id'=>$agency,
-		'work_type_id'=>$work_type
+		'work_type_id'=>$work_type,
+		'staff_id'=>$staff
 		);
 		$sanction_data=array(
 		'admin_sanction_id'=>$ref_admin,
@@ -104,9 +110,10 @@ class Projects_model extends CI_Model{
 		$expense_data=array();
 		if($this->input->post('expense_id') && count($this->input->post('expense_id'))>0){
 		foreach($this->input->post('expense_id') as $expense_id){
+		if($expense_dates[$i]) $expense_dates[$i]=date("Y-m-d",strtotime($expense_dates[$i])); else $expense_dates[$i]=0;
 		$expenses_data[]=array(
 		'expense_id'=>$expense_id,
-		'expense_date'=>date("Y-m-d",strtotime($expense_dates[$i])),
+		'expense_date'=>$expense_dates[$i],
 		'expense_amount'=>$expense_amounts[$i],
 		);
 		$i++;
@@ -163,7 +170,37 @@ class Projects_model extends CI_Model{
 		$bill_id=$this->input->post('bill_id');
 		$this->db->where('bill_id',$bill_id);
 		if($this->db->update('project_bills',array('active'=>0))){
-			echo $this->db->last_query();
+			return true;
+		}
+		else return false;
+	}
+	function update_pendency(){
+		$pendency_type=$this->input->post('pendency_type');
+		if(!!$this->input->post('pendency_date')) $pendency_date=date("Y-m-d",strtotime($this->input->post('pendency_date')));
+		else $pendency_date=0;
+		$project_id=$this->input->post('selected_project');
+		$data=array(
+		'project_id'=>$project_id,
+		'pendency_type_id'=>$pendency_type,
+		'pendency_date'=>$pendency_date,
+		);
+		if($this->db->insert('ho_pendency',$data)){
+			return true;
+		}
+		else return false;
+	}
+	function delete_pendency(){
+		$pendency_id=$this->input->post('pendency_id');
+		$this->db->where('pendency_id',$pendency_id);
+		if($this->db->update('ho_pendency',array('active'=>0))){
+			return true;
+		}
+		else return false;
+	}
+	function delete_extension(){
+		$extension_id=$this->input->post('extension_id');
+		$this->db->where('extension_id',$extension_id);
+		if($this->db->update('project_extension',array('active'=>0))){
 			return true;
 		}
 		else return false;
@@ -171,21 +208,53 @@ class Projects_model extends CI_Model{
 	function update_status(){
 		$status=$this->input->post('status');
 		$stage=$this->input->post('stage');
+		$final_bill=$this->input->post('final_bill');
 		$status_remarks=$this->input->post('status_remarks');
 		$date=date("Y-m-d");
-		$probable_date=date("Y-m-d",strtotime($this->input->post('probable_date_of_completion')));
+		if($this->input->post('probable_date_of_completion')) $probable_date=date("Y-m-d",strtotime($this->input->post('probable_date_of_completion')));else $probable_date=0;
+		if($this->input->post('final_bill_date')) $final_bill_date=date("Y-m-d",strtotime($this->input->post('final_bill_date')));else $final_bill_date=0;
 		$project_id=$this->input->post('selected_project');
+		$this->db->trans_start();
 		$this->db->where('project_id',$project_id)->update('project_status',array('current'=>0));
 		$data=array(
-		'project_id'=>$project_id,
-		'status_type_id'=>$status,
-		'stage_id'=>$stage,
-		'remarks_1'=>$status_remarks,
-		'status_date'=>$date,
-		'probable_date_of_completion'=>$probable_date,
-		'current'=>1
+			'project_id'=>$project_id,
+			'status_type_id'=>$status,
+			'stage_id'=>$stage,
+			'remarks_1'=>$status_remarks,
+			'status_date'=>$date,
+			'probable_date_of_completion'=>$probable_date,
+			'current'=>1
 		);
-		if($this->db->insert('project_status',$data)){
+		if($this->input->post('final_bill') != NULL){
+			$project_data = array(
+				'final_bill'=>$final_bill,
+				'final_bill_date'=>$final_bill_date
+			);
+			$this->db->where('project_id',$project_id);
+			$this->db->update('projects',$project_data);
+		}
+		$this->db->insert('project_status',$data);
+		$this->db->trans_complete();
+		if($this->db->trans_status()===FALSE){
+			return false;
+			$this->db->trans_rollback();
+		}
+		else 
+			return true;
+	}
+	
+	function update_extension(){
+		if($this->input->post('extension_date')) $extension_date=date("Y-m-d",strtotime($this->input->post('extension_date')));
+		else $extension_date = 0;
+		if($this->input->post('approval_date')) $approval_date=date("Y-m-d",strtotime($this->input->post('approval_date')));
+		else $approval_date = 0;
+		$project_id=$this->input->post('selected_project');
+		$data=array(
+		'project_id'=>$project_id,
+		'extension_date'=>$extension_date,
+		'approval_date'=>$approval_date
+		);
+		if($this->db->insert('project_extension',$data)){
 			return true;
 		}
 		else return false;
