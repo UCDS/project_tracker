@@ -14,13 +14,26 @@ class Reports_model extends CI_Model{
 				$ud_id[] = $ud->user_department_id;
 			}
 			$this->db->where_in('projects.user_department_id',$ud_id);
-			if($divisions!=-1 && count($divisions)>0){
-			$division_list=array();
-			foreach($divisions as $d){
-				$division_list[]=$d->division_id;
+			if($this->input->post('division')){
+				$this->db->where('divisions.division_id',$this->input->post('division'));
 			}
-			$this->db->where_in('divisions.division_id',$division_list);
+			else if($divisions!=-1 && count($divisions)>0){
+				$division_list=array();
+				foreach($divisions as $d){
+					$division_list[]=$d->division_id;
+				}
+				$this->db->where_in('divisions.division_id',$division_list);
 			}
+		}
+		else if($this->input->post('division')){
+			$this->db->where('divisions.division_id',$this->input->post('division'));
+		}
+		else if($divisions!=-1 && count($divisions)>0){
+		$division_list=array();
+		foreach($divisions as $d){
+			$division_list[]=$d->division_id;
+		}
+		$this->db->where_in('divisions.division_id',$division_list);
 		}
 		if($states!=0 && $states!='0' && count($states)>0){
 			$state_id=array();

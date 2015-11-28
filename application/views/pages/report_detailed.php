@@ -156,6 +156,7 @@
 	<th>HO Pendency</th>
 	<th>Remarks</th>
 	<th>Work Type</th>
+	<th>Sanction Type</th>
 	<th>Images</th>
 	<th>Division</th>
 	<th>User Department</th>
@@ -230,8 +231,8 @@
 			?>
 		</td>
 		<td><?php echo $project->remarks_1; ?></td>
-		<td><?php echo $project->work_type;?>
-		</td>
+		<td><?php echo $project->work_type;?></td>
+		<td><?php echo $project->sanction_type;?></td>
 		<td class="text-right"><?php echo $project->image_count; ?></td>
 		<td><?php echo $project->division; ?></td>
 		<td><?php echo $project->user_department; ?></td>

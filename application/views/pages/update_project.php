@@ -95,11 +95,25 @@ $(function(){
 				<td>Work Type</td>
 				<td>
 					<select name="work_type" id="work_type" class="form-control">
-					<option value="" disabled>--SELECT--</option>
+					<option value="" disabled selected>--SELECT--</option>
 					<?php foreach($work_type as $w){
 						echo "<option value='$w->work_type_id'";
 						if($w->work_type_id==$p->work_type_id) echo " selected ";
 						echo ">$w->work_type</option>";
+					}
+					?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>Sanction Type</td>
+				<td>
+					<select name="sanction_type" id="sanction_type" class="form-control">
+					<option value="" disabled selected>--SELECT--</option>
+					<?php foreach($sanction_type as $s){
+						echo "<option value='$s->sanction_type_id'";
+						if($s->sanction_type_id==$p->sanction_type_id) echo " selected ";
+						echo ">$s->sanction_type</option>";
 					}
 					?>
 					</select>

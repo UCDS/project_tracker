@@ -33,6 +33,7 @@ class Projects extends CI_Controller {
 		$this->data['agencies']=$this->staff_model->get_agencies();
 		$this->data['staff']=$this->staff_model->get_staff();
 		$this->data['work_type']=$this->staff_model->get_work_type();
+		$this->data['sanction_type']=$this->staff_model->get_sanction_type();
 		$this->data['title']="Create Project";
 		$this->load->view('templates/header',$this->data);
 		$this->load->view('templates/left_nav');
@@ -73,6 +74,8 @@ class Projects extends CI_Controller {
 		$this->data['grant']=$this->staff_model->get_grants(1);
 		$this->data['user_department_list']=$this->staff_model->get_user_departments(1);
 		$this->data['staff']=$this->staff_model->get_staff();
+		$this->data['work_type']=$this->staff_model->get_work_type();
+		$this->data['sanction_type']=$this->staff_model->get_sanction_type();
 
 		$this->data['title']="Update Projects";
 		$this->load->view('templates/header',$this->data);

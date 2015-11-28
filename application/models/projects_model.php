@@ -22,6 +22,7 @@ class Projects_model extends CI_Model{
 		$user_department=$this->input->post('user_department');
 		$agency=$this->input->post('agency');
 		$work_type=$this->input->post('work_type');
+		$sanction_type=$this->input->post('sanction_type');
 		$staff=$this->input->post('staff');
 		$data=array(
 			'project_name'=>$project_name,
@@ -35,6 +36,7 @@ class Projects_model extends CI_Model{
 			'user_department_id'=>$user_department,
 			'agency_id'=>$agency,
 			'work_type_id'=>$work_type,
+			'sanction_type_id'=>$sanction_type,
 			'staff_id'=>$staff
 			);
 		$this->db->trans_start();
@@ -68,6 +70,7 @@ class Projects_model extends CI_Model{
 	function update_project(){
 		$project_name=$this->input->post('project_name');
 		$work_type=$this->input->post('work_type');
+		$sanction_type=$this->input->post('sanction_type');
 		$facility_id=$this->input->post('facility');
 		$address=$this->input->post('project_address');
 		$ref_admin=$this->input->post('ref_admin');
@@ -96,6 +99,7 @@ class Projects_model extends CI_Model{
 		'user_department_id'=>$user_department,
 		'agency_id'=>$agency,
 		'work_type_id'=>$work_type,
+		'sanction_type_id'=>$sanction_type,
 		'staff_id'=>$staff
 		);
 		$sanction_data=array(

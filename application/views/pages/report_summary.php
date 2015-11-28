@@ -30,7 +30,7 @@
 	  <span class="glyphicon glyphicon-print"></span> Print
 	</button>
 	</div>
-	<div class="col-md-6">
+	<div class="col-md-8 panel panel-default">
 	<small>Get report as on</small>
 	<select class="form-control" style="width:100px" name="month" id="month">
 	<option selected disabled>Month</option>
@@ -60,6 +60,15 @@
 	<select name="cumilative_report" class="form-control">
 	<option value="0" selected>Yearly Report</option>
 	<option value="1" <?php if($this->input->post('cumilative_report')) echo " selected ";?>>Cumilative Report</option>
+	</select>
+	<select name="division" id="division" class="form-control" >
+	<option value="" selected>All Divisions</option>
+	<?php foreach($divisions as $division){
+		echo "<option value='$division->division_id'";
+		if($this->input->post('division')==$division->division_id) echo " selected ";
+		echo ">$division->division</option>";
+	}
+	?>
 	</select>
 	<button class="btn btn-sm" type="submit" name="select_month">Go</button>
 	</form>
@@ -181,8 +190,6 @@
 	$not_started+=$row->not_started;
 	$work_in_progress+=$row->work_in_progress;
 	$work_completed+=$row->work_completed;
-	$medical+=$row->medical;
-	$non_medical+=$row->non_medical;
 	$expenses_prev+=$row->expenses_last_year;
 	$expenses_prev_year+=$row->expenses_previous_year;
 	$expenses_current+=$row->expenses_current_year;
@@ -223,8 +230,6 @@
 		<th class="text-right"><?php echo $not_started;?></th>
 		<th class="text-right"><?php echo $work_in_progress;?></th>
 		<th class="text-right"><?php echo $work_completed;?></th>
-		<th class="text-right"><?php echo $medical;?></th>
-		<th class="text-right"><?php echo $non_medical;?></th>
 	</tr>
 	</table>
 	</div>

@@ -34,6 +34,18 @@ $(function(){
 		</div>
 	</div>
 	<div class="form-group">
+		<label for="sanction_type" class="col-md-4" >Santion Type</label>
+		<div  class="col-md-8">
+		<select name="sanction_type" id="sanction_type" class="form-control" >
+		<option value="">--SELECT--</option>
+		<?php foreach($sanction_type as $s){
+			echo "<option value='$s->sanction_type_id'>$s->sanction_type</option>";
+		}
+		?>
+		</select>		
+		</div>
+	</div>
+	<div class="form-group">
 		<label for="project_address" class="col-md-4">Project Address</label>
 		<div  class="col-md-8">
 		<input type="text" class="form-control" placeholder="Project Address" id="project_address" name="project_address" />

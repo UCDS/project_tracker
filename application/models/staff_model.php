@@ -134,6 +134,12 @@ class Staff_model extends CI_Model{
 		$query=$this->db->get();
 		return $query->result();
 	}
+	function get_sanction_type(){
+		$this->db->select("sanction_type_id, sanction_type")
+		->from("sanction_type");
+		$query=$this->db->get();
+		return $query->result();
+	}
 	function get_facilities($divisions=0){
 		if(count($divisions)>0){
 			$division_list=array();
@@ -356,7 +362,10 @@ class Staff_model extends CI_Model{
 			$this->db->where('state_id',$this->input->post('state'));
 		}
 		if($this->input->post('work_type')){
-			$this->db->where('work_type_id',$this->input->post('work_type'));
+			$this->db->where('projects.work_type_id',$this->input->post('work_type'));
+		}
+		if($this->input->post('sanction_type')){
+			$this->db->where('projects.sanction_type_id',$this->input->post('sanction_type'));
 		}
 		if($user_departments!=0 && $user_departments!='0' && count($user_departments)>0){
 			$ud_id=array();
@@ -414,16 +423,17 @@ class Staff_model extends CI_Model{
 			$this->db->where('status_types.status_type_id',$this->input->post('status_filter'));
 		}
 		if($this->input->post('cumilative_report')==0){
-			$this->db->where("IF(final_bill=1,IF(final_bill_date>='$year_start' AND final_bill_date<='$year_end',1,0),1)");
+			//$this->db->where("IF(final_bill=1,IF(final_bill_date>='$year_start' AND final_bill_date<='$year_end',1,0),1)");
 		}
 		$this->db->select("expense_upto_last_year,expense_upto_last_month,expense_current_month,expenses,
 		target_upto_last_month,target_current_month,targets,pending_bills,COUNT(image_id) image_count,
 		IFNULL(extension_date,'') completion_date,projects.*,districts.*,
 		divisions.*,grant_phase.*,facilities.*,facility_type,project_status.*,sanctions.*,status_types.*,work_stages.stage_id,
 		work_stages.stage,work_stages.status_type_id as status_id,agency.*,user_departments.*,projects.staff_id,CONCAT(IF(first_name!='',first_name,''),' ',IF(last_name!='',last_name,'')) staff_name,
-		designation, work_type",false);
+		designation, work_type,sanction_type",false);
 		$this->db->from("projects")
 		->join('work_type','projects.work_type_id=work_type.work_type_id','left')
+		->join('sanction_type','projects.sanction_type_id=sanction_type.sanction_type_id','left')
 		->join('agency','projects.agency_id=agency.agency_id','left')
 		->join('staff','projects.staff_id=staff.staff_id','left')
 		->join('project_status','projects.project_id=project_status.project_id')
