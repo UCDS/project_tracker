@@ -117,6 +117,7 @@ class Reports extends CI_Controller {
 		$this->data['id']=$id;
 		$this->data['userdata']=$this->session->userdata('logged_in');
 		$this->data['title']="$name Summary Report";
+		$this->data['work_types']=$this->staff_model->get_work_type();
 		$this->load->view('templates/header',$this->data);
 		$this->load->helper('form');
 		$this->load->library('form_validation');

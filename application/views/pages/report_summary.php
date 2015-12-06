@@ -70,6 +70,15 @@
 	}
 	?>
 	</select>
+	<select name="work_type" id="work_type" class="form-control" >
+	<option value="" selected>Work Type</option>
+	<?php foreach($work_types as $work_type){
+		echo "<option value='$work_type->work_type_id'";
+		if($this->input->post('work_type')==$work_type->work_type_id) echo " selected ";
+		echo ">$work_type->work_type</option>";
+	}
+	?>
+	</select>
 	<button class="btn btn-sm" type="submit" name="select_month">Go</button>
 	</form>
 	</div>

@@ -76,6 +76,9 @@ class Reports_model extends CI_Model{
 		else{
 			$this->db->where("IF(final_bill=1,IF(final_bill_date>='$year_start' AND final_bill_date<='$year_end',1,0),1)");
 		}
+		if($this->input->post('work_type')){
+			$this->db->where('work_type_id',$this->input->post('work_type'));
+		}
 		$this->db->select("districts.latitude,districts.longitude,
 		SUM(CASE WHEN admin_sanction_date<='$year_current' THEN admin_sanction_amount else 0 END) admin_sanction_amount,
 		SUM(CASE WHEN admin_sanction_date<='$year_current' THEN tech_sanction_amount else 0 END) tech_sanction_amount,

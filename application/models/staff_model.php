@@ -423,7 +423,7 @@ class Staff_model extends CI_Model{
 			$this->db->where('status_types.status_type_id',$this->input->post('status_filter'));
 		}
 		if($this->input->post('cumilative_report')==0){
-			//$this->db->where("IF(final_bill=1,IF(final_bill_date>='$year_start' AND final_bill_date<='$year_end',1,0),1)");
+			$this->db->where("IF(final_bill=1,IF(final_bill_date>='$year_start' AND final_bill_date<='$year_end',1,0),1)");
 		}
 		$this->db->select("expense_upto_last_year,expense_upto_last_month,expense_current_month,expenses,
 		target_upto_last_month,target_current_month,targets,pending_bills,COUNT(image_id) image_count,
