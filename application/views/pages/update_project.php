@@ -10,6 +10,7 @@
 	.ui-datepicker{ z-index: 9990999 !important;}
 </style>
 <script type="text/javascript" src="<?php echo base_url();?>assets/js/zebra_datepicker.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>assets/js/jquery.chained.min.js"></script>
 <script type="text/javascript">
 $(function(){
 	$(".date").Zebra_DatePicker();
@@ -27,23 +28,24 @@ $(function(){
 		$("#stage option").hide().prop('disabled',true);
 		$("#stage>option:eq(0)").prop('selected',true).show().prop('disabled',true);
 		$("#stage ."+status_type_id+"").show().prop('disabled',false);
+		if($(this).val() == 3) 
+			$("#final_bill").show();
 	});
 	$('#formtabs a').click(function (e) {
 	  e.preventDefault()
 	  $(this).tab('show')
 	});
-	$("#division").change(function(){
-			$("#facility option").show();
-			if($(this).data('facilityoptions') == undefined){
-			/*Taking an array of all options-2 and kind of embedding it on the select1*/
-			$(this).data('facilityoptions',$('#facility option').clone());
-			}	
-		var id = $(this).val();
-		var facilityoptions = $(this).data('facilityoptions').filter('[name=' + id + ']');
-		$('#facility').html(facilityoptions);
-		$('#facility').prepend('<option value="" selected="selected" >--Select--</option>');
-		});
-
+	<?php if($project[0]->final_bill !=1) { ?>
+	$(".final_bill_date").hide();
+	<?php } ?>
+	$(".final_bill").change(function(){
+		if($(this).val()==1)
+			$(".final_bill_date").show().attr('required',true);
+		else	
+			$(".final_bill_date").hide().attr('required',false);
+	});
+	$("#facility").chained("#division");
+	$("#staff").chained("#division");
 });
 </script>
 	<div class="row">
@@ -55,6 +57,10 @@ $(function(){
 			<ul class="nav nav-tabs" id="formtabs">
 			  <li class="active"><a href="#project" data-toggle="tab">Project</a></li>
 			  <li><a href="#projectstatus" data-toggle="tab">Status</a></li>
+			  <li><a href="#projecthopendency" data-toggle="tab">HO Pendency</a></li>
+			<?php if($project[0]->agreement_date != 0) { ?>
+			  <li><a href="#projectextension" data-toggle="tab">Extension</a></li>
+			<?php } ?>
 			  <li><a href="#bills" data-toggle="tab">Pending Bills</a></li>
 			  <li><a href="#expenses" data-toggle="tab">Expenses</a></li>
 			  <li><a href="#targets" data-toggle="tab">Targets</a></li>
@@ -88,8 +94,29 @@ $(function(){
 			<tr>
 				<td>Work Type</td>
 				<td>
-					<label for="medical" class="control-label"><input type="radio" value="M" id="medical" name="work_type" <?php if($p->work_type_id=="M") echo " checked ";?> />Medical</label>
-					<label for="non-medical" class="control-label"><input type="radio" value="N" id="non-medical" name="work_type" <?php if($p->work_type_id=="N") echo " checked ";?> />Non Medical</label>
+					<select name="work_type" id="work_type" class="form-control">
+					<option value="" disabled selected>--SELECT--</option>
+					<?php foreach($work_type as $w){
+						echo "<option value='$w->work_type_id'";
+						if($w->work_type_id==$p->work_type_id) echo " selected ";
+						echo ">$w->work_type</option>";
+					}
+					?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>Sanction Type</td>
+				<td>
+					<select name="sanction_type" id="sanction_type" class="form-control">
+					<option value="" disabled selected>--SELECT--</option>
+					<?php foreach($sanction_type as $s){
+						echo "<option value='$s->sanction_type_id'";
+						if($s->sanction_type_id==$p->sanction_type_id) echo " selected ";
+						echo ">$s->sanction_type</option>";
+					}
+					?>
+					</select>
 				</td>
 			</tr>
 			<tr>
@@ -107,13 +134,27 @@ $(function(){
 				</td>
 			</tr>
 			<tr>
+				<td>Recording Officer</td>
+				<td>
+					<select name="staff" id="staff" class="form-control" >
+					<option value="">--SELECT--</option>
+					<?php foreach($staff as $s){
+						echo "<option value='$s->staff_id' class='$s->division_id'";
+						if($s->staff_id==$p->staff_id) echo " selected "; 
+						echo ">$s->designation - $s->staff_name</option>";
+					}
+					?>
+					</select>
+				<td>
+			</tr>
+			<tr>
 				<td>Facility</td>
 				<td>
 					<select name="facility" id="facility" class="form-control" >
-					<option value="" disabled>--SELECT--</option>
+					<option value="">--SELECT--</option>
 					<?php foreach($facilities as $facility){
-						echo "<option value='$facility->facility_id' name='$facility->division_id'";
-						if($facility->facility_id==$p->facility_id) echo " selected "; if($facility->division_id!=$p->division_id) echo " hidden "; 
+						echo "<option value='$facility->facility_id' class='$facility->division_id'";
+						if($facility->facility_id==$p->facility_id) echo " selected "; 
 						echo ">$facility->facility_name</option>";
 					}
 					?>
@@ -142,7 +183,7 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Agreement Date</td>
-				<td><input type="text" class="form-control date" placeholder="Agreement Date" id="agreement_date" value="<?php echo date("d-M-y",strtotime($p->agreement_date)); ?>" name="agreement_date" form="update_project_form" /></td>
+				<td><input type="text" class="form-control date" placeholder="Agreement Date" id="agreement_date" value="<?php if($p->agreement_date != 0) echo date("d-M-y",strtotime($p->agreement_date)); ?>" name="agreement_date" form="update_project_form" /></td>
 			</tr>
 			<tr>
 				<td>Agreement Number</td>
@@ -154,17 +195,17 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Completion date as per agreement</td>
-				<td><input type="text" class="form-control date" placeholder="as per Agreement" id="agreement_completion_date" value="<?php echo date("d-M-y",strtotime($p->agreement_completion_date)); ?>" name="agreement_completion_date" form="update_project_form"  /></td>
+				<td><input type="text" class="form-control date" placeholder="as per Agreement" id="agreement_completion_date" value="<?php if($p->agreement_completion_date != 0)  echo date("d-M-y",strtotime($p->agreement_completion_date)); ?>" name="agreement_completion_date" form="update_project_form"  /></td>
 			</tr>
 			<tr>
-				<td>Grant <?php echo $p->grant_phase_id;?></td>
+				<td>Grant</td>
 				<td>		
 					<select name="grant" id="grant" class="select-box selectized" required>
 					<option value="">--SELECT--</option>
 					<?php foreach($grants as $grant){
 						echo "<option value='$grant->phase_id' ";
-						if($grant->phase_id==$p->grant_phase_id) echo " selected ";
-						echo ">$grant->phase_name $grant->phase_id</option>";
+						if($grant->phase_id == $p->grant_phase_id) echo " selected asdf ";
+						echo ">$grant->phase_name</option>";
 					}
 					?>
 					</select>	
@@ -270,9 +311,20 @@ $(function(){
 					</select>
 				</td>
 			</tr>
+			<tr id="final_bill" <?php if($p->status_type_id != 3) echo " hidden ";?>>
+				<td>Final Bill</td>
+				<td>
+					<label><input type="radio" class="final_bill" name="final_bill" value="1" <?php if($p->final_bill == 1) echo " checked";?> /> Paid</label> <br />
+					<label><input type="radio" class="final_bill" name="final_bill" value="0" <?php if($p->final_bill == 0) echo " checked";?> /> Not Paid</label>
+					<div class="final_bill_date">
+						<label>Final Bill Date</label>
+						<input type="text" class="form-control date" name="final_bill_date" form="update_status_form" value="<?php if($p->final_bill_date!=0) echo $p->final_bill_date;?>" />
+					</div>
+				</td>
+			</tr>
 			<tr>
 				<td>Remarks</td>
-				<td><input type="text" class="form-control" placeholder="Status Remarks" id="status_remarks" value="<?php echo $p->remarks_1; ?>" name="status_remarks" /></td>
+				<td><textarea class="form-control" placeholder="Status Remarks" id="status_remarks" name="status_remarks"><?php echo $p->remarks_1; ?></textarea></td>
 			</tr>
 			<tr>
 				<td>Probable completion date</td>
@@ -289,6 +341,135 @@ $(function(){
 			</tr>
 		</table>
 		</div>
+		
+		<div class="tab-pane fade" id="projecthopendency">						
+		
+		<h4>Pending at HO:</h4>
+
+		<table class="table table-bordered table-striped">
+		<?php if(count($pendencies)>0){ ?>
+			<tr>
+			<td colspan=10">
+				<table class="table table-bordered table-striped">
+					<thead>
+						<th>#</th>
+						<th>Pendency</th>
+						<th>Submission Date</th>
+					</thead>
+					<?php $i=1;foreach($pendencies as $pendency){ ?>
+						<tr>
+							<td>
+								<?php echo form_open('projects/update',array('id'=>'delete_pendency_form','role'=>'form')); ?>
+								<?php echo $i++; ?>
+								<input class="sr-only" type="text" value="<?php echo $pendency->pendency_id;?>" name="pendency_id" hidden readonly /></td>
+							<td><?php echo $pendency->pendency_type;?></td>
+							<td><?php if($pendency->pendency_date!=0) echo $pendency->pendency_date;?></td>
+							<td><input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" />
+							<input type="submit" value="X" class="btn btn-danger btn-sm" name="delete_pendency" />
+							</form>	
+							</td>
+						</tr>
+					<?php } ?>
+				</table>
+			</td>
+			</tr>
+			<?php } ?>
+			<tr>
+				<td>					
+				<?php echo form_open('projects/update',array('id'=>'update_pendency_form','role'=>'form')); ?>
+				Add Pendency
+				</td>
+				<td class='text-center'>
+				<div class='col-md-12'>
+				<select name="pendency_type" class="form-control" required>
+					<option value="" selected disabled>Pending</option>
+						<?php 
+						foreach($pendency_types as $pendency_type){ ?>
+							<option value="<?php echo $pendency_type->pendency_type_id;?>">
+								<?php echo $pendency_type->pendency_type;?>
+							</option>
+						<?php } ?>
+				</select>
+				<input type="text" placeholder="Date of Submission" class="form-control date" name='pendency_date'  id="pendency_date" required />
+				</div>
+				</td>
+			</tr>
+			<tr>
+			<td colspan="2" align="center">				
+				<input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" />
+				<input class='btn btn-lg btn-primary' type="submit" name="update_pendency" value="Add Pendency" />
+				</form>
+			</td>
+			</tr>
+		</table>
+		</div>
+		
+		<?php if($p->agreement_date != 0) { ?>
+		<div class="tab-pane fade" id="projectextension">	
+			<script>
+			$(function(){
+				$("#extension_date").Zebra_DatePicker({
+					<?php if($p->agreement_completion_date != 0) { ?> 
+					direction : ['<?php echo date("Y-m-d",strtotime($p->agreement_completion_date." + 1 day"));?>',false]
+					<?php }
+					else if($p->agreement_date != 0) { ?> 
+					direction : ['<?php echo date("Y-m-d",strtotime($p->agreement_date." + 1 day"));?>',false]
+					<?php } ?>
+				});
+			});
+			</script>
+			<table class="table table-bordered table-striped">
+		<?php if(count($extensions)>0){ ?>
+			<tr>
+			<td colspan=10">
+				<table class="table table-bordered table-striped">
+					<thead>
+						<th>#</th>
+						<th>Extension Date</th>
+						<th>Approval Date</th>
+						<th></th>
+					</thead>
+					<?php $i=1;foreach($extensions as $extension){ ?>
+						<tr>
+							<td>
+								<?php echo form_open('projects/update',array('id'=>'delete_extension_form','role'=>'form')); ?>
+								<?php echo $i++; ?>
+								<input class="sr-only" type="text" value="<?php echo $extension->extension_id;?>" name="extension_id" hidden readonly /></td>
+							<td><?php echo date("d-M-Y",strtotime($extension->extension_date));?></td>
+							<td><?php echo date("d-M-Y",strtotime($extension->approval_date));?></td>
+							<td><input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" />
+							<input type="submit" value="X" class="btn btn-danger btn-sm" name="delete_extension" />
+							</form>
+							</td>
+						</tr>
+					<?php } ?>
+				</table>
+			</td>
+			</tr>
+			<?php } ?>
+			<tr>
+				<td>Extended Agreement Date</td>
+				<td>
+					<?php echo form_open('projects/update',array('id'=>'update_agreement_form','role'=>'form')); ?>
+					<input name="extension_date" id="extension_date" form="update_agreement_form" class="form-control" />
+				</td>
+			</tr>
+			<tr>
+				<td>Approval Date</td>
+				<td>
+					<input name="approval_date" id="approval_date" form="update_agreement_form" class="date form-control" />
+				</td>
+			</tr>
+			<tr>
+			<td colspan="2" align="center">
+					<input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" form="update_agreement_form" />
+					<input class='btn btn-lg btn-primary' type="submit" name="update_extension" form="update_agreement_form" value="Add Extension" />
+				</form>
+			</td>
+			</tr>
+		</table>
+		</div>
+		<?php } ?>
 		<div class="tab-pane fade" id="expenses">		
 		<table class="table table-bordered table-striped">
 			<tr>
@@ -321,7 +502,6 @@ $(function(){
 		<?php if(count($bills)>0){ ?>
 			<tr>
 			<td colspan=10">
-				<?php echo form_open('projects/update',array('id'=>'delete_bill_form','role'=>'form')); ?>
 				<table class="table table-bordered table-striped">
 					<thead>
 						<th>#</th>
@@ -332,18 +512,21 @@ $(function(){
 					</thead>
 					<?php $i=1;foreach($bills as $bill){ ?>
 						<tr>
-							<td><?php echo $i++; ?>
+							<td>
+								<?php echo form_open('projects/update',array('id'=>'delete_bill_form','role'=>'form')); ?>
+								<?php echo $i++; ?>
 								<input class="sr-only" type="text" value="<?php echo $bill->bill_id;?>" name="bill_id" hidden readonly /></td>
 							<td><?php echo $bill->payer;?></td>
 							<td><?php echo $bill->bill_date;?></td>
 							<td><?php echo $bill->voucher_number;?></td>
 							<td><?php echo $bill->bill_amount;?></td>
 							<td><input type='hidden' value="<?php echo $p->project_id; ?>" name="selected_project" />
-							<input type="submit" value="X" class="btn btn-danger btn-sm" name="delete_bill" /></td>
+							<input type="submit" value="X" class="btn btn-danger btn-sm" name="delete_bill" />
+							</form>
+							</td>
 						</tr>
 					<?php } ?>
 				</table>
-				</form>	
 			</td>
 			</tr>
 			<?php } ?>

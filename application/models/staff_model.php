@@ -123,8 +123,20 @@ class Staff_model extends CI_Model{
 		return $query->result();
 	}
 	function get_staff(){
-		$this->db->select("staff_id,CONCAT(IF(first_name!='',first_name,''),' ',IF(last_name!='',last_name,'')) staff_name",false)
-		->from("staff");
+		$this->db->select("staff_id,CONCAT(IF(first_name!='',first_name,''),' ',IF(last_name!='',last_name,'')) staff_name,designation,division_id",false)
+		->from("staff")->where('status',1);
+		$query=$this->db->get();
+		return $query->result();
+	}
+	function get_work_type(){
+		$this->db->select("work_type_id, work_type")
+		->from("work_type");
+		$query=$this->db->get();
+		return $query->result();
+	}
+	function get_sanction_type(){
+		$this->db->select("sanction_type_id, sanction_type")
+		->from("sanction_type");
 		$query=$this->db->get();
 		return $query->result();
 	}
@@ -173,7 +185,8 @@ class Staff_model extends CI_Model{
 		if($this->input->post('grant') || $projects==1){
 			$this->db->select("*")->from('grants')
 			->join('grant_phase','grants.grant_id=grant_phase.grant_id')
-			->join('projects','grant_phase.phase_id=projects.grant_phase_id');
+			->join('projects','grant_phase.phase_id=projects.grant_phase_id')
+			->group_by('phase_id');
 			if($this->input->post('facility_type'))
 			$this->db->where('facility_type_id',$this->input->post('facility_type'));
 			else if($this->input->post('district'))
@@ -212,6 +225,55 @@ class Staff_model extends CI_Model{
 	}
 	function get_bills($project_id){
 		$this->db->select("*")->from("project_bills")->where('project_id',$project_id)->order_by('bill_id')->where('active',1);
+		$query=$this->db->get();
+		return $query->result();
+	}
+	function get_pendencies($project_id,$user_departments=0,$divisions=0){
+		if($user_departments!=0 && $user_departments!='0' && count($user_departments)>0){
+			$this->db->join('projects','ho_pendency.project_id = projects.project_id');
+			$ud_id=array();
+			foreach($user_departments as $ud){
+				$ud_id[] = $ud->user_department_id;
+			}
+			$this->db->where_in('projects.user_department_id',$ud_id);
+			if($divisions!=-1 && count($divisions)>0){
+			$division_list=array();
+			foreach($divisions as $d){
+				$division_list[]=$d->division_id;
+			}
+			$this->db->join('facilities','projects.facility_id = facilities.facility_id');
+			$this->db->join('divisions','facilities.division_id = divisions.division_id');
+			$this->db->where_in('divisions.division_id',$division_list);
+			}
+		}
+		else if($divisions!=0 && count($divisions)>0){
+			$this->db->join('projects','ho_pendency.project_id = projects.project_id');
+			$this->db->join('facilities','projects.facility_id = facilities.facility_id');
+			$this->db->join('divisions','facilities.division_id = divisions.division_id');
+			$division_list=array();
+			foreach($divisions as $d){
+				$division_list[]=$d->division_id;
+			}
+			$this->db->where_in('divisions.division_id',$division_list);
+		}
+		if($project_id!=0){
+			$this->db->where('project_id',$project_id);
+		}
+		$this->db->select('pendency_type,pendency_id,pendency_date,ho_pendency.project_id')
+		->from("ho_pendency")
+		->join('pendency_type','ho_pendency.pendency_type_id = pendency_type.pendency_type_id')
+		->order_by('pendency_id')
+		->where('active',1);
+		$query=$this->db->get();
+		return $query->result();
+	}
+	function get_pendency_types(){
+		$this->db->select("*")->from("pendency_type")->order_by('pendency_type');
+		$query=$this->db->get();
+		return $query->result();
+	}
+	function get_extensions($project_id){
+		$this->db->select("*")->from("project_extension")->where('project_id',$project_id)->order_by('extension_date','DESC')->where('active',1);
 		$query=$this->db->get();
 		return $query->result();
 	}
@@ -278,6 +340,9 @@ class Staff_model extends CI_Model{
 		if($this->input->post('phase_id')){
 				$this->db->where('grant_phase_id',$this->input->post('phase_id'));
 		}
+		if($this->input->post('staff_id')){
+				$this->db->where('projects.staff_id',$this->input->post('staff_id'));
+		}
 		if($this->input->post('agency_id')){
 				$this->db->where('projects.agency_id',$this->input->post('agency_id'));
 		}
@@ -295,6 +360,12 @@ class Staff_model extends CI_Model{
 		}
 		if($this->input->post('state')){
 			$this->db->where('state_id',$this->input->post('state'));
+		}
+		if($this->input->post('work_type')){
+			$this->db->where('projects.work_type_id',$this->input->post('work_type'));
+		}
+		if($this->input->post('sanction_type')){
+			$this->db->where('projects.sanction_type_id',$this->input->post('sanction_type'));
 		}
 		if($user_departments!=0 && $user_departments!='0' && count($user_departments)>0){
 			$ud_id=array();
@@ -317,18 +388,54 @@ class Staff_model extends CI_Model{
 			}
 			$this->db->where_in('divisions.division_id',$division_list);
 		}
-		if($this->input->post('month')){
+		if($this->input->post('month') && $this->input->post('year')){
 			$month=$this->input->post('month');
 			$year=$this->input->post('year');
+			$year_start=date("Y-m-d",strtotime("April 1 $year"));
+			$year_current=date("Y-m-t",strtotime("1 ".date("M", mktime(0, 0, 0, $month+1, 0, 0))." ".$year));
+			if($year_current>=$year_start){ 
+				$year_start=date("Y-m-01",strtotime($year_start)); 
+				$year_end=date("Y-m-t",strtotime("March 31 $year + 1year"));
+			}
+			else { 
+				$year_start=date("Y-m-01",strtotime("April 1 $year previous year")); 
+				$year_end=date("Y-m-t",strtotime("March 31 $year"));
+			}
 		}
 		else{
 			$month="MONTH(CURDATE())";
 			$year="YEAR(CURDATE())";
 		}
-		$this->db->select("expense_upto_last_year,expense_upto_last_month,expense_current_month,expenses,target_upto_last_month,target_current_month,targets,pending_bills,COUNT(image_id) image_count,
-		projects.*,districts.*,divisions.*,grant_phase.*,facilities.*,facility_type,project_status.*,sanctions.*,status_types.*,work_stages.stage_id,work_stages.stage,work_stages.status_type_id as status_id,agency.*,user_departments.*");
+		if($this->input->post('agreement_filter')){
+			if($this->input->post('agreement_filter')=="in") {
+				$this->db->where('agreement_date != 0');
+				$this->db->where('agreement_completion_date !=0');
+				$this->db->having('((completion_date != "" AND completion_date >= "'.date("Y-m-d").'") OR (completion_date ="" AND agreement_completion_date >= "'.date("Y-m-d").'"))');			
+			}
+			else{
+				$this->db->where('final_bill',0);
+				$this->db->where('agreement_date !=0 ');
+				$this->db->where('agreement_completion_date !=0');
+				$this->db->having('((completion_date != "" AND completion_date < "'.date("Y-m-d").'") OR (completion_date ="" AND agreement_completion_date < "'.date("Y-m-d").'"))');			
+			}
+		}
+		if($this->input->post('status_filter')){
+			$this->db->where('status_types.status_type_id',$this->input->post('status_filter'));
+		}
+		if($this->input->post('cumilative_report')==0){
+			$this->db->where("IF(final_bill=1,IF(final_bill_date>='$year_start' AND final_bill_date<='$year_end',1,0),1)");
+		}
+		$this->db->select("expense_upto_last_year,expense_upto_last_month,expense_current_month,expenses,
+		target_upto_last_month,target_current_month,targets,pending_bills,COUNT(image_id) image_count,
+		IFNULL(extension_date,'') completion_date,projects.*,districts.*,
+		divisions.*,grant_phase.*,facilities.*,facility_type,project_status.*,sanctions.*,status_types.*,work_stages.stage_id,
+		work_stages.stage,work_stages.status_type_id as status_id,agency.*,user_departments.*,projects.staff_id,CONCAT(IF(first_name!='',first_name,''),' ',IF(last_name!='',last_name,'')) staff_name,
+		designation, work_type,sanction_type",false);
 		$this->db->from("projects")
+		->join('work_type','projects.work_type_id=work_type.work_type_id','left')
+		->join('sanction_type','projects.sanction_type_id=sanction_type.sanction_type_id','left')
 		->join('agency','projects.agency_id=agency.agency_id','left')
+		->join('staff','projects.staff_id=staff.staff_id','left')
 		->join('project_status','projects.project_id=project_status.project_id')
 		->join('project_images','projects.project_id=project_images.project_id','left')
 		->join('status_types','project_status.status_type_id=status_types.status_type_id','left')
@@ -346,13 +453,18 @@ class Staff_model extends CI_Model{
 		SUM(CASE WHEN month(project_expenses.expense_date)=$month AND YEAR(project_expenses.expense_date)=$year THEN expense_amount ELSE 0 END) expense_current_month,
 		SUM(CASE WHEN (month(project_expenses.expense_date)<=$month AND YEAR(project_expenses.expense_date)<=$year) OR (YEAR(project_expenses.expense_date)<$year) THEN expense_amount ELSE 0 END) expenses
 		FROM project_expenses GROUP BY project_id) table_expenses",'projects.project_id=table_expenses.project_id','left')
-		->join("(SELECT project_id,SUM(CASE WHEN (month(project_targets.projection_month)<$month AND YEAR(project_targets.projection_month)=$year) OR (YEAR(projection_month)<$year)  THEN target_amount ELSE 0 END) target_upto_last_month,
+		->join("(SELECT project_id,SUM(CASE WHEN ((month(project_targets.projection_month)<$month AND YEAR(project_targets.projection_month)=$year) OR (YEAR(projection_month)<$year)) AND projection_month>='$year_start'  THEN target_amount ELSE 0 END) target_upto_last_month,
 		SUM(CASE WHEN month(project_targets.projection_month)=$month AND YEAR(project_targets.projection_month)=$year THEN target_amount ELSE 0 END) target_current_month,
 		SUM(CASE WHEN projection_month >= '$year_start' AND projection_month<='$year_end' THEN target_amount ELSE 0 END) targets 
 		FROM project_targets WHERE current=1 GROUP BY project_id) table_targets",'projects.project_id=table_targets.project_id','left')
 		->join("(SELECT project_id, 
 			 SUM(bill_amount) pending_bills
-			 FROM project_bills WHERE active=1  GROUP BY project_id) table_bills" ,'projects.project_id=table_bills.project_id','left');
+			 FROM project_bills WHERE active=1  GROUP BY project_id) table_bills" ,'projects.project_id=table_bills.project_id','left')
+		->join("(SELECT project_id, 
+			MAX(extension_date) extension_date
+			 FROM project_extension WHERE active=1 GROUP BY project_id ORDER BY extension_date) table_extensions" ,'projects.project_id=table_extensions.project_id','left')
+		;
+		$this->db->where("admin_sanction_date <= '$year_current'");
 		$this->db->group_by('projects.project_id')
 		->order_by('tech_sanction_amount','DESC');
 		$this->db->where('project_status.current',1);

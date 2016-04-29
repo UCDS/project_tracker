@@ -1,22 +1,14 @@
 <link rel="stylesheet" href="<?php echo base_url();?>assets/css/metallic.css" >
 <script type="text/javascript" src="<?php echo base_url();?>assets/js/zebra_datepicker.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>assets/js/jquery.chained.min.js"></script>
 <script type="text/javascript">
 $(function(){
 	$("#agreement_date").Zebra_DatePicker({
 		direction:false
 	});
 	$("#probable_date_of_completion,#agreement_completion_date").Zebra_DatePicker();
-	$("#division").change(function(){
-			$("#facility option").show();
-			if($(this).data('facilityoptions') == undefined){
-			/*Taking an array of all options-2 and kind of embedding it on the select1*/
-			$(this).data('facilityoptions',$('#facility option').clone());
-			}	
-		var id = $(this).val();
-		var facilityoptions = $(this).data('facilityoptions').filter('[name=' + id + ']');
-		$('#facility').html(facilityoptions);
-		$('#facility').prepend('<option value="" selected="selected" >--Select--</option>');
-		});
+	$("#facility").chained("#division");
+	$("#staff").chained("#division");
 });
 </script>
 	
@@ -29,16 +21,28 @@ $(function(){
 		<input type="text" class="form-control" placeholder="Project Name" id="project_name" name="project_name" required />
 		</div>
 	</div>
-	<div class="form_group">
-		<div  class="col-md-12" style="padding-left:0">
-		<label class="col-md-6">Work Type</label>
-		<label class="radio-inline" for="wt_medical">
-		<input type="radio" name="work_type" id="wt_medical" value="M" />Medical 
-		</label>
-		<label for="wt_non_medical" class="radio-inline"> 
-		<input type="radio" id="wt_non_medical" name="work_type" value="N" /> 
-		Non Medical
-		</label>
+	<div class="form-group">
+		<label for="work_type" class="col-md-4" >Work Type</label>
+		<div  class="col-md-8">
+		<select name="work_type" id="work_type" class="form-control" >
+		<option value="">--SELECT--</option>
+		<?php foreach($work_type as $w){
+			echo "<option value='$w->work_type_id'>$w->work_type</option>";
+		}
+		?>
+		</select>		
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="sanction_type" class="col-md-4" >Santion Type</label>
+		<div  class="col-md-8">
+		<select name="sanction_type" id="sanction_type" class="form-control" >
+		<option value="">--SELECT--</option>
+		<?php foreach($sanction_type as $s){
+			echo "<option value='$s->sanction_type_id'>$s->sanction_type</option>";
+		}
+		?>
+		</select>		
 		</div>
 	</div>
 	<div class="form-group">
@@ -51,21 +55,33 @@ $(function(){
 		<label for="division" class="col-md-4" >Division</label>
 		<div  class="col-md-8">
 		<select name="division" id="division" class="form-control" required >
-		<option value="" disabled>--SELECT--</option>
+		<option value="">--SELECT--</option>
 		<?php foreach($divisions as $division){
 			echo "<option value='$division->division_id'>$division->division</option>";
 		}
 		?>
 		</select>		
+		</div>
 	</div>
+	<div class="form-group">
+		<label for="staff" class="col-md-4" >Recording Officer</label>
+		<div  class="col-md-8">
+		<select name="staff" id="staff" class="form-control" >
+		<option value="">--SELECT--</option>
+		<?php foreach($staff as $s){
+			echo "<option value='$s->staff_id' class='$s->division_id'>$s->designation - $s->staff_name</option>";
+		}
+		?>
+		</select>		
+		</div>
 	</div>
 	<div class="form-group">
 		<label for="facility" class="col-md-4" >Facility</label>
 		<div  class="col-md-8">
 		<select name="facility" id="facility" class="form-control" required>
-		<option value="" disabled>--SELECT--</option>
+		<option value="">--SELECT--</option>
 		<?php foreach($facilities as $facility){
-			echo "<option value='$facility->facility_id' name='$facility->division_id' hidden>$facility->facility_name</option>";
+			echo "<option value='$facility->facility_id' class='$facility->division_id'>$facility->facility_name</option>";
 		}
 		?>
 		</select>		

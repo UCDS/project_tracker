@@ -49,6 +49,47 @@
 <?php } else if(preg_match("^".base_url()."masters^",current_url()) || preg_match("^".base_url()."projects^",current_url()) || preg_match("^".base_url()."staff^",current_url()) || preg_match("^".base_url()."user_panel^",current_url())){ ?>
 <div class="col-sm-3 col-md-2 sidebar-left">
     <ul class="nav nav-sidebar">
+		<li class="disabled"><a href="#">Edit</a></li>
+				<?php 
+				foreach($functions as $f){
+					if($f->user_function=="Works" && $f->edit==1){ ?>
+						<li><a href="<?php echo base_url();?>projects/update">Projects</a></li>
+					<?php
+						break;
+					}
+				}
+				foreach($functions as $f){
+					if($f->user_function=="Facilities" && $f->edit==1){ ?>
+						<li><a href="<?php echo base_url();?>masters/edit/facility">Facility Name</a></li>
+					<?php 
+						break;
+					}
+				}
+				foreach($functions as $f){
+					if($f->user_function=="User Departments" && $f->edit==1){ ?>
+						<li><a href="<?php echo base_url();?>masters/edit/user_department">User Department</a></li>
+					<?php
+						break;
+					}
+				}
+				foreach($functions as $f){
+					if($f->user_function=="Facility Types" && $f->edit==1){ ?>
+						<li><a href="<?php echo base_url();?>masters/edit/facility_types">Facility Types</a></li>
+					<?php
+						break;
+					}
+				}
+				foreach($functions as $f){
+					if($f->user_function=="Staff" && $f->edit==1){ ?>
+						<li><a href="<?php echo base_url();?>staff/edit/staff">Staff Details</a></li>
+						<li><a href="<?php echo base_url();?>staff/edit/staff_type">Staff Type</a></li>
+						<li><a href="<?php echo base_url();?>staff/edit/staff_category">Staff Category</a></li>
+					<?php
+						break;
+					}
+				}
+				?>
+		<li class="nav-divider"></li>
 		<li class="disabled"><a href="#">Add</a></li>
 			<?php 
 				foreach($functions as $f){
@@ -131,38 +172,6 @@
 					if($f->user_function=="Users" && $f->add==1){ ?>
 						<li><a href="<?php echo base_url();?>user_panel/create_user">User</a></li>
 					<?php 
-						break;
-					}
-				}
-				?>
-		<li class="nav-divider"></li>
-		<li class="disabled"><a href="#">Edit</a></li>
-				<?php 
-				foreach($functions as $f){
-					if($f->user_function=="Works" && $f->edit==1){ ?>
-						<li><a href="<?php echo base_url();?>projects/update">Projects</a></li>
-					<?php
-						break;
-					}
-				}
-				foreach($functions as $f){
-					if($f->user_function=="Facilities" && $f->edit==1){ ?>
-						<li><a href="<?php echo base_url();?>masters/edit/facility">Facility Name</a></li>
-					<?php 
-						break;
-					}
-				}
-				foreach($functions as $f){
-					if($f->user_function=="User Departments" && $f->edit==1){ ?>
-						<li><a href="<?php echo base_url();?>masters/edit/user_department">User Department</a></li>
-					<?php
-						break;
-					}
-				}
-				foreach($functions as $f){
-					if($f->user_function=="Facility Types" && $f->edit==1){ ?>
-						<li><a href="<?php echo base_url();?>masters/edit/facility_types">Facility Types</a></li>
-					<?php
 						break;
 					}
 				}

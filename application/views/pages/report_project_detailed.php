@@ -23,7 +23,7 @@
 </script>
 <div class="container">
 	<div class="row">
-			
+		<?php if(isset($project) && count($project)>0) { ?>
 			<ul class="nav nav-tabs" id="formtabs">
 			  <li class="active"><a href="#project" data-toggle="tab">Project</a></li>
 			  <li><a href="#expenses" data-toggle="tab">Expenses</a></li>
@@ -122,6 +122,14 @@
 					</div>
 					<div class="row alternate">
 					<div class="col-md-5">
+						<b>Staff:</b>
+					</div>
+					<div class="col-md-7">
+						<?php echo $p->staff_name."<br /><small>".$p->designation."</small>";?>
+					</div>
+					</div>
+					<div class="row alternate">
+					<div class="col-md-5">
 						<b>User Department:</b>
 					</div>
 					<div class="col-md-7">
@@ -216,7 +224,7 @@
 						<b>Agreement Date:</b>
 					</div>
 					<div class="col-md-7">
-						<?php echo date("d-M-Y",strtotime($p->agreement_date));?>
+						<?php if($p->agreement_date!=0) echo date("d-M-Y",strtotime($p->agreement_date));?>
 					</div>
 					</div>
 					<div class="row alternate">
@@ -224,7 +232,7 @@
 						<b>Completion Date as per Agreement:</b>
 					</div>
 					<div class="col-md-7">
-						<?php echo date("d-M-Y",strtotime($p->agreement_completion_date));?>
+						<?php if($p->agreement_completion_date!=0)  echo date("d-M-Y",strtotime($p->agreement_completion_date));?>
 					</div>
 					</div>
 					<div class="row alternate">
@@ -232,7 +240,7 @@
 						<b>Probable Completion Date:</b>
 					</div>
 					<div class="col-md-7">
-						<?php echo date("d-M-Y",strtotime($p->probable_date_of_completion));?>
+						<?php if($p->probable_date_of_completion!=0)  echo date("d-M-Y",strtotime($p->probable_date_of_completion));?>
 					</div>
 					</div>
 					<div class="row alternate">
@@ -321,4 +329,8 @@
 			</table>
 			</div>
 			</div>
+		<?php } 
+		else {?>
+		<div class="alert alert-danger">Project not found.</div>
+		<?php } ?>
 	</div>

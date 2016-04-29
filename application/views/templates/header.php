@@ -7,8 +7,7 @@
 	<title><?php echo $title; ?> - APMSIDC</title>
 	<link rel="stylesheet" type="text/css" 
 	href="<?php echo base_url(); ?>assets/css/bootstrap.css">
-	<link rel="stylesheet" type="text/css" 
-	href="<?php echo base_url(); ?>assets/css/theme.default.css">
+	<link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/theme.default.css">
 	<link rel="stylesheet" type="text/css" 
 	href="<?php echo base_url(); ?>assets/css/selectize.css">
 	
@@ -175,7 +174,26 @@
 							if($f->user_function == "Reports - Agency"){ ?>
 							<li><a href="<?php echo base_url();?>reports/summary/agencies">Agency</a></li>
 						<?php break; }
-						} ?>
+						}
+						foreach($functions as $f){
+							if($f->user_function == "Reports - District"){ ?>
+							<li><a href="<?php echo base_url();?>reports/physical_financial/userdept_district">District - User Dept.</a></li>
+						<?php break; }
+						}
+						foreach($functions as $f){
+							if($f->user_function == "Reports - District"){ ?>
+							<li><a href="<?php echo base_url();?>reports/staff">Staff</a></li>
+						<?php break; }
+						}
+						?>
+						<li class="divider"></li>
+						<li>
+						<?php echo form_open('reports/projects',array('class'=>'form-custom','role'=>'form'));?>
+						<div class="input-group"> 
+								<input class="form-control" name="project_id" placeholder="Project ID" />
+						 <span class="input-group-btn"><button class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button></span>
+						 </form>
+						 </li>
 				</ul>
 			</li>
 	<?php } ?>

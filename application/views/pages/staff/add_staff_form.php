@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="<?php echo base_url();?>assets/css/metallic.css" >
 <script type="text/javascript" src="<?php echo base_url();?>assets/js/zebra_datepicker.js"></script>
+<script type="text/javascript" src="<?php echo base_url();?>assets/js/jquery.chained.min.js"></script>
 
 <script type="text/javascript">
 	$(function(){
@@ -9,6 +10,7 @@
 			$("#unit option,#area option").hide();
 			$("#unit option[class="+department_id+"],#area option[class="+department_id+"]").show();
 		});
+	$("#reporting_officer").chained("#division");
 	});
 </script>
 
@@ -66,6 +68,34 @@
 		</div>
 		<div class="col-md-6">
 			<input type="text" class="form-control date" placeholder="Date of Birth" id="date_of_birth" name="date_of_birth" />
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-md-3">
+			<label for="division" class="control-label">Division</label>
+		</div>
+		<div class="col-md-6">
+			<select class="form-control" id="division" name="division" >
+				<option value="">Division</option>
+				<?php foreach($divisions as $d){
+				echo "<option value='$d->division_id'>$d->division</option>";
+				}?>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-md-3">
+			<label for="reporting_officer" class="control-label">Reporting Officer</label>
+		</div>
+		<div class="col-md-6">
+			<select class="form-control" id="reporting_officer" name="reporting_officer" >
+				<option value="">Select</option>
+				<?php 
+					foreach($reporting_officers as $r){
+						echo "<option value='$r->staff_id' class='$r->division_id'>$r->designation - $r->staff_name</option>";
+					}
+				?>
+			</select>
 		</div>
 	</div>
 	<div class="form-group">
